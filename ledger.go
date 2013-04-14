@@ -139,13 +139,13 @@ func printBalances(accountList []*Account, printZeroBalances bool, depth, column
 			overallBalance.Add(overallBalance, account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.FloatString(2)
+			outBalanceString := account.Balance.FloatString(DisplayPrecision)
 			spaceCount := columns - len(account.Name) - len(outBalanceString)
 			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 	}
 	fmt.Println(strings.Repeat("-", columns))
-	outBalanceString := overallBalance.FloatString(2)
+	outBalanceString := overallBalance.FloatString(DisplayPrecision)
 	spaceCount := columns - len(outBalanceString)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
@@ -154,9 +154,9 @@ func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	for _, trans := range generalLedger {
 		fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
 		for _, accChange := range trans.AccountChanges {
-			outBalanceString := accChange.Balance.FloatString(2)
+			outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
 			spaceCount := columns - 4 - len(accChange.Name) - len(outBalanceString)
-			fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), accChange.Balance.FloatString(2))
+			fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 		fmt.Fprintln(w, "")
 	}
@@ -169,8 +169,8 @@ func printRegister(generalLedger []*Transaction, filter string, columns int) {
 			if strings.Contains(accChange.Name, filter) {
 				runningBalance.Add(runningBalance, accChange.Balance)
 				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(TransactionDateFormat), trans.Payee)
-				outBalanceString := accChange.Balance.FloatString(2)
-				outRunningBalanceString := runningBalance.FloatString(2)
+				outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
+				outRunningBalanceString := runningBalance.FloatString(DisplayPrecision)
 				spaceCount := columns - writtenBytes - 2 - len(outBalanceString) - len(outRunningBalanceString)
 				if spaceCount < 0 {
 					spaceCount = 0

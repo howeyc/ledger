@@ -9,6 +9,7 @@ import (
 )
 
 const TransactionDateFormat = "2006/01/02"
+const DisplayPrecision = 2
 
 func main() {
 	var startDate, endDate time.Time
