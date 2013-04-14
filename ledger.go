@@ -41,6 +41,9 @@ func (s TransactionsByDate) Less(i, j int) bool {
 	return s.Transactions[i].Date.Before(s.Transactions[j].Date)
 }
 
+// Parses a ledger file and returns a list of Transactions.
+//
+// Transactions are sorted by date.
 func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
 	var trans *Transaction
 	scanner := bufio.NewScanner(ledgerReader)
@@ -98,6 +101,11 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	return generalLedger, scanner.Err()
 }
 
+// Given a list of transactions and filter strings, returns account balances of
+// all accounts that have any filter as a substring of the account name. Also
+// returns balances for each account level depth as a separate record.
+//
+// Accounts are sorted by name.
 func getBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	balances := make(map[string]*big.Rat)
 	for _, trans := range generalLedger {
@@ -137,6 +145,8 @@ func getBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	return accList
 }
 
+// Prints out account balances formated to a windows of a width of columns.
+// Only shows accounts with names less than or equal to the given depth.
 func printBalances(accountList []*Account, printZeroBalances bool, depth, columns int) {
 	overallBalance := new(big.Rat)
 	for _, account := range accountList {
@@ -156,6 +166,7 @@ func printBalances(accountList []*Account, printZeroBalances bool, depth, column
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
 
+// Prints all transactions as a formatted ledger file.
 func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	for _, trans := range generalLedger {
 		fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
@@ -168,6 +179,7 @@ func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	}
 }
 
+// Prints each transaction that matches the given filters.
 func printRegister(generalLedger []*Transaction, filterArr []string, columns int) {
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
@@ -194,6 +206,8 @@ func printRegister(generalLedger []*Transaction, filterArr []string, columns int
 	}
 }
 
+// Takes a transaction and balances it. This is mainly to fill in the empty part
+// with the remaining balance.
 func balanceTransaction(input *Transaction) error {
 	balance := new(big.Rat)
 	var emptyAccPtr *Account
