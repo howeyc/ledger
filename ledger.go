@@ -98,11 +98,17 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	return generalLedger, scanner.Err()
 }
 
-func getBalances(generalLedger []*Transaction, filter string) []*Account {
+func getBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	balances := make(map[string]*big.Rat)
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
-			if strings.Contains(accChange.Name, filter) {
+			inFilter := len(filterArr) == 0
+			for _, filter := range filterArr {
+				if strings.Contains(accChange.Name, filter) {
+					inFilter = true
+				}
+			}
+			if inFilter {
 				accHier := strings.Split(accChange.Name, ":")
 				accDepth := len(accHier)
 				for currDepth := accDepth; currDepth > 0; currDepth-- {
@@ -135,7 +141,7 @@ func printBalances(accountList []*Account, printZeroBalances bool, depth, column
 	overallBalance := new(big.Rat)
 	for _, account := range accountList {
 		accDepth := len(strings.Split(account.Name, ":"))
-		if accDepth == 0 {
+		if accDepth == 1 {
 			overallBalance.Add(overallBalance, account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
@@ -162,11 +168,17 @@ func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	}
 }
 
-func printRegister(generalLedger []*Transaction, filter string, columns int) {
+func printRegister(generalLedger []*Transaction, filterArr []string, columns int) {
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
-			if strings.Contains(accChange.Name, filter) {
+			inFilter := len(filterArr) == 0
+			for _, filter := range filterArr {
+				if strings.Contains(accChange.Name, filter) {
+					inFilter = true
+				}
+			}
+			if inFilter {
 				runningBalance.Add(runningBalance, accChange.Balance)
 				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(TransactionDateFormat), trans.Payee)
 				outBalanceString := accChange.Balance.FloatString(DisplayPrecision)

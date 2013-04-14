@@ -63,16 +63,13 @@ func main() {
 		return
 	}
 
-	containsFilter := ""
-	if len(args) > 1 {
-		containsFilter = args[1]
-	}
+	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
-	case "balance":
-		printBalances(getBalances(generalLedger, containsFilter), showEmptyAccounts, transactionDepth, columnWidth)
+	case "balance", "bal":
+		printBalances(getBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
 	case "print":
 		printLedger(os.Stdout, generalLedger, columnWidth)
-	case "register":
-		printRegister(generalLedger, containsFilter, columnWidth)
+	case "register", "reg":
+		printRegister(generalLedger, containsFilterArray, columnWidth)
 	}
 }
