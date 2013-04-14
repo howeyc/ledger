@@ -22,17 +22,22 @@ func main() {
 
 	var ledgerFileName string
 
-	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name.")
+	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&startString, "s", startDate.Format(TransactionDateFormat), "Start date of transaction processing.")
-	flag.StringVar(&endString, "e", endDate.Format(TransactionDateFormat), "Start date of transaction processing.")
+	flag.StringVar(&endString, "e", endDate.Format(TransactionDateFormat), "End date of transaction processing.")
 	flag.BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
 	flag.IntVar(&transactionDepth, "depth", -1, "Depth of transaction output (balance).")
 	flag.IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	flag.BoolVar(&columnWide, "wide", false, "Wide output (same as --column 132).")
+	flag.BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
 	flag.Parse()
 
 	if columnWidth == 80 && columnWide {
 		columnWidth = 132
+	}
+
+	if len(ledgerFileName) == 0 {
+		flag.Usage()
+		return
 	}
 
 	// TODO(chris): Handle parse of arg errors
@@ -46,11 +51,11 @@ func main() {
 	}
 
 	ledgerFileReader, err := os.Open(ledgerFileName)
-	defer ledgerFileReader.Close()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	defer ledgerFileReader.Close()
 
 	generalLedger, parseError := parseLedger(ledgerFileReader)
 	if parseError != nil {
