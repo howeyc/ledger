@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"sort"
 	"strings"
 	"time"
 )
@@ -14,13 +15,33 @@ type Account struct {
 	Balance *big.Rat
 }
 
+type Accounts []*Account
+
+func (s Accounts) Len() int      { return len(s) }
+func (s Accounts) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+type AccountsByName struct{ Accounts }
+
+func (s AccountsByName) Less(i, j int) bool { return s.Accounts[i].Name < s.Accounts[j].Name }
+
 type Transaction struct {
 	Payee          string
 	Date           time.Time
 	AccountChanges []Account
 }
 
-func parseLedger(ledgerReader io.Reader) (generalLedger []Transaction, err error) {
+type Transactions []*Transaction
+
+func (s Transactions) Len() int      { return len(s) }
+func (s Transactions) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
+type TransactionsByDate struct{ Transactions }
+
+func (s TransactionsByDate) Less(i, j int) bool {
+	return s.Transactions[i].Date.Before(s.Transactions[j].Date)
+}
+
+func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
 	var trans *Transaction
 	scanner := bufio.NewScanner(ledgerReader)
 	var line string
@@ -36,7 +57,7 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []Transaction, err error
 				if transErr != nil {
 					return generalLedger, fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
 				}
-				generalLedger = append(generalLedger, *trans)
+				generalLedger = append(generalLedger, trans)
 				trans = nil
 			}
 		} else if trans == nil {
@@ -61,13 +82,11 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []Transaction, err error
 				}
 			}
 			lastIndex := len(nonEmptyWords) - 1
-			accChange.Name = strings.Join(nonEmptyWords[:lastIndex], " ")
 			rationalNum := new(big.Rat)
 			_, balErr := rationalNum.SetString(nonEmptyWords[lastIndex])
 			if balErr == false {
 				// Assuming no balance and whole line is account name
 				accChange.Name = strings.Join(nonEmptyWords, " ")
-				//	return generalLedger, fmt.Errorf("%d: Unable to parse value: %s", lineCount, nonEmptyWords[lastIndex])
 			} else {
 				accChange.Name = strings.Join(nonEmptyWords[:lastIndex], " ")
 				accChange.Balance = rationalNum
@@ -75,14 +94,69 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []Transaction, err error
 			trans.AccountChanges = append(trans.AccountChanges, accChange)
 		}
 	}
+	sort.Sort(TransactionsByDate{generalLedger})
 	return generalLedger, scanner.Err()
 }
 
-func printLedger(w io.Writer, generalLedger []Transaction) {
+func getBalances(generalLedger []*Transaction, filter string) []*Account {
+	balances := make(map[string]*big.Rat)
+	for _, trans := range generalLedger {
+		for _, accChange := range trans.AccountChanges {
+			if strings.Contains(accChange.Name, filter) {
+				accHier := strings.Split(accChange.Name, ":")
+				accDepth := len(accHier)
+				for currDepth := accDepth; currDepth > 0; currDepth-- {
+					currAccName := strings.Join(accHier[:currDepth], ":")
+					if ratNum, ok := balances[currAccName]; !ok {
+						ratNum = new(big.Rat)
+						ratNum.SetString(accChange.Balance.RatString())
+						balances[currAccName] = ratNum
+					} else {
+						ratNum.Add(ratNum, accChange.Balance)
+					}
+				}
+			}
+		}
+	}
+
+	accList := make([]*Account, len(balances))
+	count := 0
+	for accName, accBalance := range balances {
+		account := &Account{Name: accName, Balance: accBalance}
+		accList[count] = account
+		count++
+	}
+
+	sort.Sort(AccountsByName{accList})
+	return accList
+}
+
+func printBalances(accountList []*Account, printZeroBalances bool, depth, columns int) {
+	overallBalance := new(big.Rat)
+	for _, account := range accountList {
+		accDepth := len(strings.Split(account.Name, ":"))
+		if accDepth == 0 {
+			overallBalance.Add(overallBalance, account.Balance)
+		}
+		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
+			outBalanceString := account.Balance.FloatString(2)
+			spaceCount := columns - len(account.Name) - len(outBalanceString)
+			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+		}
+	}
+	fmt.Println(strings.Repeat("-", columns))
+	outBalanceString := overallBalance.FloatString(2)
+	spaceCount := columns - len(outBalanceString)
+	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
+}
+
+func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	for _, trans := range generalLedger {
 		fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
 		for _, accChange := range trans.AccountChanges {
-			fmt.Fprintf(w, "    %s          %s\n", accChange.Name, accChange.Balance.FloatString(2))
+			outBalanceString := accChange.Balance.FloatString(2)
+			spaceCount := columns - 4 - len(accChange.Name) - len(outBalanceString)
+			fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), accChange.Balance.FloatString(2))
 		}
 		fmt.Fprintln(w, "")
 	}
