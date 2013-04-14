@@ -162,6 +162,26 @@ func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	}
 }
 
+func printRegister(generalLedger []*Transaction, filter string, columns int) {
+	runningBalance := new(big.Rat)
+	for _, trans := range generalLedger {
+		for _, accChange := range trans.AccountChanges {
+			if strings.Contains(accChange.Name, filter) {
+				runningBalance.Add(runningBalance, accChange.Balance)
+				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(TransactionDateFormat), trans.Payee)
+				outBalanceString := accChange.Balance.FloatString(2)
+				outRunningBalanceString := runningBalance.FloatString(2)
+				spaceCount := columns - writtenBytes - 2 - len(outBalanceString) - len(outRunningBalanceString)
+				if spaceCount < 0 {
+					spaceCount = 0
+				}
+				fmt.Printf("%s%s %s", strings.Repeat(" ", spaceCount), outBalanceString, outRunningBalanceString)
+				fmt.Println("")
+			}
+		}
+	}
+}
+
 func balanceTransaction(input *Transaction) error {
 	balance := new(big.Rat)
 	var emptyAccPtr *Account

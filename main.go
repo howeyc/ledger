@@ -66,5 +66,7 @@ func main() {
 		printBalances(getBalances(generalLedger, containsFilter), showEmptyAccounts, transactionDepth, columnWidth)
 	case "print":
 		printLedger(os.Stdout, generalLedger, columnWidth)
+	case "register":
+		printRegister(generalLedger, containsFilter, columnWidth)
 	}
 }
