@@ -71,5 +71,7 @@ func main() {
 		printLedger(os.Stdout, generalLedger, columnWidth)
 	case "register", "reg":
 		printRegister(generalLedger, containsFilterArray, columnWidth)
+	case "classify":
+		classifyPayee(generalLedger, getBalances(generalLedger, []string{}), args[1])
 	}
 }
