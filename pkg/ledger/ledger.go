@@ -1,4 +1,4 @@
-package main
+package ledger
 
 import (
 	"bufio"
@@ -9,6 +9,14 @@ import (
 	"strings"
 	"time"
 )
+
+var TransactionDateFormat string
+var DisplayPrecision int
+
+func init() {
+	TransactionDateFormat = "2006/01/02"
+	DisplayPrecision = 2
+}
 
 type Account struct {
 	Name    string
@@ -44,7 +52,7 @@ func (s TransactionsByDate) Less(i, j int) bool {
 // Parses a ledger file and returns a list of Transactions.
 //
 // Transactions are sorted by date.
-func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
+func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
 	var trans *Transaction
 	scanner := bufio.NewScanner(ledgerReader)
 	var line string
@@ -106,7 +114,7 @@ func parseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 // returns balances for each account level depth as a separate record.
 //
 // Accounts are sorted by name.
-func getBalances(generalLedger []*Transaction, filterArr []string) []*Account {
+func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	balances := make(map[string]*big.Rat)
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
@@ -147,7 +155,7 @@ func getBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 
 // Prints out account balances formated to a windows of a width of columns.
 // Only shows accounts with names less than or equal to the given depth.
-func printBalances(accountList []*Account, printZeroBalances bool, depth, columns int) {
+func PrintBalances(accountList []*Account, printZeroBalances bool, depth, columns int) {
 	overallBalance := new(big.Rat)
 	for _, account := range accountList {
 		accDepth := len(strings.Split(account.Name, ":"))
@@ -167,7 +175,7 @@ func printBalances(accountList []*Account, printZeroBalances bool, depth, column
 }
 
 // Prints all transactions as a formatted ledger file.
-func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
+func PrintLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	for _, trans := range generalLedger {
 		fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
 		for _, accChange := range trans.AccountChanges {
@@ -180,7 +188,7 @@ func printLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 }
 
 // Prints each transaction that matches the given filters.
-func printRegister(generalLedger []*Transaction, filterArr []string, columns int) {
+func PrintRegister(generalLedger []*Transaction, filterArr []string, columns int) {
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {

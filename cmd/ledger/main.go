@@ -6,10 +6,9 @@ import (
 	"os"
 	"strings"
 	"time"
-)
 
-const TransactionDateFormat = "2006/01/02"
-const DisplayPrecision = 2
+	"github.com/howeyc/cli-ledger/pkg/ledger"
+)
 
 func main() {
 	var startDate, endDate time.Time
@@ -21,6 +20,9 @@ func main() {
 	var columnWide bool
 
 	var ledgerFileName string
+
+	ledger.TransactionDateFormat = "2006/01/02"
+	TransactionDateFormat := ledger.TransactionDateFormat
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&startString, "s", startDate.Format(TransactionDateFormat), "Start date of transaction processing.")
@@ -57,7 +59,7 @@ func main() {
 	}
 	defer ledgerFileReader.Close()
 
-	generalLedger, parseError := parseLedger(ledgerFileReader)
+	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
 	if parseError != nil {
 		fmt.Println(parseError)
 		return
@@ -66,12 +68,10 @@ func main() {
 	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
 	case "balance", "bal":
-		printBalances(getBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
+		ledger.PrintBalances(ledger.GetBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
 	case "print":
-		printLedger(os.Stdout, generalLedger, columnWidth)
+		ledger.PrintLedger(os.Stdout, generalLedger, columnWidth)
 	case "register", "reg":
-		printRegister(generalLedger, containsFilterArray, columnWidth)
-	case "classify":
-		classifyPayee(generalLedger, getBalances(generalLedger, []string{}), args[1])
+		ledger.PrintRegister(generalLedger, containsFilterArray, columnWidth)
 	}
 }
