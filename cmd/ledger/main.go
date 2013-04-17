@@ -42,9 +42,14 @@ func main() {
 		return
 	}
 
-	// TODO(chris): Handle parse of arg errors
-	startDate, _ = time.Parse(TransactionDateFormat, startString)
-	endDate, _ = time.Parse(TransactionDateFormat, endString)
+	parsedStartDate, tstartErr := time.Parse(TransactionDateFormat, startString)
+	parsedEndDate, tendErr := time.Parse(TransactionDateFormat, endString)
+
+	if tstartErr != nil || tendErr != nil {
+		fmt.Println("Unable to parse start or end date string argument.")
+		fmt.Println("Expected format: YYYY/MM/dd")
+		return
+	}
 
 	args := flag.Args()
 	if len(args) == 0 {
@@ -64,6 +69,21 @@ func main() {
 		fmt.Println(parseError)
 		return
 	}
+
+	timeStartIndex, timeEndIndex := 0, 0
+	for idx := 0; idx < len(generalLedger); idx++ {
+		if generalLedger[idx].Date.After(parsedStartDate) {
+			timeStartIndex = idx
+			break
+		}
+	}
+	for idx := len(generalLedger) - 1; idx >= 0; idx-- {
+		if generalLedger[idx].Date.Before(parsedEndDate) {
+			timeEndIndex = idx
+			break
+		}
+	}
+	generalLedger = generalLedger[timeStartIndex : timeEndIndex+1]
 
 	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
