@@ -14,14 +14,10 @@ import (
 
 func main() {
 	var ledgerFileName string
-	var dateColumn, payeeColumn, amountColumn int
 	var accountSubstring, csvFileName, csvDateFormat string
 	var negateAmount bool
 
 	flag.BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
-	flag.IntVar(&dateColumn, "dc", -1, "Date column number.")
-	flag.IntVar(&payeeColumn, "pc", -1, "Payee column number.")
-	flag.IntVar(&amountColumn, "ac", -1, "Amount column number.")
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
 	flag.Parse()
@@ -82,6 +78,26 @@ func main() {
 		}
 	}
 
+	// Find columns from header
+	var dateColumn, payeeColumn, amountColumn int
+	dateColumn, payeeColumn, amountColumn = -1, -1, -1
+	for fieldIndex, fieldName := range csvRecords[0] {
+		fieldName = strings.ToLower(fieldName)
+		if strings.Contains(fieldName, "date") {
+			dateColumn = fieldIndex
+		} else if strings.Contains(fieldName, "description") {
+			payeeColumn = fieldIndex
+		} else if strings.Contains(fieldName, "amount") {
+			amountColumn = fieldIndex
+		}
+	}
+
+	if dateColumn < 0 || payeeColumn < 0 || amountColumn < 0 {
+		fmt.Println("Unable to find columns required from header field names.")
+		return
+	}
+
+	// TODO(chris): Only import new transactions
 	for _, record := range csvRecords[1:] {
 		inputPayeeWords := strings.Split(record[payeeColumn], " ")
 		csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
