@@ -101,9 +101,20 @@ func main() {
 	for _, record := range csvRecords[1:] {
 		inputPayeeWords := strings.Split(record[payeeColumn], " ")
 		csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
-		fmt.Printf("%s %s\n", csvDate.Format(ledger.TransactionDateFormat), record[payeeColumn])
-		fmt.Printf("   %s\n", matchingAccount)
-		_, likely, _ := classifier.LogScores(inputPayeeWords)
-		fmt.Printf("   %s     %s\n", classifier.Classes[likely], record[amountColumn])
+		if !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
+			fmt.Printf("%s %s\n", csvDate.Format(ledger.TransactionDateFormat), record[payeeColumn])
+			fmt.Printf("   %s\n", matchingAccount)
+			_, likely, _ := classifier.LogScores(inputPayeeWords)
+			fmt.Printf("   %s     %s\n", classifier.Classes[likely], record[amountColumn])
+		}
 	}
+}
+
+func existingTransaction(generalLedger []*ledger.Transaction, transDate time.Time, payee string) bool {
+	for _, trans := range generalLedger {
+		if trans.Date == transDate && strings.HasPrefix(trans.Payee, payee) {
+			return true
+		}
+	}
+	return false
 }
