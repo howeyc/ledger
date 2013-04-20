@@ -8,6 +8,7 @@ to the [Ledger](http://ledger-cli.org) command line tool written in C++.
 The ledger file this will parse is much simpler than the C++ tool.
 
 Transaction Format:
+
     <YYYY/MM/dd> <Payee description>
         <Account Name 1>    <Amount 1>
         .
@@ -21,6 +22,7 @@ to balance the transaction will be added to that account for the transaction.
 Amounts must be decimal numbers with a negative(-) sign in front if necessary.
 
 Example transaction:
+
     2013/01/02 McDonald's #24233 HOUSTON TX
         Expenses:Dining Out:Fast Food        5.60
         Wallet:Cash
