@@ -12,6 +12,12 @@ import (
 	"github.com/jbrukh/bayesian"
 )
 
+func usage() {
+	fmt.Printf("Usage: %s -f <ledger-file> <account> <csv file>\n", os.Args[0])
+	flag.PrintDefaults()
+	os.Exit(1)
+}
+
 func main() {
 	var ledgerFileName string
 	var accountSubstring, csvFileName, csvDateFormat string
@@ -24,7 +30,7 @@ func main() {
 
 	args := flag.Args()
 	if len(args) != 2 {
-		fmt.Println("Specify account and import csv file.")
+		usage()
 	} else {
 		accountSubstring = args[0]
 		csvFileName = args[1]
