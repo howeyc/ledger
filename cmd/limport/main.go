@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"math/big"
 	"os"
 	"strings"
 	"time"
@@ -103,15 +104,31 @@ func main() {
 		return
 	}
 
-	// TODO(chris): Only import new transactions
+	expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: new(big.Rat)}
+	csvAccount := ledger.Account{Name: matchingAccount, Balance: new(big.Rat)}
 	for _, record := range csvRecords[1:] {
 		inputPayeeWords := strings.Split(record[payeeColumn], " ")
 		csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
 		if !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
-			fmt.Printf("%s %s\n", csvDate.Format(ledger.TransactionDateFormat), record[payeeColumn])
-			fmt.Printf("   %s\n", matchingAccount)
+			// Classify into expense account
 			_, likely, _ := classifier.LogScores(inputPayeeWords)
-			fmt.Printf("   %s     %s\n", classifier.Classes[likely], record[amountColumn])
+			if likely >= 0 {
+				expenseAccount.Name = string(classifier.Classes[likely])
+			}
+
+			// Negate amount if required
+			expenseAccount.Balance.SetString(record[amountColumn])
+			if negateAmount {
+				expenseAccount.Balance.Neg(expenseAccount.Balance)
+			}
+
+			// Csv amount is the negative of the expense amount
+			csvAccount.Balance.Neg(expenseAccount.Balance)
+
+			// Create valid transaction for print in ledger format
+			trans := &ledger.Transaction{Date: csvDate, Payee: record[payeeColumn]}
+			trans.AccountChanges = []ledger.Account{csvAccount, expenseAccount}
+			ledger.PrintTransaction(os.Stdout, trans, 80)
 		}
 	}
 }
