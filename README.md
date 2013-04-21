@@ -36,6 +36,8 @@ This will parse a ledger file into an array of Transaction structs.
 There are also convenience functions to print a formatted ledger, and get
 balances for all accounts in the ledger file.
 
+[GoDoc](http://go.pkgdoc.org/github.com/howeyc/ledger/pkg/ledger)
+
 ## cmd/ledger
 
 A very simplistic version of Ledger. Supports "balance", and "reg" commands.
