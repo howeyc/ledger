@@ -23,14 +23,16 @@ type Account struct {
 	Balance *big.Rat
 }
 
-type Accounts []*Account
+type sortAccounts []*Account
 
-func (s Accounts) Len() int      { return len(s) }
-func (s Accounts) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s sortAccounts) Len() int      { return len(s) }
+func (s sortAccounts) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-type AccountsByName struct{ Accounts }
+type sortAccountsByName struct{ sortAccounts }
 
-func (s AccountsByName) Less(i, j int) bool { return s.Accounts[i].Name < s.Accounts[j].Name }
+func (s sortAccountsByName) Less(i, j int) bool {
+	return s.sortAccounts[i].Name < s.sortAccounts[j].Name
+}
 
 type Transaction struct {
 	Payee          string
@@ -38,15 +40,15 @@ type Transaction struct {
 	AccountChanges []Account
 }
 
-type Transactions []*Transaction
+type sortTransactions []*Transaction
 
-func (s Transactions) Len() int      { return len(s) }
-func (s Transactions) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+func (s sortTransactions) Len() int      { return len(s) }
+func (s sortTransactions) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
-type TransactionsByDate struct{ Transactions }
+type sortTransactionsByDate struct{ sortTransactions }
 
-func (s TransactionsByDate) Less(i, j int) bool {
-	return s.Transactions[i].Date.Before(s.Transactions[j].Date)
+func (s sortTransactionsByDate) Less(i, j int) bool {
+	return s.sortTransactions[i].Date.Before(s.sortTransactions[j].Date)
 }
 
 // Parses a ledger file and returns a list of Transactions.
@@ -105,7 +107,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			trans.AccountChanges = append(trans.AccountChanges, accChange)
 		}
 	}
-	sort.Sort(TransactionsByDate{generalLedger})
+	sort.Sort(sortTransactionsByDate{generalLedger})
 	return generalLedger, scanner.Err()
 }
 
@@ -149,7 +151,7 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 		count++
 	}
 
-	sort.Sort(AccountsByName{accList})
+	sort.Sort(sortAccountsByName{accList})
 	return accList
 }
 

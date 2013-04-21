@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/howeyc/cli-ledger/pkg/ledger"
+	"github.com/howeyc/ledger/pkg/ledger"
 	"github.com/jbrukh/bayesian"
 )
 
