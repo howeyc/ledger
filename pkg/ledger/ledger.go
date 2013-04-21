@@ -176,16 +176,21 @@ func PrintBalances(accountList []*Account, printZeroBalances bool, depth, column
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
 
+// Prints a transaction formatted to fit in specified column width.
+func PrintTransaction(w io.Writer, trans *Transaction, columns int) {
+	fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
+	for _, accChange := range trans.AccountChanges {
+		outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
+		spaceCount := columns - 4 - len(accChange.Name) - len(outBalanceString)
+		fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+	}
+	fmt.Fprintln(w, "")
+}
+
 // Prints all transactions as a formatted ledger file.
 func PrintLedger(w io.Writer, generalLedger []*Transaction, columns int) {
 	for _, trans := range generalLedger {
-		fmt.Fprintf(w, "%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
-		for _, accChange := range trans.AccountChanges {
-			outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
-			spaceCount := columns - 4 - len(accChange.Name) - len(outBalanceString)
-			fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
-		}
-		fmt.Fprintln(w, "")
+		PrintTransaction(w, trans, columns)
 	}
 }
 
