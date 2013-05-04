@@ -40,7 +40,8 @@ balances for all accounts in the ledger file.
 
 ## cmd/ledger
 
-A very simplistic version of Ledger. Supports "balance", and "reg" commands.
+A very simplistic version of Ledger.
+Supports "balance", "register", and "print" commands.
 
 Example usage:
 ```sh
@@ -67,4 +68,4 @@ Example usage:
 In the above example "discover" is the account search string to use to find
 the account that all transactions in the csv file should be applied too. The
 second account to use for each transaction will be picked based on the
-bayesian classifiction of the payee.
+bayesian classification of the payee.
