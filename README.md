@@ -69,3 +69,10 @@ In the above example "discover" is the account search string to use to find
 the account that all transactions in the csv file should be applied too. The
 second account to use for each transaction will be picked based on the
 bayesian classification of the payee.
+
+## cmd/lreport
+
+Work in progress.
+
+Create a report based on ledger file. Currently hard-coded to spit out a 
+Quarterly Net Worth line chart.
