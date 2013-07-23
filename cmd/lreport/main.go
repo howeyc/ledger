@@ -48,8 +48,8 @@ func main() {
 			currentDate = trans.Date
 			// Quarterly
 			if currentDate.Day() == 1 && (currentDate.Month() == 1 || currentDate.Month() == 4 || currentDate.Month() == 7 || currentDate.Month() == 10) {
-				balances := ledger.GetBalances(generalLedger[:idx], []string{})
 				XCoord := float64(currentDate.Year()*100 + int(currentDate.Month()))
+				balances := ledger.GetBalances(generalLedger[:idx], flag.Args())
 				netWorth := new(big.Rat)
 				for _, balance := range balances {
 					switch balance.Name {
