@@ -13,7 +13,7 @@ import (
 func main() {
 	var startDate, endDate time.Time
 	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
-	endDate = time.Now()
+	endDate = time.Now().Add(time.Hour * 24)
 	var startString, endString string
 	var columnWidth, transactionDepth int
 	var showEmptyAccounts bool
