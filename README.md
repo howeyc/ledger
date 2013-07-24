@@ -74,5 +74,19 @@ bayesian classification of the payee.
 
 Work in progress.
 
-Create a report based on ledger file. Currently hard-coded to spit out a 
-Quarterly Net Worth line chart.
+Create a chart based on ledger file. Currently plots the following Accounts:
+* Assets
+* Liabilites
+* Net Worth (Assets - Liabilities)
+* Income
+
+Output is a 11 x 8.5 inch digital file (png or pdf).
+
+The reported time range can be specified, as well as the frequency of times
+plotted on the chart. Optional account filter is also allowed.
+
+Example usage:
+```sh
+    lreport -f ledger.dat --quarterly --output quarterly-chart.png
+    lreport -f ledger.dat -s "2011/01/01" --output stocks-chart.png Stocks
+```
