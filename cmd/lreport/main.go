@@ -23,6 +23,7 @@ func main() {
 	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
 	endDate = time.Now().Add(time.Hour * 24)
 	var startString, endString string
+	var outputFilename string
 	var periodQuarterly, periodMonthly, periodWeekly bool
 
 	var ledgerFileName string
@@ -31,6 +32,7 @@ func main() {
 	TransactionDateFormat := ledger.TransactionDateFormat
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
+	flag.StringVar(&outputFilename, "output", "", "Output file name (*Required).")
 	flag.StringVar(&startString, "s", startDate.Format(TransactionDateFormat), "Start date of transaction processing.")
 	flag.StringVar(&endString, "e", endDate.Format(TransactionDateFormat), "End date of transaction processing.")
 	flag.BoolVar(&periodQuarterly, "quarterly", false, "Plot quarterly values.")
@@ -150,8 +152,8 @@ func main() {
 		panic(err)
 	}
 
-	// Save the plot to a PNG file.
-	if err := p.Save(11, 8.5, "networth.png"); err != nil {
+	// Save the plot to output file.
+	if err := p.Save(11, 8.5, outputFilename); err != nil {
 		panic(err)
 	}
 }
