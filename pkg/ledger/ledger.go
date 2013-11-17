@@ -107,6 +107,16 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			trans.AccountChanges = append(trans.AccountChanges, accChange)
 		}
 	}
+	// If the file does not end on empty line, we must attempt to balance last
+	// transaction of the file.
+	if trans != nil {
+		transErr := balanceTransaction(trans)
+		if transErr != nil {
+			return generalLedger, fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+		}
+		generalLedger = append(generalLedger, trans)
+		trans = nil
+	}
 	sort.Sort(sortTransactionsByDate{generalLedger})
 	return generalLedger, scanner.Err()
 }
