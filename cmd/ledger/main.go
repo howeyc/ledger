@@ -25,7 +25,7 @@ func main() {
 	TransactionDateFormat := ledger.TransactionDateFormat
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
-	flag.StringVar(&startString, "s", startDate.Format(TransactionDateFormat), "Start date of transaction processing.")
+	flag.StringVar(&startString, "b", startDate.Format(TransactionDateFormat), "Begin date of transaction processing.")
 	flag.StringVar(&endString, "e", endDate.Format(TransactionDateFormat), "End date of transaction processing.")
 	flag.BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
 	flag.IntVar(&transactionDepth, "depth", -1, "Depth of transaction output (balance).")
