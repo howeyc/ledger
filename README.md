@@ -1,7 +1,10 @@
 # Ledger in Go
 
-This is a toy project to parse and import transactions in a ledger file similar
+This is a project to parse and import transactions in a ledger file similar
 to the [Ledger](http://ledger-cli.org) command line tool written in C++.
+
+I have been using this tool to track my finances for over a year. I have data
+going back over five years.
 
 ## Simple Ledger file support
 
@@ -89,4 +92,15 @@ Example usage:
 ```sh
     lreport -f ledger.dat --quarterly --output quarterly-chart.png
     lreport -f ledger.dat -s "2011/01/01" --output stocks-chart.png Stocks
+```
+
+## cmd/lweb
+
+Another work in progress.
+
+A website view of the ledger file.
+
+Example usage:
+```sh
+    lweb -f ledger.dat --port 8080
 ```
