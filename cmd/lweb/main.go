@@ -16,9 +16,11 @@ var ledgerBuffer bytes.Buffer
 func main() {
 	var ledgerFileName string
 	var serverPort int
+	var localhost bool
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.IntVar(&serverPort, "port", 8056, "Port to listen on.")
+	flag.BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
 
 	flag.Parse()
 
@@ -44,5 +46,11 @@ func main() {
 	http.Handle("/", r)
 
 	fmt.Println("Listening on port", serverPort)
-	http.ListenAndServe(fmt.Sprintf(":%d", serverPort), nil)
+	listenAddress := ""
+	if localhost {
+		listenAddress = fmt.Sprintf("127.0.0.1:%d", serverPort)
+	} else {
+		listenAddress = fmt.Sprintf(":%d", serverPort)
+	}
+	http.ListenAndServe(listenAddress, nil)
 }
