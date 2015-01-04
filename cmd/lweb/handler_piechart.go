@@ -6,6 +6,7 @@ import (
 	"image/png"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/howeyc/ledger/pkg/ledger"
 
@@ -17,6 +18,8 @@ import (
 func PieChartHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	accountName := vars["accountName"]
+	startString := vars["startDate"]
+	endString := vars["endDate"]
 
 	ledgerFileReader := bytes.NewReader(ledgerBuffer.Bytes())
 
@@ -25,6 +28,24 @@ func PieChartHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, terr.Error(), 500)
 		return
 	}
+
+	parsedStartDate, _ := time.Parse("2006-01-02", startString)
+	parsedEndDate, _ := time.Parse("2006-01-02", endString)
+	timeStartIndex, timeEndIndex := 0, 0
+	for idx := 0; idx < len(trans); idx++ {
+		if trans[idx].Date.After(parsedStartDate) {
+			timeStartIndex = idx
+			break
+		}
+	}
+	for idx := len(trans) - 1; idx >= 0; idx-- {
+		if trans[idx].Date.Before(parsedEndDate) {
+			timeEndIndex = idx
+			break
+		}
+	}
+	trans = trans[timeStartIndex : timeEndIndex+1]
+
 	balances := ledger.GetBalances(trans, []string{accountName})
 
 	skipCount := 0
@@ -50,7 +71,7 @@ func PieChartHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	piec := chart.PieChart{Title: "Pie Chart"}
+	piec := chart.PieChart{Title: accountName + " : " + startString + " - " + endString}
 	piec.FmtVal = chart.AbsoluteValue
 	piec.FmtKey = chart.PercentValue
 	piec.AddDataPair(accountName, accNames, values)

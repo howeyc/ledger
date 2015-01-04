@@ -41,7 +41,7 @@ func main() {
 	r.HandleFunc("/ledger", LedgerHandler).Methods("GET")
 	r.HandleFunc("/accounts", AccountsHandler).Methods("GET")
 	r.HandleFunc("/account/{accountName}", AccountHandler).Methods("GET")
-	r.HandleFunc("/piechart/{accountName}.png", PieChartHandler).Methods("GET")
+	r.HandleFunc("/piechart/{accountName}/{startDate}/{endDate}/chart.png", PieChartHandler).Methods("GET")
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("webroot"))))
 
 	http.Handle("/", r)
