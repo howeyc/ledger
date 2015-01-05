@@ -42,6 +42,7 @@ func main() {
 	r.HandleFunc("/accounts", AccountsHandler).Methods("GET")
 	r.HandleFunc("/account/{accountName}", AccountHandler).Methods("GET")
 	r.HandleFunc("/piechart/{accountName}/{startDate}/{endDate}/chart.png", PieChartHandler).Methods("GET")
+	r.HandleFunc("/barchart/{accountNames}/{startDate}/{endDate}/chart.png", BarChartHandler).Methods("GET")
 	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("webroot"))))
 
 	http.Handle("/", r)
