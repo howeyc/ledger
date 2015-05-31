@@ -128,7 +128,7 @@ func main() {
 			// Create valid transaction for print in ledger format
 			trans := &ledger.Transaction{Date: csvDate, Payee: record[payeeColumn]}
 			trans.AccountChanges = []ledger.Account{csvAccount, expenseAccount}
-			ledger.PrintTransaction(os.Stdout, trans, 80)
+			PrintTransaction(trans, 80)
 		}
 	}
 }
