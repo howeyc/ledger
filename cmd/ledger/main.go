@@ -88,10 +88,10 @@ func main() {
 	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
 	case "balance", "bal":
-		ledger.PrintBalances(ledger.GetBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
+		PrintBalances(ledger.GetBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
 	case "print":
-		ledger.PrintLedger(os.Stdout, generalLedger, columnWidth)
+		PrintLedger(generalLedger, columnWidth)
 	case "register", "reg":
-		ledger.PrintRegister(generalLedger, containsFilterArray, columnWidth)
+		PrintRegister(generalLedger, containsFilterArray, columnWidth)
 	}
 }
