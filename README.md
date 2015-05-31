@@ -36,15 +36,14 @@ A ledger file is assumed to be a list of transactions separated by a new line.
 ## pkg/ledger
 
 This will parse a ledger file into an array of Transaction structs.
-There are also convenience functions to print a formatted ledger, and get
-balances for all accounts in the ledger file.
+There is also a function get balances for all accounts in the ledger file.
 
-[GoDoc](http://go.pkgdoc.org/github.com/howeyc/ledger/pkg/ledger)
+[GoDoc](http://godoc.org/github.com/howeyc/ledger/pkg/ledger)
 
 ## cmd/ledger
 
 A very simplistic version of Ledger.
-Supports "balance", "register", and "print" commands.
+Supports "balance", "register", "print" and "stats" commands.
 
 Example usage:
 ```sh
@@ -53,6 +52,7 @@ Example usage:
     ledger -f ledger.dat reg
     ledger -f ledger.dat reg Food
     ledger -f ledger.dat print
+    ledger -f ledger.dat stats
 ```
 
 ## cmd/limport
@@ -75,7 +75,7 @@ bayesian classification of the payee.
 
 ## cmd/lreport
 
-Work in progress.
+Work in progress. Very bare-bones, I recommend lweb.
 
 Create a chart based on ledger file. Currently plots the following Accounts:
 * Assets

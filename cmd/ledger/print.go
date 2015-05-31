@@ -2,11 +2,41 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 	"strings"
+	"time"
 
 	"github.com/howeyc/ledger/pkg/ledger"
 )
+
+// Prints out statistics
+func PrintStats(generalLedger []*ledger.Transaction) {
+	if len(generalLedger) < 1 {
+		fmt.Println("Empty ledger.")
+		return
+	}
+	startDate := generalLedger[0].Date
+	endDate := generalLedger[len(generalLedger)-1].Date
+
+	payees := make(map[string]struct{})
+	accounts := make(map[string]struct{})
+
+	for _, trans := range generalLedger {
+		payees[trans.Payee] = struct{}{}
+		for _, account := range trans.AccountChanges {
+			accounts[account.Name] = struct{}{}
+		}
+	}
+
+	days := math.Floor(endDate.Sub(startDate).Hours() / 24)
+
+	fmt.Printf("%-25s : %s to %s (%s)\n", "Transactions span", startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), endDate.Sub(startDate))
+	fmt.Printf("%-25s : %s\n", "Since last post", time.Since(endDate))
+	fmt.Printf("%-25s : %d, (%.1f per day)\n", "Transactions", len(generalLedger), float64(len(generalLedger))/days)
+	fmt.Printf("%-25s : %d\n", "Payees", len(payees))
+	fmt.Printf("%-25s : %d\n", "Referenced Accounts", len(accounts))
+}
 
 // Prints out account balances formated to a windows of a width of columns.
 // Only shows accounts with names less than or equal to the given depth.

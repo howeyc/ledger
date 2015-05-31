@@ -93,5 +93,7 @@ func main() {
 		PrintLedger(generalLedger, columnWidth)
 	case "register", "reg":
 		PrintRegister(generalLedger, containsFilterArray, columnWidth)
+	case "stats":
+		PrintStats(generalLedger)
 	}
 }
