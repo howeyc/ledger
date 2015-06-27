@@ -1,0 +1,11 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/ajstarks/svgo",
+			"repository": "https://github.com/ajstarks/svgo",
+			"revision": "6bd3ede812fdffc72aea6026a0d5a14be4e3c5d9",
+			"branch": "master"
+		}
+	]
+}

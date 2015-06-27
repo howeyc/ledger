@@ -1,2 +1,4 @@
 *.dat
 *.exe
+bin
+pkg

@@ -33,12 +33,12 @@ Example transaction:
 A ledger file is assumed to be a list of transactions separated by a new line.
 
 
-## pkg/ledger
+## src/ledger
 
 This will parse a ledger file into an array of Transaction structs.
 There is also a function get balances for all accounts in the ledger file.
 
-[GoDoc](http://godoc.org/github.com/howeyc/ledger/pkg/ledger)
+[GoDoc](http://godoc.org/github.com/howeyc/ledger/src/ledger)
 
 ## cmd/ledger
 
