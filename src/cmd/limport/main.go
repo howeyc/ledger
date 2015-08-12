@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"ledger"
 
@@ -24,10 +25,12 @@ func main() {
 	var ledgerFileName string
 	var accountSubstring, csvFileName, csvDateFormat string
 	var negateAmount bool
+	var fieldDelimiter string
 
 	flag.BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
+	flag.StringVar(&fieldDelimiter, "delimiter", ",", "Field delimiter.")
 	flag.Parse()
 
 	args := flag.Args()
@@ -70,6 +73,7 @@ func main() {
 	allAccounts := ledger.GetBalances(generalLedger, []string{})
 
 	csvReader := csv.NewReader(csvFileReader)
+	csvReader.Comma, _ = utf8.DecodeRuneInString(fieldDelimiter)
 	csvRecords, _ := csvReader.ReadAll()
 
 	classes := make([]bayesian.Class, len(allAccounts))
@@ -95,7 +99,11 @@ func main() {
 			dateColumn = fieldIndex
 		} else if strings.Contains(fieldName, "description") {
 			payeeColumn = fieldIndex
+		} else if strings.Contains(fieldName, "payee") {
+			payeeColumn = fieldIndex
 		} else if strings.Contains(fieldName, "amount") {
+			amountColumn = fieldIndex
+		} else if strings.Contains(fieldName, "expense") {
 			amountColumn = fieldIndex
 		}
 	}
