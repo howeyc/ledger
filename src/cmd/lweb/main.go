@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
+	"github.com/go-martini/martini"
 )
 
 var ledgerBuffer bytes.Buffer
@@ -37,15 +37,10 @@ func main() {
 	io.Copy(&ledgerBuffer, ledgerFileReader)
 	ledgerFileReader.Close()
 
-	r := mux.NewRouter()
-	r.HandleFunc("/ledger", LedgerHandler).Methods("GET")
-	r.HandleFunc("/accounts", AccountsHandler).Methods("GET")
-	r.HandleFunc("/account/{accountName}", AccountHandler).Methods("GET")
-	r.HandleFunc("/piechart/{accountName}/{startDate}/{endDate}/chart.png", PieChartHandler).Methods("GET")
-	r.HandleFunc("/barchart/{accountNames}/{startDate}/{endDate}/chart.png", BarChartHandler).Methods("GET")
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("webroot"))))
-
-	http.Handle("/", r)
+	m := martini.Classic()
+	m.Get("/ledger", LedgerHandler)
+	m.Get("/accounts", AccountsHandler)
+	m.Get("/account/:accountName", AccountHandler)
 
 	fmt.Println("Listening on port", serverPort)
 	listenAddress := ""
@@ -54,5 +49,5 @@ func main() {
 	} else {
 		listenAddress = fmt.Sprintf(":%d", serverPort)
 	}
-	http.ListenAndServe(listenAddress, nil)
+	http.ListenAndServe(listenAddress, m)
 }

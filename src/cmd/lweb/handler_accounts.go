@@ -8,7 +8,7 @@ import (
 
 	"ledger"
 
-	"github.com/gorilla/mux"
+	"github.com/go-martini/martini"
 )
 
 func AccountsHandler(w http.ResponseWriter, r *http.Request) {
@@ -34,9 +34,8 @@ func AccountsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AccountHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	accountName := vars["accountName"]
+func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
+	accountName := params["accountName"]
 
 	t, err := template.ParseFiles("templates/template.account.html", "templates/template.nav.html")
 	if err != nil {

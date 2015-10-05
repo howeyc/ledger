@@ -8,12 +8,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/gorilla/mux",
-			"repository": "https://github.com/gorilla/mux",
-			"revision": "47e8f450ef38c857cdd922ec08862ca9d65a1c6d",
-			"branch": "master"
-		},
-		{
 			"importpath": "github.com/gorilla/context",
 			"repository": "https://github.com/gorilla/context",
 			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
@@ -37,6 +31,18 @@
 			"revision": "7c718d1758f0e23896e295ff50bb34c2c5fe901d",
 			"branch": "master",
 			"path": "/v2.1/gl"
+		},
+		{
+			"importpath": "github.com/go-martini/martini",
+			"repository": "https://github.com/go-martini/martini",
+			"revision": "9987fc59f060a063247d22472c2fb48654bac5f6",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/codegangsta/inject",
+			"repository": "https://github.com/codegangsta/inject",
+			"revision": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504",
+			"branch": "master"
 		}
 	]
 }
