@@ -7,17 +7,12 @@
     <meta name="author" content="">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Ledger - General Ledger</title>
+    <title>Ledger - Report</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
 
     <!-- Add custom CSS here -->
-    <style type="text/css">
-        .popover{
-            max-width:600px;
-        }
-    </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -27,48 +22,33 @@
   </head>
 
   <body>
-	
-	{{template "nav" .Reports}}
 
+      {{template "nav" .Reports}}
+	
    <div class="container">
       <div class="content-header">
         <div class="row">
 			<div class="col-md-10">
-        		<h1>Ledger</h1>
+                <h1>Pie Chart</h1>
 			</div>
 			<div class="col-md-2"></div>
 		</div>
       </div>
       <div class="page-content inset">
       <div class="row">
-      <div class="col-md-12">
+      <div class="col-xs-9">
+
+          <div id="canvas-holder" style="width:80%">
+               <canvas id="chart-area" width="300" height="300" />
+          </div>
 	
-      <table id="listtable" class="table table-bordered table-hover paginated-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description (Payee)</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{range .Transactions}}
-          <tr>
-            <td>{{.Date.Format "2006-01-02"}}</td>
-            <td>{{.Payee}}</td>
-            <td>
-            <button class="btn btn-default popover-dismiss"
-                    data-html="true" data-placement="left"
-                    data-toggle="popover" title='{{.Date.Format "2006-01-02"}} - {{.Payee}}'
-                    data-content= '<table width="100%">
-                            {{range .AccountChanges}}<tr><td width="70%"><a href="/account/{{.Name}}">{{.Name}}</a></td><td width="30%" align="right">{{.Balance.FloatString 2}}</td></tr>{{end}}
-                            </table>'>
-                    Detail</button>
-            </td>
-          </tr>
-          {{end}}
-        </tbody>
-      </table>
+      </div>
+      <div class="col-xs-3">
+	<ul>
+        {{range .ChartAccounts}}
+        <li>{{.Name}} : {{.Balance}}</li>
+        {{end}}
+	</ul>
       </div>
       </div>
       </div>
@@ -79,13 +59,22 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/jquery.min.js"></script>
+    <script src="/Chart.min.js"></script>
     <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
     <script>
     $(document).ready(function() {
-    $('.popover-dismiss').popover({
-          trigger: 'click',
-          animation: false
-    });
+	var ctx = document.getElementById("chart-area").getContext("2d");
+	var data = [
+    {{range .ChartAccounts}}
+    {
+        value: {{.Balance}},
+        color: "{{.Color}}",
+        highlight: "{{.Highlight}}",
+        label: "{{.Name}}"
+    },
+    {{end}}
+	];
+	var myPieChart = new Chart(ctx).Pie(data,{responsive: true});
     });
     </script>
 

@@ -15,7 +15,14 @@
           <ul class="nav navbar-nav">
             <li><a href="/ledger">General Ledger</a></li>
             <li><a href="/accounts">Accounts</a></li>
-            <li><a href="/report.html">Report</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown toggle" data-toggle="dropdown">Reports <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    {{range .}}
+                    <li><a href="/report/{{.Name}}">{{.Name}}</a></li>
+                    {{end}}
+                </ul>
+            </li>
           </ul>
         </div><!--/.nav-collapse -->
 	  </div>

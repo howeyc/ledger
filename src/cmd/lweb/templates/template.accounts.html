@@ -23,7 +23,7 @@
 
   <body>
 	
-	{{template "nav" .}}
+	{{template "nav" .Reports}}
 
    <div class="container">
       <div class="content-header">
@@ -46,7 +46,7 @@
           </tr>
         </thead>
         <tbody>
-          {{range .}}
+          {{range .Accounts}}
           <tr>
             <td><a href="/account/{{.Name}}">{{.Name}}</a></td>
             <td align="right">{{.Balance.FloatString 2}}</td>

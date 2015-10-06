@@ -28,7 +28,12 @@ func AccountsHandler(w http.ResponseWriter, r *http.Request) {
 
 	balances := ledger.GetBalances(trans, []string{})
 
-	err = t.Execute(w, balances)
+	var pData pageData
+	pData.Reports = reportConfigData.Reports
+	pData.Accounts = balances
+	pData.Transactions = trans
+
+	err = t.Execute(w, pData)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 	}
@@ -64,7 +69,11 @@ func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 		}
 	}
 
-	err = t.Execute(w, pageTrans)
+	var pData pageData
+	pData.Reports = reportConfigData.Reports
+	pData.Transactions = pageTrans
+
+	err = t.Execute(w, pData)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 	}

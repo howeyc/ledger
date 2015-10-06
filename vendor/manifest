@@ -43,6 +43,18 @@
 			"repository": "https://github.com/codegangsta/inject",
 			"revision": "33e0aa1cb7c019ccc3fbe049a8262a6403d30504",
 			"branch": "master"
+		},
+		{
+			"importpath": "github.com/BurntSushi/toml",
+			"repository": "https://github.com/BurntSushi/toml",
+			"revision": "056c9bc7be7190eaa7715723883caffa5f8fa3e4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/studiofrenetic/period",
+			"repository": "https://github.com/studiofrenetic/period",
+			"revision": "4c05d828105ecd99b5d538020ecd4cd063e72c83",
+			"branch": "master"
 		}
 	]
 }

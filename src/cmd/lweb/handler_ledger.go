@@ -23,7 +23,11 @@ func LedgerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, trans)
+	var pData pageData
+	pData.Reports = reportConfigData.Reports
+	pData.Transactions = trans
+
+	err = t.Execute(w, pData)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 	}
