@@ -110,7 +110,14 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		accName := account.Name[accStartLen+1:]
 		value, _ := account.Balance.Float64()
 
-		if !strings.Contains(accName, ":") {
+		include := true
+		for _, excludeName := range rConf.Exclude {
+			if strings.Contains(accName, excludeName) {
+				include = false
+			}
+		}
+
+		if include && !strings.Contains(accName, ":") {
 			values = append(values, reportAccount{Name: accName, Balance: value,
 				Color:     colorlist[colorIdx].Color,
 				Highlight: colorlist[colorIdx].Highlight})

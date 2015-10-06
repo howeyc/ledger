@@ -22,6 +22,7 @@ type reportConfig struct {
 	DateRange string `toml:"date_range"`
 	DateFreq  string `toml:"date_freq"`
 	Accounts  []string
+	Exclude   []string `toml:"exclude"`
 }
 
 var reportConfigData struct {
