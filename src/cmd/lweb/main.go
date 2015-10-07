@@ -71,6 +71,9 @@ func main() {
 	m.Get("/accounts", AccountsHandler)
 	m.Get("/account/:accountName", AccountHandler)
 	m.Get("/report/:reportName", ReportHandler)
+	m.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/accounts", http.StatusFound)
+	})
 
 	fmt.Println("Listening on port", serverPort)
 	listenAddress := ""
