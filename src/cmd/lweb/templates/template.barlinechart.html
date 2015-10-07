@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Ledger - Report</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/custom/assets/js/html5shiv.js"></script>
+      <script src="/custom/assets/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+      {{template "nav" .Reports}}
+	
+   <div class="container">
+      <div class="content-header">
+        <div class="row">
+			<div class="col-md-10">
+                <h1>Line Chart</h1>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+      </div>
+      <div class="page-content inset">
+      <div class="row">
+      <div class="col-xs-9">
+
+          <div id="canvas-holder" style="width:80%">
+               <canvas id="chart-area" width="300" height="300" />
+          </div>
+	
+      </div>
+      <div class="col-xs-3">
+      </div>
+      </div>
+      </div>
+   </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/jquery.min.js"></script>
+    <script src="/Chart.min.js"></script>
+    <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+    $(document).ready(function() {
+	var ctx = document.getElementById("chart-area").getContext("2d");
+    var data = {
+        labels: [
+        {{range .Labels}}
+            "{{.}}",
+        {{end}}
+        ],
+        datasets: [
+
+    {{range .DataSets}}
+    {
+        label: {{.AccountName}},
+        fillColor: "rgba({{.RGBColor}},0.2)",
+        strokeColor: "rgba({{.RGBColor}},1)",
+        pointColor: "rgba({{.RGBColor}},1)",
+        pointStrokeColor: "#fff",
+        pointHighlightFill: "#fff",
+        pointHighlightStroke: "rgba({{.RGBColor}},1)",
+        data: [
+        {{range .Values}}
+        {{.}},
+        {{end}}
+        ]
+    },
+    {{end}}
+        ]
+    };
+    {{if eq .ChartType "Line"}}
+    var myPieChart = new Chart(ctx).Line(data,{responsive: true});
+    {{end}}
+    {{if eq .ChartType "Bar"}}
+    var myPieChart = new Chart(ctx).Bar(data,{responsive: true});
+    {{end}}
+    });
+    </script>
+
+  </body>
+</html>

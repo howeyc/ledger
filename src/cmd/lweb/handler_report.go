@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -64,72 +65,71 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 	}
 	trans = trans[timeStartIndex : timeEndIndex+1]
 
-	accountName := rConf.Accounts[0]
+	switch rConf.Chart {
+	case "pie":
+		accountName := rConf.Accounts[0]
+		balances := ledger.GetBalances(trans, []string{accountName})
 
-	balances := ledger.GetBalances(trans, []string{accountName})
-
-	skipCount := 0
-	for _, account := range balances {
-		if !strings.HasPrefix(account.Name, accountName) {
-			skipCount++
-		}
-		if account.Name == accountName {
-			skipCount++
-		}
-	}
-
-	accStartLen := len(accountName)
-
-	type reportAccount struct {
-		Name      string
-		Balance   float64
-		Color     string
-		Highlight string
-	}
-
-	values := make([]reportAccount, 0)
-
-	type reportColor struct {
-		Color     string
-		Highlight string
-	}
-
-	colorlist := []reportColor{{"#F7464A", "#FF5A5E"},
-		{"#46BFBD", "#5AD3D1"},
-		{"#FDB45C", "#FFC870"},
-		{"#B48EAD", "#C69CBE"},
-		{"#949FB1", "#A8B3C5"},
-		{"#4D5360", "#616774"},
-		{"#23A1A3", "#34B3b5"},
-		{"#bf9005", "#D1A216"},
-		{"#1742d1", "#2954e2"},
-		{"#E228BA", "#E24FC2"}}
-
-	colorIdx := 0
-	for _, account := range balances[skipCount:] {
-		accName := account.Name[accStartLen+1:]
-		value, _ := account.Balance.Float64()
-
-		include := true
-		for _, excludeName := range rConf.Exclude {
-			if strings.Contains(accName, excludeName) {
-				include = false
+		skipCount := 0
+		for _, account := range balances {
+			if !strings.HasPrefix(account.Name, accountName) {
+				skipCount++
+			}
+			if account.Name == accountName {
+				skipCount++
 			}
 		}
 
-		if include && !strings.Contains(accName, ":") {
-			values = append(values, reportAccount{Name: accName, Balance: value,
-				Color:     colorlist[colorIdx].Color,
-				Highlight: colorlist[colorIdx].Highlight})
-			colorIdx++
-		}
-	}
+		accStartLen := len(accountName)
 
-	switch rConf.Chart {
-	case "pie":
+		type pieAccount struct {
+			Name      string
+			Balance   float64
+			Color     string
+			Highlight string
+		}
+
+		values := make([]pieAccount, 0)
+
+		type pieColor struct {
+			Color     string
+			Highlight string
+		}
+
+		colorlist := []pieColor{{"#F7464A", "#FF5A5E"},
+			{"#46BFBD", "#5AD3D1"},
+			{"#FDB45C", "#FFC870"},
+			{"#B48EAD", "#C69CBE"},
+			{"#949FB1", "#A8B3C5"},
+			{"#4D5360", "#616774"},
+			{"#23A1A3", "#34B3b5"},
+			{"#bf9005", "#D1A216"},
+			{"#1742d1", "#2954e2"},
+			{"#E228BA", "#E24FC2"}}
+
+		colorIdx := 0
+		for _, account := range balances[skipCount:] {
+			accName := account.Name[accStartLen+1:]
+			value, _ := account.Balance.Float64()
+
+			include := true
+			for _, excludeName := range rConf.Exclude {
+				if strings.Contains(accName, excludeName) {
+					include = false
+				}
+			}
+
+			if include && !strings.Contains(accName, ":") {
+				values = append(values, pieAccount{Name: accName, Balance: value,
+					Color:     colorlist[colorIdx].Color,
+					Highlight: colorlist[colorIdx].Highlight})
+				colorIdx++
+			}
+		}
+
 		type piePageData struct {
 			pageData
-			ChartAccounts []reportAccount
+			ChartAccounts []pieAccount
 		}
 
 		var pData piePageData
@@ -142,11 +142,77 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			http.Error(w, err.Error(), 500)
 			return
 		}
-
 		err = t.Execute(w, pData)
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 		}
+	case "line", "bar":
+		colorlist := []string{"220,220,220", "151,187,205"}
+		type lineData struct {
+			AccountName string
+			RGBColor    string
+			Values      []float64
+		}
+		type linePageData struct {
+			pageData
+			ChartType string
+			Labels    []string
+			DataSets  []lineData
+		}
+		var lData linePageData
+		lData.Reports = reportConfigData.Reports
+		lData.Transactions = trans
+
+		colorIdx := 0
+		for _, freqAccountName := range rConf.Accounts {
+			lData.DataSets = append(lData.DataSets,
+				lineData{AccountName: freqAccountName,
+					RGBColor: colorlist[colorIdx]})
+			colorIdx++
+		}
+
+		ledgerFileReader = bytes.NewReader(ledgerBuffer.Bytes())
+		trans, _ = ledger.ParseLedger(ledgerFileReader)
+
+		var rType ledger.RangeType
+		switch rConf.Chart {
+		case "line":
+			rType = ledger.RangeSnapshot
+			lData.ChartType = "Line"
+		case "bar":
+			rType = ledger.RangePartition
+			lData.ChartType = "Bar"
+		}
+
+		rangeBalances := ledger.BalancesByPeriod(trans, ledger.PeriodQuarter, rType)
+		for _, rb := range rangeBalances {
+			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
+
+			for _, freqAccountName := range rConf.Accounts {
+				for _, bal := range rb.Balances {
+					if bal.Name == freqAccountName {
+						for dIdx, _ := range lData.DataSets {
+							fval, _ := bal.Balance.Float64()
+							fval = math.Abs(fval)
+							if lData.DataSets[dIdx].AccountName == bal.Name {
+								lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, fval)
+							}
+						}
+					}
+				}
+			}
+		}
+
+		t, err := template.ParseFiles("templates/template.barlinechart.html", "templates/template.nav.html")
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		err = t.Execute(w, lData)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+		}
+
 	default:
 		fmt.Fprint(w, "Unsupported chart type.")
 	}
