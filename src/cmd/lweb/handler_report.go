@@ -12,23 +12,69 @@ import (
 	"ledger"
 
 	"github.com/go-martini/martini"
-	"github.com/studiofrenetic/period"
 )
 
-func getReportPeriod(currentTime time.Time, duration string) period.Period {
-	var per period.Period
-	switch duration {
-	case "YTD":
-		per, _ = period.CreateFromYear(currentTime.Year())
-	case "Previous Year":
-		per, _ = period.CreateFromYear(currentTime.Year() - 1)
-	case "Current Month":
-		per, _ = period.CreateFromMonth(currentTime.Year(), int(currentTime.Month()))
-	case "Previous Month":
-		per, _ = period.CreateFromMonth(currentTime.Year(), int(currentTime.Month())-1)
+func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period) {
+	switch dateFreq {
+	case "Monthly":
+		period = ledger.PeriodMonth
+	case "Quarterly":
+		period = ledger.PeriodQuarter
+	case "Yearly":
+		period = ledger.PeriodYear
+	default:
+		period = ledger.PeriodMonth
 	}
 
-	return per
+	currentTime := time.Now()
+	switch dateRange {
+	case "All Time":
+		end = currentTime.Add(time.Hour * 24)
+	case "YTD":
+		start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+		end = currentTime.Add(time.Hour * 24)
+	case "Previous Year":
+		start = time.Date(currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
+		end = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	case "Previous Month":
+		start = time.Date(currentTime.Year(), currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
+		end = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
+	case "Current Month":
+		start = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
+		end = currentTime.Add(time.Hour * 24)
+	case "Current Quarter":
+		switch currentTime.Month() {
+		case time.January, time.February, time.March:
+			start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+		case time.April, time.May, time.June:
+			start = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+		case time.July, time.August, time.September:
+			start = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+		case time.October, time.November, time.December:
+			start = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+		}
+	case "Previous Quarter":
+		switch currentTime.Month() {
+		case time.January, time.February, time.March:
+			start = time.Date(currentTime.Year()-1, time.October, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+		case time.April, time.May, time.June:
+			start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+		case time.July, time.August, time.September:
+			start = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+		case time.October, time.November, time.December:
+			start = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+			end = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+		}
+	}
+
+	return
 }
 
 func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
@@ -48,22 +94,9 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			rConf = reportConf
 		}
 	}
-	reportPeriod := getReportPeriod(time.Now(), rConf.DateRange)
+	rStart, rEnd, rPeriod := getRangeAndPeriod(rConf.DateRange, rConf.DateFreq)
 
-	timeStartIndex, timeEndIndex := 0, 0
-	for idx := 0; idx < len(trans); idx++ {
-		if reportPeriod.Contains(trans[idx].Date) {
-			timeStartIndex = idx
-			break
-		}
-	}
-	for idx := len(trans) - 1; idx >= 0; idx-- {
-		if !reportPeriod.Contains(trans[idx].Date) {
-			timeEndIndex = idx
-			break
-		}
-	}
-	trans = trans[timeStartIndex : timeEndIndex+1]
+	trans = ledger.TransactionsInDateRange(trans, rStart, rEnd)
 
 	switch rConf.Chart {
 	case "pie":
@@ -172,9 +205,6 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			colorIdx++
 		}
 
-		ledgerFileReader = bytes.NewReader(ledgerBuffer.Bytes())
-		trans, _ = ledger.ParseLedger(ledgerFileReader)
-
 		var rType ledger.RangeType
 		switch rConf.Chart {
 		case "line":
@@ -185,7 +215,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.ChartType = "Bar"
 		}
 
-		rangeBalances := ledger.BalancesByPeriod(trans, ledger.PeriodQuarter, rType)
+		rangeBalances := ledger.BalancesByPeriod(trans, rPeriod, rType)
 		for _, rb := range rangeBalances {
 			if lData.RangeStart.IsZero() {
 				lData.RangeStart = rb.Start

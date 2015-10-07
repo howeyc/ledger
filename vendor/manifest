@@ -8,12 +8,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/gorilla/context",
-			"repository": "https://github.com/gorilla/context",
-			"revision": "215affda49addc4c8ef7e2534915df2c8c35c6cd",
-			"branch": "master"
-		},
-		{
 			"importpath": "github.com/vdobler/chart",
 			"repository": "https://github.com/vdobler/chart",
 			"revision": "4b9375a373385b772fae87d4631997b8b87b3541",
@@ -48,12 +42,6 @@
 			"importpath": "github.com/BurntSushi/toml",
 			"repository": "https://github.com/BurntSushi/toml",
 			"revision": "056c9bc7be7190eaa7715723883caffa5f8fa3e4",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/studiofrenetic/period",
-			"repository": "https://github.com/studiofrenetic/period",
-			"revision": "4c05d828105ecd99b5d538020ecd4cd063e72c83",
 			"branch": "master"
 		}
 	]
