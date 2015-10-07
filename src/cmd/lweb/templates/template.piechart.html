@@ -7,7 +7,7 @@
     <meta name="author" content="">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Ledger - Report</title>
+    <title>Ledger - Report - {{.ReportName}}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
@@ -29,7 +29,7 @@
       <div class="content-header">
         <div class="row">
 			<div class="col-md-10">
-                <h1>Pie Chart</h1>
+                <h1>{{.ReportName}} : {{.RangeStart.Format "2006-01-02"}} - {{.RangeEnd.Format "2006-01-02"}}</h1>
 			</div>
 			<div class="col-md-2"></div>
 		</div>

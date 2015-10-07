@@ -162,13 +162,18 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		type piePageData struct {
 			pageData
-			ChartAccounts []pieAccount
+			ReportName           string
+			RangeStart, RangeEnd time.Time
+			ChartAccounts        []pieAccount
 		}
 
 		var pData piePageData
 		pData.Reports = reportConfigData.Reports
 		pData.Transactions = trans
 		pData.ChartAccounts = values
+		pData.RangeStart = rStart
+		pData.RangeEnd = rEnd
+		pData.ReportName = reportName
 
 		t, err := template.ParseFiles("templates/template.piechart.html", "templates/template.nav.html")
 		if err != nil {
@@ -188,6 +193,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 		type linePageData struct {
 			pageData
+			ReportName           string
 			RangeStart, RangeEnd time.Time
 			ChartType            string
 			Labels               []string
@@ -196,6 +202,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		var lData linePageData
 		lData.Reports = reportConfigData.Reports
 		lData.Transactions = trans
+		lData.ReportName = reportName
 
 		colorIdx := 0
 		for _, freqAccountName := range rConf.Accounts {
