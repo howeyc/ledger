@@ -36,21 +36,18 @@
       </div>
       <div class="page-content inset">
       <div class="row">
-      <div class="col-xs-9">
-
-          <div id="canvas-holder" style="width:80%">
+      <div class="col-xs-12">
+          <div id="canvas-holder" style="width:100%">
                <canvas id="chart-area" width="300" height="300" />
           </div>
-	
-      </div>
-      <div class="col-xs-3">
-	<ul>
-        {{range .ChartAccounts}}
-        <li>{{.Name}} : {{.Balance}}</li>
-        {{end}}
-	</ul>
       </div>
       </div>
+      <div class="row">
+      <div class="col-xs-12">
+          <div id="chart-legend"></div>
+      </div>
+      </div>
+
       </div>
    </div> <!-- /container -->
 
@@ -60,6 +57,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/jquery.min.js"></script>
     <script src="/Chart.min.js"></script>
+    <script src="/legend.js"></script>
     <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
     <script>
     $(document).ready(function() {
@@ -75,6 +73,7 @@
     {{end}}
 	];
 	var myPieChart = new Chart(ctx).Pie(data,{responsive: true});
+    legend(document.getElementById('chart-legend'), data);
     });
     </script>
 

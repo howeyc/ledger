@@ -36,16 +36,18 @@
       </div>
       <div class="page-content inset">
       <div class="row">
-      <div class="col-xs-9">
-
-          <div id="canvas-holder" style="width:80%">
+      <div class="col-xs-12">
+          <div id="canvas-holder" style="width:100%">
                <canvas id="chart-area" width="300" height="300" />
           </div>
-	
-      </div>
-      <div class="col-xs-3">
       </div>
       </div>
+      <div class="row">
+      <div class="col-xs-12">
+          <div id="chart-legend"></div>
+      </div>
+      </div>
+
       </div>
    </div> <!-- /container -->
 
@@ -55,6 +57,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/jquery.min.js"></script>
     <script src="/Chart.min.js"></script>
+    <script src="/legend.js"></script>
     <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
     <script>
     $(document).ready(function() {
@@ -65,8 +68,9 @@
             "{{.}}",
         {{end}}
         ],
-        datasets: [
 
+    {{if eq .ChartType "Line"}}
+        datasets: [
     {{range .DataSets}}
     {
         label: {{.AccountName}},
@@ -85,12 +89,29 @@
     {{end}}
         ]
     };
-    {{if eq .ChartType "Line"}}
     var myPieChart = new Chart(ctx).Line(data,{responsive: true});
     {{end}}
     {{if eq .ChartType "Bar"}}
+        datasets: [
+    {{range .DataSets}}
+    {
+        label: {{.AccountName}},
+        fillColor: "rgba({{.RGBColor}},0.5)",
+        strokeColor: "rgba({{.RGBColor}},0.8)",
+        HighlightFill: "rgba({{.RGBColor}},0.75)",
+        HighlightStroke: "rgba({{.RGBColor}},1)",
+        data: [
+        {{range .Values}}
+        {{.}},
+        {{end}}
+        ]
+    },
+    {{end}}
+        ]
+    };
     var myPieChart = new Chart(ctx).Bar(data,{responsive: true});
     {{end}}
+    legend(document.getElementById('chart-legend'), data);
     });
     </script>
 

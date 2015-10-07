@@ -147,7 +147,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			http.Error(w, err.Error(), 500)
 		}
 	case "line", "bar":
-		colorlist := []string{"220,220,220", "151,187,205"}
+		colorlist := []string{"220,220,220", "151,187,205", "70, 191, 189", "191, 71, 73", "191, 71, 133", "71, 191, 129"}
 		type lineData struct {
 			AccountName string
 			RGBColor    string
@@ -155,9 +155,10 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 		type linePageData struct {
 			pageData
-			ChartType string
-			Labels    []string
-			DataSets  []lineData
+			RangeStart, RangeEnd time.Time
+			ChartType            string
+			Labels               []string
+			DataSets             []lineData
 		}
 		var lData linePageData
 		lData.Reports = reportConfigData.Reports
@@ -186,6 +187,10 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		rangeBalances := ledger.BalancesByPeriod(trans, ledger.PeriodQuarter, rType)
 		for _, rb := range rangeBalances {
+			if lData.RangeStart.IsZero() {
+				lData.RangeStart = rb.Start
+			}
+			lData.RangeEnd = rb.End
 			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
 
 			for _, freqAccountName := range rConf.Accounts {
