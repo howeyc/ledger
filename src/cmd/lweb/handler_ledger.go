@@ -2,14 +2,13 @@ package main
 
 import (
 	"bytes"
-	"html/template"
 	"net/http"
 
 	"ledger"
 )
 
 func LedgerHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/template.ledger.html", "templates/template.nav.html")
+	t, err := parseAssets("templates/template.ledger.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

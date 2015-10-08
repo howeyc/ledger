@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"math"
 	"net/http"
 	"strings"
@@ -175,7 +174,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		pData.RangeEnd = rEnd
 		pData.ReportName = reportName
 
-		t, err := template.ParseFiles("templates/template.piechart.html", "templates/template.nav.html")
+		t, err := parseAssets("templates/template.piechart.html", "templates/template.nav.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -245,7 +244,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			}
 		}
 
-		t, err := template.ParseFiles("templates/template.barlinechart.html", "templates/template.nav.html")
+		t, err := parseAssets("templates/template.barlinechart.html", "templates/template.nav.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

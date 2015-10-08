@@ -12,6 +12,8 @@ import (
 
 	"github.com/BurntSushi/toml"
 	"github.com/go-martini/martini"
+	"github.com/martini-contrib/gzip"
+	"github.com/martini-contrib/staticbin"
 )
 
 var ledgerBuffer bytes.Buffer
@@ -67,6 +69,9 @@ func main() {
 	ledgerFileReader.Close()
 
 	m := martini.Classic()
+	m.Use(gzip.All())
+	m.Use(staticbin.Static("public", Asset))
+
 	m.Get("/ledger", LedgerHandler)
 	m.Get("/accounts", AccountsHandler)
 	m.Get("/account/:accountName", AccountHandler)

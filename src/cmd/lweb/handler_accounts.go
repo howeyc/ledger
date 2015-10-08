@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"html/template"
 	"net/http"
 	"strings"
 
@@ -12,7 +11,7 @@ import (
 )
 
 func AccountsHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := template.ParseFiles("templates/template.accounts.html", "templates/template.nav.html")
+	t, err := parseAssets("templates/template.accounts.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -42,7 +41,7 @@ func AccountsHandler(w http.ResponseWriter, r *http.Request) {
 func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	accountName := params["accountName"]
 
-	t, err := template.ParseFiles("templates/template.account.html", "templates/template.nav.html")
+	t, err := parseAssets("templates/template.account.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
