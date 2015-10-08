@@ -8,25 +8,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/vdobler/chart",
-			"repository": "https://github.com/vdobler/chart",
-			"revision": "4b9375a373385b772fae87d4631997b8b87b3541",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/llgcode/draw2d",
-			"repository": "https://github.com/llgcode/draw2d",
-			"revision": "f8fb5a20526d25b8849edf82c49d0f7fce42c629",
-			"branch": "master"
-		},
-		{
-			"importpath": "github.com/go-gl/gl/v2.1/gl",
-			"repository": "https://github.com/go-gl/gl",
-			"revision": "7c718d1758f0e23896e295ff50bb34c2c5fe901d",
-			"branch": "master",
-			"path": "/v2.1/gl"
-		},
-		{
 			"importpath": "github.com/go-martini/martini",
 			"repository": "https://github.com/go-martini/martini",
 			"revision": "9987fc59f060a063247d22472c2fb48654bac5f6",
@@ -42,6 +23,12 @@
 			"importpath": "github.com/BurntSushi/toml",
 			"repository": "https://github.com/BurntSushi/toml",
 			"revision": "056c9bc7be7190eaa7715723883caffa5f8fa3e4",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/jteeuwen/go-bindata",
+			"repository": "https://github.com/jteeuwen/go-bindata",
+			"revision": "bfe36d3254337b7cc18024805dfab2106613abdf",
 			"branch": "master"
 		}
 	]
