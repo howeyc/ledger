@@ -29,12 +29,12 @@ func getTransactions() ([]*ledger.Transaction, error) {
 		return nil, err
 
 	}
-	ledgerFileReader.Close()
 
 	trans, terr := ledger.ParseLedger(ledgerFileReader)
 	if terr != nil {
 		return nil, terr
 	}
+	ledgerFileReader.Close()
 
 	return trans, nil
 }
