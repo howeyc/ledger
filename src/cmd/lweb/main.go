@@ -75,8 +75,10 @@ func main() {
 	}
 
 	go func() {
-		toml.DecodeFile(reportConfigFileName, &reportConfigData)
-		time.Sleep(time.Minute * 5)
+		for {
+			toml.DecodeFile(reportConfigFileName, &reportConfigData)
+			time.Sleep(time.Minute * 5)
+		}
 	}()
 
 	m := martini.Classic()
