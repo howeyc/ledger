@@ -226,18 +226,21 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.RangeEnd = rb.End
 			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
 
+			accVals := make(map[string]float64)
+			for _, freqAccountName := range rConf.Accounts {
+				accVals[freqAccountName] = 0
+			}
 			for _, freqAccountName := range rConf.Accounts {
 				for _, bal := range rb.Balances {
 					if bal.Name == freqAccountName {
-						for dIdx, _ := range lData.DataSets {
-							fval, _ := bal.Balance.Float64()
-							fval = math.Abs(fval)
-							if lData.DataSets[dIdx].AccountName == bal.Name {
-								lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, fval)
-							}
-						}
+						fval, _ := bal.Balance.Float64()
+						fval = math.Abs(fval)
+						accVals[freqAccountName] = fval
 					}
 				}
+			}
+			for dIdx, _ := range lData.DataSets {
+				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
 			}
 		}
 
