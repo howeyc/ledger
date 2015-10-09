@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"net/http"
 	"strings"
 
@@ -17,9 +16,7 @@ func AccountsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ledgerFileReader := bytes.NewReader(ledgerBuffer.Bytes())
-
-	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	trans, terr := getTransactions()
 	if terr != nil {
 		http.Error(w, terr.Error(), 500)
 		return
@@ -47,9 +44,7 @@ func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 		return
 	}
 
-	ledgerFileReader := bytes.NewReader(ledgerBuffer.Bytes())
-
-	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	trans, terr := getTransactions()
 	if terr != nil {
 		http.Error(w, terr.Error(), 500)
 		return

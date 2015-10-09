@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"math"
 	"net/http"
@@ -79,9 +78,7 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	reportName := params["reportName"]
 
-	ledgerFileReader := bytes.NewReader(ledgerBuffer.Bytes())
-
-	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	trans, terr := getTransactions()
 	if terr != nil {
 		http.Error(w, terr.Error(), 500)
 		return

@@ -1,11 +1,6 @@
 package main
 
-import (
-	"bytes"
-	"net/http"
-
-	"ledger"
-)
+import "net/http"
 
 func LedgerHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := parseAssets("templates/template.ledger.html", "templates/template.nav.html")
@@ -14,9 +9,7 @@ func LedgerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ledgerFileReader := bytes.NewReader(ledgerBuffer.Bytes())
-
-	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	trans, terr := getTransactions()
 	if terr != nil {
 		http.Error(w, terr.Error(), 500)
 		return

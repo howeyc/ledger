@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
+	"sync"
+	"time"
 
 	"ledger"
 
@@ -16,7 +16,28 @@ import (
 	"github.com/martini-contrib/staticbin"
 )
 
-var ledgerBuffer bytes.Buffer
+var ledgerFileName string
+var reportConfigFileName string
+var ledgerLock sync.Mutex
+
+func getTransactions() ([]*ledger.Transaction, error) {
+	ledgerLock.Lock()
+	defer ledgerLock.Unlock()
+
+	ledgerFileReader, err := os.Open(ledgerFileName)
+	if err != nil {
+		return nil, err
+
+	}
+	ledgerFileReader.Close()
+
+	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	if terr != nil {
+		return nil, terr
+	}
+
+	return trans, nil
+}
 
 type reportConfig struct {
 	Name      string
@@ -38,8 +59,6 @@ type pageData struct {
 }
 
 func main() {
-	var ledgerFileName string
-	var reportConfigFileName string
 	var serverPort int
 	var localhost bool
 
@@ -55,18 +74,10 @@ func main() {
 		return
 	}
 
-	_, derr := toml.DecodeFile(reportConfigFileName, &reportConfigData)
-	if derr != nil {
-		fmt.Println(derr)
-	}
-
-	ledgerFileReader, err := os.Open(ledgerFileName)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	io.Copy(&ledgerBuffer, ledgerFileReader)
-	ledgerFileReader.Close()
+	go func() {
+		toml.DecodeFile(reportConfigFileName, &reportConfigData)
+		time.Sleep(time.Minute * 5)
+	}()
 
 	m := martini.Classic()
 	m.Use(gzip.All())
