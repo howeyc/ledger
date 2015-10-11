@@ -48,7 +48,7 @@ type reportConfig struct {
 	Exclude   []string `toml:"exclude"`
 }
 
-var reportConfigData struct {
+var rLoadData, reportConfigData struct {
 	Reports []reportConfig `toml:"report"`
 }
 
@@ -76,7 +76,8 @@ func main() {
 
 	go func() {
 		for {
-			toml.DecodeFile(reportConfigFileName, &reportConfigData)
+			toml.DecodeFile(reportConfigFileName, &rLoadData)
+			reportConfigData = rLoadData
 			time.Sleep(time.Minute * 5)
 		}
 	}()
