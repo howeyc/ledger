@@ -134,7 +134,13 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			{"#23A1A3", "#34B3b5"},
 			{"#bf9005", "#D1A216"},
 			{"#1742d1", "#2954e2"},
-			{"#E228BA", "#E24FC2"}}
+			{"#E228BA", "#E24FC2"},
+			{"#A52A2A", "#B73C3C"},
+			{"#3EB73C", "#4CBA4A"},
+			{"#A014CE", "#AB49CC"},
+			{"#F9A200", "#F9B12A"},
+			{"#075400", "#4B7C47"},
+		}
 
 		colorIdx := 0
 		for _, account := range balances[skipCount:] {
@@ -181,7 +187,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			http.Error(w, err.Error(), 500)
 		}
 	case "line", "bar":
-		colorlist := []string{"220,220,220", "151,187,205", "70, 191, 189", "191, 71, 73", "191, 71, 133", "71, 191, 129"}
+		colorlist := []string{"220,220,220", "151,187,205", "70, 191, 189", "191, 71, 73", "191, 71, 133", "71, 191, 129", "165,42,42"}
 		type lineData struct {
 			AccountName string
 			RGBColor    string
