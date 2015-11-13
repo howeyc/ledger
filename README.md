@@ -75,11 +75,13 @@ bayesian classification of the payee.
 
 ## cmd/lweb
 
-A work in progress.
+A website view of the ledger file. This program will show the account list,
+and ledger for a given account.
 
-A website view of the ledger file.
+Reports available through the web interface are taken from a toml configuration
+file of the report configuration. See reports-sample.toml for examples.
 
 Example usage:
 ```sh
-    lweb -f ledger.dat --port 8080
+    lweb -f ledger.dat -r reports.toml --port 8080
 ```
