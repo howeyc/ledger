@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	WHITESPACE = " \t"
+)
+
 // Parses a ledger file and returns a list of Transactions.
 //
 // Transactions are sorted by date.
@@ -48,7 +52,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 		} else {
 			var accChange Account
 			// remove heading and tailing space from the line
-			line = strings.Trim(line, " \t")
+			line = strings.Trim(line, WHITESPACE)
 			lineSplit := strings.Split(line, "  ")
 			nonEmptyWords := []string{}
 			for _, word := range lineSplit {
@@ -57,7 +61,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 				}
 			}
 			lastIndex := len(nonEmptyWords) - 1
-			balErr, rationalNum := getBalance(nonEmptyWords[lastIndex])
+			balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], WHITESPACE))
 			if balErr == false {
 				// Assuming no balance and whole line is account name
 				accChange.Name = strings.Join(nonEmptyWords, " ")
