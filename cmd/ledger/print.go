@@ -6,6 +6,7 @@ import (
 	"math/big"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/howeyc/ledger"
 )
@@ -49,7 +50,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
 			outBalanceString := account.Balance.FloatString(ledger.DisplayPrecision)
-			spaceCount := columns - len(account.Name) - len(outBalanceString)
+			spaceCount := columns - utf8.RuneCountInString(account.Name) - utf8.RuneCountInString(outBalanceString)
 			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 	}
@@ -93,7 +94,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(ledger.TransactionDateFormat), trans.Payee)
 				outBalanceString := accChange.Balance.FloatString(ledger.DisplayPrecision)
 				outRunningBalanceString := runningBalance.FloatString(ledger.DisplayPrecision)
-				spaceCount := columns - writtenBytes - 2 - len(outBalanceString) - len(outRunningBalanceString)
+				spaceCount := columns - writtenBytes - 2 - utf8.RuneCountInString(outBalanceString) - utf8.RuneCountInString(outRunningBalanceString)
 				if spaceCount < 0 {
 					spaceCount = 0
 				}
