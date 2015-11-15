@@ -3,11 +3,16 @@ package ledger
 import (
 	"bufio"
 	"fmt"
+	"github.com/marcmak/calc/calc"
 	"io"
 	"math/big"
 	"sort"
 	"strings"
 	"time"
+)
+
+const (
+	WHITESPACE = " \t"
 )
 
 // Parses a ledger file and returns a list of Transactions.
@@ -46,7 +51,9 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			trans = &Transaction{Payee: payeeString, Date: transDate}
 		} else {
 			var accChange Account
-			lineSplit := strings.Split(line, " ")
+			// remove heading and tailing space from the line
+			line = strings.Trim(line, WHITESPACE)
+			lineSplit := strings.Split(line, "  ")
 			nonEmptyWords := []string{}
 			for _, word := range lineSplit {
 				if len(word) > 0 {
@@ -54,8 +61,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 				}
 			}
 			lastIndex := len(nonEmptyWords) - 1
-			rationalNum := new(big.Rat)
-			_, balErr := rationalNum.SetString(nonEmptyWords[lastIndex])
+			balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], WHITESPACE))
 			if balErr == false {
 				// Assuming no balance and whole line is account name
 				accChange.Name = strings.Join(nonEmptyWords, " ")
@@ -78,6 +84,16 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	}
 	sort.Sort(sortTransactionsByDate{generalLedger})
 	return generalLedger, scanner.Err()
+}
+
+func getBalance(balance string) (bool, *big.Rat) {
+	rationalNum := new(big.Rat)
+	if strings.Contains(balance, "(") {
+		rationalNum.SetFloat64(calc.Solve(balance))
+		return true, rationalNum
+	}
+	_, isValid := rationalNum.SetString(balance)
+	return isValid, rationalNum
 }
 
 // Takes a transaction and balances it. This is mainly to fill in the empty part
