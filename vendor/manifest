@@ -1,0 +1,12 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/marcmak/calc/calc",
+			"repository": "https://github.com/marcmak/calc",
+			"revision": "5bbbfc3b3149741fda5147a18568a62f6cd3fec1",
+			"branch": "master",
+			"path": "/calc"
+		}
+	]
+}

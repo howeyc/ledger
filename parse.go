@@ -3,12 +3,13 @@ package ledger
 import (
 	"bufio"
 	"fmt"
-	"github.com/marcmak/calc/calc"
 	"io"
 	"math/big"
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/marcmak/calc/calc"
 )
 
 const (
