@@ -6,7 +6,7 @@ import "time"
 // specified by start and end. The returned list contains transactions on the same day as start
 // but does not include any transactions on the day of end.
 func TransactionsInDateRange(trans []*Transaction, start, end time.Time) []*Transaction {
-	newlist := make([]*Transaction, 0)
+	var newlist []*Transaction
 
 	start = start.Add(-1 * time.Second)
 
@@ -19,8 +19,10 @@ func TransactionsInDateRange(trans []*Transaction, start, end time.Time) []*Tran
 	return newlist
 }
 
+// Period is used to specify the length of a date range or frequency
 type Period string
 
+// Periods suppored by ledger
 const (
 	PeriodMonth   Period = "Monthly"
 	PeriodQuarter Period = "Quarterly"
@@ -61,13 +63,18 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 	return boundaries
 }
 
+// RangeType is used to specify how the data is "split" into sections
 type RangeType string
 
 const (
-	RangeSnapshot  RangeType = "Snapshot"
+	// RangeSnapshot will have each section be the running total at the time of the snapshot
+	RangeSnapshot RangeType = "Snapshot"
+
+	// RangePartition will have each section be the accumulated value of the transactions within that partition's date range
 	RangePartition RangeType = "Partition"
 )
 
+// RangeBalance contains the account balances and the start and end time of the date range
 type RangeBalance struct {
 	Start, End time.Time
 	Balances   []*Account
@@ -75,7 +82,7 @@ type RangeBalance struct {
 
 // BalancesByPeriod will return the account balances for each period.
 func BalancesByPeriod(trans []*Transaction, per Period, rType RangeType) []*RangeBalance {
-	results := make([]*RangeBalance, 0)
+	var results []*RangeBalance
 	if len(trans) < 1 {
 		return results
 	}

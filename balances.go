@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Given a list of transactions and filter strings, returns account balances of
+// GetBalances provided a list of transactions and filter strings, returns account balances of
 // all accounts that have any filter as a substring of the account name. Also
 // returns balances for each account level depth as a separate record.
 //

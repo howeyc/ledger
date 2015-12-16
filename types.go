@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Account holds the name and balance
 type Account struct {
 	Name    string
 	Balance *big.Rat
@@ -21,6 +22,10 @@ func (s sortAccountsByName) Less(i, j int) bool {
 	return s.sortAccounts[i].Name < s.sortAccounts[j].Name
 }
 
+// Transaction is the basis of a ledger. The ledger holds a list of transactions.
+// A Transaction has a Payee, Date (with no time, or to put another way, with
+// hours,minutes,seconds values that probably doesn't make sense), and a list of
+// Account values that hold the value of the transaction for each account.
 type Transaction struct {
 	Payee          string
 	Date           time.Time
