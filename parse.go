@@ -26,10 +26,12 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	var lineCount int
 	for scanner.Scan() {
 		line = scanner.Text()
+		// remove heading and tailing space from the line
+		trimmedLine := strings.Trim(line, whitespace)
 		lineCount++
 		if strings.HasPrefix(line, ";") {
 			// nop
-		} else if len(line) == 0 {
+		} else if len(trimmedLine) == 0 {
 			if trans != nil {
 				transErr := balanceTransaction(trans)
 				if transErr != nil {
@@ -52,9 +54,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			trans = &Transaction{Payee: payeeString, Date: transDate}
 		} else {
 			var accChange Account
-			// remove heading and tailing space from the line
-			line = strings.Trim(line, whitespace)
-			lineSplit := strings.Split(line, "  ")
+			lineSplit := strings.Split(trimmedLine, "  ")
 			nonEmptyWords := []string{}
 			for _, word := range lineSplit {
 				if len(word) > 0 {
