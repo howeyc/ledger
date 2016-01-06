@@ -56,7 +56,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 	}
 	fmt.Println(strings.Repeat("-", columns))
 	outBalanceString := overallBalance.FloatString(ledger.DisplayPrecision)
-	spaceCount := columns - len(outBalanceString)
+	spaceCount := columns - utf8.RuneCountInString(outBalanceString)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
 
@@ -65,7 +65,7 @@ func PrintTransaction(trans *ledger.Transaction, columns int) {
 	fmt.Printf("%s %s\n", trans.Date.Format(ledger.TransactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.FloatString(ledger.DisplayPrecision)
-		spaceCount := columns - 4 - len(accChange.Name) - len(outBalanceString)
+		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		fmt.Printf("    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 	}
 	fmt.Println("")
