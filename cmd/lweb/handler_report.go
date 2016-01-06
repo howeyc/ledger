@@ -169,9 +169,27 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			ChartAccounts        []pieAccount
 		}
 
+		var rtrans []*ledger.Transaction
+		for _, tran := range trans {
+			for _, accChange := range tran.AccountChanges {
+				include := false
+				if strings.HasPrefix(accChange.Name, accountName) {
+					include = true
+				}
+				for _, excludeName := range rConf.Exclude {
+					if strings.Contains(accChange.Name, excludeName) {
+						include = false
+					}
+				}
+				if include {
+					rtrans = append(rtrans, tran)
+				}
+			}
+		}
+
 		var pData piePageData
 		pData.Reports = reportConfigData.Reports
-		pData.Transactions = trans
+		pData.Transactions = rtrans
 		pData.ChartAccounts = values
 		pData.RangeStart = rStart
 		pData.RangeEnd = rEnd
@@ -203,7 +221,6 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 		var lData linePageData
 		lData.Reports = reportConfigData.Reports
-		lData.Transactions = trans
 		lData.ReportName = reportName
 
 		colorIdx := 0
@@ -249,6 +266,23 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
 			}
 		}
+
+		var rtrans []*ledger.Transaction
+		for _, tran := range trans {
+			include := false
+			for _, freqAccountName := range rConf.Accounts {
+				for _, accChange := range tran.AccountChanges {
+					if strings.HasPrefix(accChange.Name, freqAccountName) {
+						include = true
+					}
+				}
+			}
+
+			if include {
+				rtrans = append(rtrans, tran)
+			}
+		}
+		lData.Transactions = rtrans
 
 		t, err := parseAssets("templates/template.barlinechart.html", "templates/template.nav.html")
 		if err != nil {
