@@ -97,7 +97,8 @@ func BalancesByPeriod(trans []*Transaction, per Period, rType RangeType) []*Rang
 		bEnd := boundary
 
 		bTrans := TransactionsInDateRange(trans, bStart, bEnd)
-		results = append(results, &RangeBalance{Start: bStart, End: bEnd, Balances: GetBalances(bTrans, []string{})})
+		// End date should be the last day (inclusive, so subtract 1 day)
+		results = append(results, &RangeBalance{Start: bStart, End: bEnd.AddDate(0, 0, -1), Balances: GetBalances(bTrans, []string{})})
 
 		if rType == RangePartition {
 			bStart = bEnd
