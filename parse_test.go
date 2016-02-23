@@ -38,6 +38,64 @@ var testCases = []testCase{
 		},
 		nil,
 	},
+	testCase{
+		`1970/01/01 Payee
+ Expense:test	369.0
+ Assets
+
+; Handle tabs between account and amount
+; Also handle accounts with spaces
+1970/01/01 Payee 5
+	Expense:Cars R Us
+	Expense:Cars  358.0
+	Expense:Cranks	10
+	Expense:Cranks Unlimited	10
+	Expense:Cranks United  10
+`,
+		[]*Transaction{
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense:test",
+						big.NewRat(369.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-369.0, 1),
+					},
+				},
+			},
+			&Transaction{
+				Payee: "Payee 5",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense:Cars R Us",
+						big.NewRat(-388.0, 1),
+					},
+					Account{
+						"Expense:Cars",
+						big.NewRat(358.0, 1),
+					},
+					Account{
+						"Expense:Cranks",
+						big.NewRat(10.0, 1),
+					},
+					Account{
+						"Expense:Cranks Unlimited",
+						big.NewRat(10.0, 1),
+					},
+					Account{
+						"Expense:Cranks United",
+						big.NewRat(10.0, 1),
+					},
+				},
+			},
+		},
+		nil,
+	},
 }
 
 func TestParseLedger(t *testing.T) {

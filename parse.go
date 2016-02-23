@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -24,6 +25,8 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	scanner := bufio.NewScanner(ledgerReader)
 	var line string
 	var lineCount int
+
+	accountToAmountSpace := regexp.MustCompile(" {2,}|\t+")
 	for scanner.Scan() {
 		line = scanner.Text()
 		// remove heading and tailing space from the line
@@ -54,7 +57,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			trans = &Transaction{Payee: payeeString, Date: transDate}
 		} else {
 			var accChange Account
-			lineSplit := strings.Split(trimmedLine, "  ")
+			lineSplit := accountToAmountSpace.Split(trimmedLine, -1)
 			nonEmptyWords := []string{}
 			for _, word := range lineSplit {
 				if len(word) > 0 {
