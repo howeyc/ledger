@@ -54,6 +54,11 @@ func main() {
 	args := flag.Args()
 	if len(args) == 0 {
 		fmt.Println("Specify a command.")
+		fmt.Println("Valid commands are:")
+		fmt.Println(" bal/balance: summarize account balances")
+		fmt.Println(" print: print ledger")
+		fmt.Println(" reg/register: print filtered register")
+		fmt.Println(" stats: ledger summary")
 		return
 	}
 
