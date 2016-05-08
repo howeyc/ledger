@@ -85,3 +85,23 @@ Example usage:
 ```sh
     lweb -f ledger.dat -r reports.toml --port 8080
 ```
+
+## Building components
+
+Visit the cmd/{component} directories, and run "go build"
+
+Thus...
+```sh
+   cd cmd/ledger
+   go build
+   cd ../limport
+   go build
+   cd ../lweb
+   go build
+```
+
+## Incompatibilities
+
+- C++ Ledger permits having amounts prefixed with $; Ledger in Go does not
+
+- C++ Ledger permits an empty <Payee Description>; Ledger in Go does not
