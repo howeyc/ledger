@@ -10,6 +10,11 @@ import (
 	"github.com/howeyc/ledger"
 )
 
+const (
+	TransactionDateFormat = "2006/01/02"
+	DisplayPrecision      = 2
+)
+
 func main() {
 	var startDate, endDate time.Time
 	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
@@ -20,9 +25,6 @@ func main() {
 	var columnWide bool
 
 	var ledgerFileName string
-
-	ledger.TransactionDateFormat = "2006/01/02"
-	TransactionDateFormat := ledger.TransactionDateFormat
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&startString, "b", startDate.Format(TransactionDateFormat), "Begin date of transaction processing.")
