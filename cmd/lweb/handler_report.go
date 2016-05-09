@@ -118,7 +118,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			Highlight string
 		}
 
-		values := make([]pieAccount, 0)
+		var values []pieAccount
 
 		type pieColor struct {
 			Color     string
@@ -262,7 +262,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 					}
 				}
 			}
-			for dIdx, _ := range lData.DataSets {
+			for dIdx := range lData.DataSets {
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
 			}
 		}

@@ -50,7 +50,7 @@ func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 		return
 	}
 
-	pageTrans := make([]*ledger.Transaction, 0)
+	var pageTrans []*ledger.Transaction
 	for _, tran := range trans {
 		for _, accChange := range tran.AccountChanges {
 			if strings.Contains(accChange.Name, accountName) {

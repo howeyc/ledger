@@ -71,9 +71,8 @@ func main() {
 	if len(matchingAccounts) < 1 {
 		fmt.Println("Unable to find matching account.")
 		return
-	} else {
-		matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
 	}
+	matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
 
 	allAccounts := ledger.GetBalances(generalLedger, []string{})
 
