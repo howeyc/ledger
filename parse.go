@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"sort"
 	"strings"
-	"time"
 
+	"github.com/joyt/godate"
 	"github.com/marcmak/calc/calc"
 )
 
@@ -49,7 +49,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 				return generalLedger, fmt.Errorf("%d: Unable to parse payee line: %s", lineCount, line)
 			}
 			dateString := lineSplit[0]
-			transDate, dateErr := time.Parse(TransactionDateFormat, dateString)
+			transDate, dateErr := date.Parse(dateString)
 			if dateErr != nil {
 				return generalLedger, fmt.Errorf("%d: Unable to parse date: %s", lineCount, dateString)
 			}
