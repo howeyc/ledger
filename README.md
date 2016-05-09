@@ -104,4 +104,4 @@ Thus...
 
 - C++ Ledger permits having amounts prefixed with $; Ledger in Go does not
 
-- C++ Ledger permits an empty <Payee Description>; Ledger in Go does not
+- C++ Ledger permits an empty *Payee Description*; Ledger in Go does not
