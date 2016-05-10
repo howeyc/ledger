@@ -49,22 +49,22 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			overallBalance.Add(overallBalance, account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.FloatString(ledger.DisplayPrecision)
+			outBalanceString := account.Balance.FloatString(DisplayPrecision)
 			spaceCount := columns - utf8.RuneCountInString(account.Name) - utf8.RuneCountInString(outBalanceString)
 			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 	}
 	fmt.Println(strings.Repeat("-", columns))
-	outBalanceString := overallBalance.FloatString(ledger.DisplayPrecision)
+	outBalanceString := overallBalance.FloatString(DisplayPrecision)
 	spaceCount := columns - utf8.RuneCountInString(outBalanceString)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
 
 // Prints a transaction formatted to fit in specified column width.
 func PrintTransaction(trans *ledger.Transaction, columns int) {
-	fmt.Printf("%s %s\n", trans.Date.Format(ledger.TransactionDateFormat), trans.Payee)
+	fmt.Printf("%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
-		outBalanceString := accChange.Balance.FloatString(ledger.DisplayPrecision)
+		outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		fmt.Printf("    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 	}
@@ -91,9 +91,9 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 			}
 			if inFilter {
 				runningBalance.Add(runningBalance, accChange.Balance)
-				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(ledger.TransactionDateFormat), trans.Payee)
-				outBalanceString := accChange.Balance.FloatString(ledger.DisplayPrecision)
-				outRunningBalanceString := runningBalance.FloatString(ledger.DisplayPrecision)
+				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(TransactionDateFormat), trans.Payee)
+				outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
+				outRunningBalanceString := runningBalance.FloatString(DisplayPrecision)
 				spaceCount := columns - writtenBytes - 2 - utf8.RuneCountInString(outBalanceString) - utf8.RuneCountInString(outRunningBalanceString)
 				if spaceCount < 0 {
 					spaceCount = 0

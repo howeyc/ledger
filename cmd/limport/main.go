@@ -15,6 +15,11 @@ import (
 	"github.com/jbrukh/bayesian"
 )
 
+const (
+	TransactionDateFormat = "2006/01/02"
+	DisplayPrecision      = 2
+)
+
 func usage() {
 	fmt.Printf("Usage: %s -f <ledger-file> <account> <csv file>\n", os.Args[0])
 	flag.PrintDefaults()
@@ -66,9 +71,8 @@ func main() {
 	if len(matchingAccounts) < 1 {
 		fmt.Println("Unable to find matching account.")
 		return
-	} else {
-		matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
 	}
+	matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
 
 	allAccounts := ledger.GetBalances(generalLedger, []string{})
 
