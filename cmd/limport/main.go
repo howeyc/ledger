@@ -62,7 +62,7 @@ func main() {
 
 	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
 	if parseError != nil {
-		fmt.Println(parseError)
+		fmt.Printf("%s:%s\n", ledgerFileName, parseError.Error())
 		return
 	}
 

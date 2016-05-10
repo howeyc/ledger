@@ -32,7 +32,7 @@ func getTransactions() ([]*ledger.Transaction, error) {
 
 	trans, terr := ledger.ParseLedger(ledgerFileReader)
 	if terr != nil {
-		return nil, terr
+		return nil, fmt.Errorf("%s:%s", ledgerFileName, terr.Error())
 	}
 	ledgerFileReader.Close()
 
