@@ -80,6 +80,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/jquery.min.js"></script>
     <script src="/Chart.min.js"></script>
+    <script src="/Chart.StackedBar.js"></script>
     <script src="/legend.js"></script>
     <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
     <script>
@@ -114,7 +115,7 @@
     };
     var myPieChart = new Chart(ctx).Line(data,{responsive: true});
     {{end}}
-    {{if eq .ChartType "Bar"}}
+    {{if eq .ChartType "Bar" "StackedBar"}}
         datasets: [
     {{range .DataSets}}
     {
@@ -132,7 +133,8 @@
     {{end}}
         ]
     };
-    var myPieChart = new Chart(ctx).Bar(data,{responsive: true});
+    {{if eq .ChartType "Bar"}} var myPieChart = new Chart(ctx).Bar(data,{responsive: true});{{end}}
+    {{if eq .ChartType "StackedBar"}} var myPieChart = new Chart(ctx).StackedBar(data,{responsive: true});{{end}}
     {{end}}
     legend(document.getElementById('chart-legend'), data);
     });

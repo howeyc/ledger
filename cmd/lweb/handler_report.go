@@ -204,7 +204,7 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 		}
-	case "line", "bar":
+	case "line", "bar", "stackedbar":
 		colorlist := []string{"220,220,220", "151,187,205", "70, 191, 189", "191, 71, 73", "191, 71, 133", "71, 191, 129", "165,42,42"}
 		type lineData struct {
 			AccountName string
@@ -239,6 +239,9 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		case "bar":
 			rType = ledger.RangePartition
 			lData.ChartType = "Bar"
+		case "stackedbar":
+			rType = ledger.RangePartition
+			lData.ChartType = "StackedBar"
 		}
 
 		rangeBalances := ledger.BalancesByPeriod(trans, rPeriod, rType)
