@@ -31,12 +31,17 @@ func main() {
 	var accountSubstring, csvFileName, csvDateFormat string
 	var negateAmount bool
 	var fieldDelimiter string
+	var scaleFactor float64
 
 	flag.BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
+	flag.Float64Var(&scaleFactor, "scale", 1.0, "Scale factor to multiply against every imported amount.")
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
 	flag.StringVar(&fieldDelimiter, "delimiter", ",", "Field delimiter.")
 	flag.Parse()
+
+	ratScale := big.NewRat(1,1)
+	ratScale.SetFloat64(scaleFactor)
 
 	args := flag.Args()
 	if len(args) != 2 {
@@ -134,6 +139,9 @@ func main() {
 			if negateAmount {
 				expenseAccount.Balance.Neg(expenseAccount.Balance)
 			}
+
+			// Apply scale
+			expenseAccount.Balance = expenseAccount.Balance.Mul(expenseAccount.Balance, ratScale)
 
 			// Csv amount is the negative of the expense amount
 			csvAccount.Balance.Neg(expenseAccount.Balance)
