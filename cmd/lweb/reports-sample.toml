@@ -9,14 +9,14 @@ name = "PQ Expenses"
 chart = "pie"
 date_range = "Previous Quarter"
 accounts = [ "Expenses" ]
-exclude = [ "Job Expenses" ]
+exclude_account_summary = [ "Job Expenses" ]
 
 [[report]]
 name = "PY Expenses"
 chart = "pie"
 date_range = "Previous Year"
 accounts = [ "Expenses" ]
-exclude = [ "Job Expenses", "Taxes" ]
+exclude_account_summary = [ "Job Expenses", "Taxes" ]
 
 [[report]]
 name = "YTD Expenses"
@@ -25,11 +25,12 @@ date_range = "YTD"
 accounts = [ "Expenses" ]
 
 [[report]]
-name = "YTD Monthly Savings"
+name = "YTD My Monthly Savings"
 chart = "bar"
 date_range = "YTD"
 date_freq = "Monthly"
 accounts = [ "Income", "Expenses" ]
+exclude_account_trans = [ "Income:Wife" ]
 
     [[report.calculated_account]]
     name = "Savings"

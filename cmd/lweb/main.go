@@ -50,13 +50,14 @@ type calculatedAccount struct {
 }
 
 type reportConfig struct {
-	Name               string
-	Chart              string
-	DateRange          string `toml:"date_range"`
-	DateFreq           string `toml:"date_freq"`
-	Accounts           []string
-	Exclude            []string            `toml:"exclude"`
-	CalculatedAccounts []calculatedAccount `toml:"calculated_account"`
+	Name                   string
+	Chart                  string
+	DateRange              string `toml:"date_range"`
+	DateFreq               string `toml:"date_freq"`
+	Accounts               []string
+	ExcludeAccountTrans    []string            `toml:"exclude_account_trans"`
+	ExcludeAccountsSummary []string            `toml:"exclude_account_summary"`
+	CalculatedAccounts     []calculatedAccount `toml:"calculated_account"`
 }
 
 type reportConfigStruct struct {

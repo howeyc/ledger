@@ -94,22 +94,25 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 	trans = ledger.TransactionsInDateRange(trans, rStart, rEnd)
 
-	switch rConf.Chart {
-	case "pie":
-		accountName := rConf.Accounts[0]
-		balances := ledger.GetBalances(trans, []string{accountName})
-
-		skipCount := 0
-		for _, account := range balances {
-			if !strings.HasPrefix(account.Name, accountName) {
-				skipCount++
-			}
-			if account.Name == accountName {
-				skipCount++
+	var rtrans []*ledger.Transaction
+	for _, tran := range trans {
+		include := true
+		for _, accChange := range tran.AccountChanges {
+			for _, excludeName := range rConf.ExcludeAccountTrans {
+				if strings.Contains(accChange.Name, excludeName) {
+					include = false
+				}
 			}
 		}
 
-		accStartLen := len(accountName)
+		if include {
+			rtrans = append(rtrans, tran)
+		}
+	}
+
+	switch rConf.Chart {
+	case "pie":
+		balances := ledger.GetBalances(rtrans, []string{})
 
 		type pieAccount struct {
 			Name      string
@@ -143,18 +146,26 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 
 		colorIdx := 0
-		for _, account := range balances[skipCount:] {
-			accName := account.Name[accStartLen+1:]
+		for _, account := range balances {
+			accName := account.Name
 			value, _ := account.Balance.Float64()
 
-			include := true
-			for _, excludeName := range rConf.Exclude {
+			include := false
+			for _, repAccount := range rConf.Accounts {
+				// Only include accounts equal to one depth below report account
+				repDepth := len(strings.Split(repAccount, ":"))
+				accDepth := len(strings.Split(accName, ":"))
+				if repAccount != accName && strings.HasPrefix(accName, repAccount) && accDepth == repDepth+1 {
+					include = true
+				}
+			}
+			for _, excludeName := range rConf.ExcludeAccountsSummary {
 				if strings.Contains(accName, excludeName) {
 					include = false
 				}
 			}
 
-			if include && !strings.Contains(accName, ":") {
+			if include {
 				values = append(values, pieAccount{Name: accName, Balance: value,
 					Color:     colorlist[colorIdx].Color,
 					Highlight: colorlist[colorIdx].Highlight})
@@ -167,24 +178,6 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			ReportName           string
 			RangeStart, RangeEnd time.Time
 			ChartAccounts        []pieAccount
-		}
-
-		var rtrans []*ledger.Transaction
-		for _, tran := range trans {
-			for _, accChange := range tran.AccountChanges {
-				include := false
-				if strings.HasPrefix(accChange.Name, accountName) {
-					include = true
-				}
-				for _, excludeName := range rConf.Exclude {
-					if strings.Contains(accChange.Name, excludeName) {
-						include = false
-					}
-				}
-				if include {
-					rtrans = append(rtrans, tran)
-				}
-			}
 		}
 
 		var pData piePageData
@@ -225,10 +218,19 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		colorIdx := 0
 		for _, freqAccountName := range rConf.Accounts {
-			lData.DataSets = append(lData.DataSets,
-				lineData{AccountName: freqAccountName,
-					RGBColor: colorlist[colorIdx]})
-			colorIdx++
+			include := true
+			for _, excludeName := range rConf.ExcludeAccountsSummary {
+				if strings.Contains(freqAccountName, excludeName) {
+					include = false
+				}
+			}
+
+			if include {
+				lData.DataSets = append(lData.DataSets,
+					lineData{AccountName: freqAccountName,
+						RGBColor: colorlist[colorIdx]})
+				colorIdx++
+			}
 		}
 
 		for _, calcAccount := range rConf.CalculatedAccounts {
@@ -251,26 +253,6 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.ChartType = "StackedBar"
 		}
 
-		var rtrans []*ledger.Transaction
-		for _, tran := range trans {
-			include := false
-			for _, freqAccountName := range rConf.Accounts {
-				for _, accChange := range tran.AccountChanges {
-					if strings.HasPrefix(accChange.Name, freqAccountName) {
-						include = true
-					}
-					for _, excludeName := range rConf.Exclude {
-						if strings.Contains(accChange.Name, excludeName) {
-							include = false
-						}
-					}
-				}
-			}
-
-			if include {
-				rtrans = append(rtrans, tran)
-			}
-		}
 		lData.Transactions = rtrans
 
 		rangeBalances := ledger.BalancesByPeriod(rtrans, rPeriod, rType)
