@@ -46,7 +46,7 @@ type accountOp struct {
 
 type calculatedAccount struct {
 	Name              string      `toml:"name"`
-	AccountOperations []accountOp `toml:"account_operations"`
+	AccountOperations []accountOp `toml:"account_operation"`
 }
 
 type reportConfig struct {
@@ -56,7 +56,7 @@ type reportConfig struct {
 	DateFreq           string `toml:"date_freq"`
 	Accounts           []string
 	Exclude            []string            `toml:"exclude"`
-	CalculatedAccounts []calculatedAccount `toml:"calculated_accounts"`
+	CalculatedAccounts []calculatedAccount `toml:"calculated_account"`
 }
 
 type reportConfigStruct struct {

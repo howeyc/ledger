@@ -25,6 +25,24 @@ date_range = "YTD"
 accounts = [ "Expenses" ]
 
 [[report]]
+name = "YTD Monthly Savings"
+chart = "bar"
+date_range = "YTD"
+date_freq = "Monthly"
+accounts = [ "Income", "Expenses" ]
+
+    [[report.calculated_account]]
+    name = "Savings"
+
+        [[report.calculated_account.account_operation]]
+        name = "Income"
+        operation = "+"
+        
+        [[report.calculated_account.account_operation]]
+        name = "Expenses"
+        operation = "-"
+
+[[report]]
 name = "AT Net Worth"
 chart = "line"
 date_range = "All Time"
@@ -37,6 +55,13 @@ chart = "line"
 date_range = "All Time"
 date_freq = "Quarterly"
 accounts = [ "Assets:Fixed Assets", "Expenses:Depreciation" ,"Liabilities:Loans:Auto" ]
+
+[[report]]
+name = "AT Vehicle Expenses"
+chart = "stackedbar"
+date_range = "All Time"
+date_freq = "Yearly"
+accounts = [ "Expenses:Depreciation", "Expenses:Auto:Gas", "Expenses:Auto:Insurance", "Expenses:Auto:Maintenance" ]
 
 [[report]]
 name = "AT Yearly Income"

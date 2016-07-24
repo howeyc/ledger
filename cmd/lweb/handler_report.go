@@ -231,6 +231,13 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			colorIdx++
 		}
 
+		for _, calcAccount := range rConf.CalculatedAccounts {
+			lData.DataSets = append(lData.DataSets,
+				lineData{AccountName: calcAccount.Name,
+					RGBColor: colorlist[colorIdx]})
+			colorIdx++
+		}
+
 		var rType ledger.RangeType
 		switch rConf.Chart {
 		case "line":
@@ -284,6 +291,24 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 						fval, _ := bal.Balance.Float64()
 						fval = math.Abs(fval)
 						accVals[freqAccountName] = fval
+					}
+				}
+			}
+			for _, calcAccount := range rConf.CalculatedAccounts {
+				for _, bal := range rb.Balances {
+					for _, acctOp := range calcAccount.AccountOperations {
+						if acctOp.Name == bal.Name {
+							fval, _ := bal.Balance.Float64()
+							fval = math.Abs(fval)
+							aval := accVals[calcAccount.Name]
+							switch acctOp.Operation {
+							case "+":
+								aval += fval
+							case "-":
+								aval -= fval
+							}
+							accVals[calcAccount.Name] = aval
+						}
 					}
 				}
 			}
