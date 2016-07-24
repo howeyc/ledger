@@ -244,7 +244,29 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.ChartType = "StackedBar"
 		}
 
-		rangeBalances := ledger.BalancesByPeriod(trans, rPeriod, rType)
+		var rtrans []*ledger.Transaction
+		for _, tran := range trans {
+			include := false
+			for _, freqAccountName := range rConf.Accounts {
+				for _, accChange := range tran.AccountChanges {
+					if strings.HasPrefix(accChange.Name, freqAccountName) {
+						include = true
+					}
+					for _, excludeName := range rConf.Exclude {
+						if strings.Contains(accChange.Name, excludeName) {
+							include = false
+						}
+					}
+				}
+			}
+
+			if include {
+				rtrans = append(rtrans, tran)
+			}
+		}
+		lData.Transactions = rtrans
+
+		rangeBalances := ledger.BalancesByPeriod(rtrans, rPeriod, rType)
 		for _, rb := range rangeBalances {
 			if lData.RangeStart.IsZero() {
 				lData.RangeStart = rb.Start
@@ -269,23 +291,6 @@ func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
 			}
 		}
-
-		var rtrans []*ledger.Transaction
-		for _, tran := range trans {
-			include := false
-			for _, freqAccountName := range rConf.Accounts {
-				for _, accChange := range tran.AccountChanges {
-					if strings.HasPrefix(accChange.Name, freqAccountName) {
-						include = true
-					}
-				}
-			}
-
-			if include {
-				rtrans = append(rtrans, tran)
-			}
-		}
-		lData.Transactions = rtrans
 
 		t, err := parseAssets("templates/template.barlinechart.html", "templates/template.nav.html")
 		if err != nil {

@@ -39,13 +39,24 @@ func getTransactions() ([]*ledger.Transaction, error) {
 	return trans, nil
 }
 
+type accountOp struct {
+	Name      string `toml:"name"`
+	Operation string `toml:"operation"` // +, -
+}
+
+type calculatedAccount struct {
+	Name              string      `toml:"name"`
+	AccountOperations []accountOp `toml:"account_operations"`
+}
+
 type reportConfig struct {
-	Name      string
-	Chart     string
-	DateRange string `toml:"date_range"`
-	DateFreq  string `toml:"date_freq"`
-	Accounts  []string
-	Exclude   []string `toml:"exclude"`
+	Name               string
+	Chart              string
+	DateRange          string `toml:"date_range"`
+	DateFreq           string `toml:"date_freq"`
+	Accounts           []string
+	Exclude            []string            `toml:"exclude"`
+	CalculatedAccounts []calculatedAccount `toml:"calculated_accounts"`
 }
 
 type reportConfigStruct struct {
