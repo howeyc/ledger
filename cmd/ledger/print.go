@@ -11,7 +11,7 @@ import (
 	"github.com/howeyc/ledger"
 )
 
-// Prints out statistics
+// PrintStats prints out statistics of the ledger
 func PrintStats(generalLedger []*ledger.Transaction) {
 	if len(generalLedger) < 1 {
 		fmt.Println("Empty ledger.")
@@ -39,7 +39,7 @@ func PrintStats(generalLedger []*ledger.Transaction) {
 	fmt.Printf("%-25s : %d\n", "Referenced Accounts", len(accounts))
 }
 
-// Prints out account balances formated to a windows of a width of columns.
+// PrintBalances prints out account balances formatted to a window set to a width of columns.
 // Only shows accounts with names less than or equal to the given depth.
 func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth, columns int) {
 	overallBalance := new(big.Rat)
@@ -49,36 +49,36 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			overallBalance.Add(overallBalance, account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.FloatString(DisplayPrecision)
+			outBalanceString := account.Balance.FloatString(displayPrecision)
 			spaceCount := columns - utf8.RuneCountInString(account.Name) - utf8.RuneCountInString(outBalanceString)
 			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 	}
 	fmt.Println(strings.Repeat("-", columns))
-	outBalanceString := overallBalance.FloatString(DisplayPrecision)
+	outBalanceString := overallBalance.FloatString(displayPrecision)
 	spaceCount := columns - utf8.RuneCountInString(outBalanceString)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
 
-// Prints a transaction formatted to fit in specified column width.
+// PrintTransaction prints a transaction formatted to fit in specified column width.
 func PrintTransaction(trans *ledger.Transaction, columns int) {
-	fmt.Printf("%s %s\n", trans.Date.Format(TransactionDateFormat), trans.Payee)
+	fmt.Printf("%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
-		outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
+		outBalanceString := accChange.Balance.FloatString(displayPrecision)
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		fmt.Printf("    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 	}
 	fmt.Println("")
 }
 
-// Prints all transactions as a formatted ledger file.
+// PrintLedger prints all transactions as a formatted ledger file.
 func PrintLedger(generalLedger []*ledger.Transaction, columns int) {
 	for _, trans := range generalLedger {
 		PrintTransaction(trans, columns)
 	}
 }
 
-// Prints each transaction that matches the given filters.
+// PrintRegister prints each transaction that matches the given filters.
 func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
@@ -91,9 +91,9 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 			}
 			if inFilter {
 				runningBalance.Add(runningBalance, accChange.Balance)
-				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(TransactionDateFormat), trans.Payee)
-				outBalanceString := accChange.Balance.FloatString(DisplayPrecision)
-				outRunningBalanceString := runningBalance.FloatString(DisplayPrecision)
+				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(transactionDateFormat), trans.Payee)
+				outBalanceString := accChange.Balance.FloatString(displayPrecision)
+				outRunningBalanceString := runningBalance.FloatString(displayPrecision)
 				spaceCount := columns - writtenBytes - 2 - utf8.RuneCountInString(outBalanceString) - utf8.RuneCountInString(outRunningBalanceString)
 				if spaceCount < 0 {
 					spaceCount = 0

@@ -101,10 +101,10 @@ func main() {
 	m.Use(gzip.All())
 	m.Use(staticbin.Static("public", Asset))
 
-	m.Get("/ledger", LedgerHandler)
-	m.Get("/accounts", AccountsHandler)
-	m.Get("/account/:accountName", AccountHandler)
-	m.Get("/report/:reportName", ReportHandler)
+	m.Get("/ledger", ledgerHandler)
+	m.Get("/accounts", accountsHandler)
+	m.Get("/account/:accountName", accountHandler)
+	m.Get("/report/:reportName", reportHandler)
 	m.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
 	})

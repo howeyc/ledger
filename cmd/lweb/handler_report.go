@@ -75,7 +75,7 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 	return
 }
 
-func ReportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
+func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	reportName := params["reportName"]
 
 	trans, terr := getTransactions()

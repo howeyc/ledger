@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	TransactionDateFormat = "2006/01/02"
-	DisplayPrecision      = 2
+	transactionDateFormat = "2006/01/02"
+	displayPrecision      = 2
 )
 
 func main() {
@@ -27,8 +27,8 @@ func main() {
 	var ledgerFileName string
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
-	flag.StringVar(&startString, "b", startDate.Format(TransactionDateFormat), "Begin date of transaction processing.")
-	flag.StringVar(&endString, "e", endDate.Format(TransactionDateFormat), "End date of transaction processing.")
+	flag.StringVar(&startString, "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
+	flag.StringVar(&endString, "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	flag.BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
 	flag.IntVar(&transactionDepth, "depth", -1, "Depth of transaction output (balance).")
 	flag.IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
@@ -44,8 +44,8 @@ func main() {
 		return
 	}
 
-	parsedStartDate, tstartErr := time.Parse(TransactionDateFormat, startString)
-	parsedEndDate, tendErr := time.Parse(TransactionDateFormat, endString)
+	parsedStartDate, tstartErr := time.Parse(transactionDateFormat, startString)
+	parsedEndDate, tendErr := time.Parse(transactionDateFormat, endString)
 
 	if tstartErr != nil || tendErr != nil {
 		fmt.Println("Unable to parse start or end date string argument.")

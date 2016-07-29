@@ -2,7 +2,7 @@ package main
 
 import "net/http"
 
-func LedgerHandler(w http.ResponseWriter, r *http.Request) {
+func ledgerHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := parseAssets("templates/template.ledger.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)

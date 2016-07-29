@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	TransactionDateFormat = "2006/01/02"
-	DisplayPrecision      = 2
+	transactionDateFormat = "2006/01/02"
+	displayPrecision      = 2
 )
 
 func usage() {
@@ -40,7 +40,7 @@ func main() {
 	flag.StringVar(&fieldDelimiter, "delimiter", ",", "Field delimiter.")
 	flag.Parse()
 
-	ratScale := big.NewRat(1,1)
+	ratScale := big.NewRat(1, 1)
 	ratScale.SetFloat64(scaleFactor)
 
 	args := flag.Args()

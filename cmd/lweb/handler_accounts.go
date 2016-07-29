@@ -9,7 +9,7 @@ import (
 	"github.com/go-martini/martini"
 )
 
-func AccountsHandler(w http.ResponseWriter, r *http.Request) {
+func accountsHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := parseAssets("templates/template.accounts.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -35,7 +35,7 @@ func AccountsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AccountHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
+func accountHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	accountName := params["accountName"]
 
 	t, err := parseAssets("templates/template.account.html", "templates/template.nav.html")
