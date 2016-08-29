@@ -31,6 +31,14 @@
 			"notests": true
 		},
 		{
+			"importpath": "github.com/lucasb-eyer/go-colorful",
+			"repository": "https://github.com/lucasb-eyer/go-colorful",
+			"vcs": "git",
+			"revision": "9c2852a141bf4711e4276f8f119c90d0f20a556c",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/martini-contrib/gzip",
 			"repository": "https://github.com/martini-contrib/gzip",
 			"vcs": "",

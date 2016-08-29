@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/howeyc/ledger"
-
 	"github.com/go-martini/martini"
+	"github.com/howeyc/ledger"
+	"github.com/lucasb-eyer/go-colorful"
 )
 
 func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period) {
@@ -195,6 +195,13 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 	}
 
+	colorPalette, cerr := colorful.HappyPalette(len(reportSummaryAccounts))
+	if cerr != nil {
+		http.Error(w, cerr.Error(), 500)
+		return
+	}
+	colorBlack := colorful.Color{R: 1, G: 1, B: 1}
+
 	switch rConf.Chart {
 	case "pie":
 		type pieAccount struct {
@@ -211,31 +218,12 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			Highlight string
 		}
 
-		colorlist := []pieColor{{"#F7464A", "#FF5A5E"},
-			{"#46BFBD", "#5AD3D1"},
-			{"#FDB45C", "#FFC870"},
-			{"#B48EAD", "#C69CBE"},
-			{"#949FB1", "#A8B3C5"},
-			{"#4D5360", "#616774"},
-			{"#23A1A3", "#34B3b5"},
-			{"#bf9005", "#D1A216"},
-			{"#1742d1", "#2954e2"},
-			{"#E228BA", "#E24FC2"},
-			{"#A52A2A", "#B73C3C"},
-			{"#3EB73C", "#4CBA4A"},
-			{"#A014CE", "#AB49CC"},
-			{"#F9A200", "#F9B12A"},
-			{"#075400", "#4B7C47"},
-		}
-
-		colorIdx := 0
-		for _, account := range reportSummaryAccounts {
+		for colorIdx, account := range reportSummaryAccounts {
 			accName := account.Name
 			value, _ := account.Balance.Float64()
 			values = append(values, pieAccount{Name: accName, Balance: value,
-				Color:     colorlist[colorIdx].Color,
-				Highlight: colorlist[colorIdx].Highlight})
-			colorIdx++
+				Color:     colorPalette[colorIdx].Hex(),
+				Highlight: colorPalette[colorIdx].BlendRgb(colorBlack, 0.1).Hex()})
 		}
 
 		type piePageData struct {
@@ -263,21 +251,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			http.Error(w, err.Error(), 500)
 		}
 	case "line", "bar", "stackedbar":
-		colorlist := []string{"220 ,220, 220", // grey
-			"128, 128, 0", // olive-green
-			"198, 113, 113", // salmon
-			"0, 255, 255", // cyan
-			"113, 113, 198", // light purple
-			"255, 255, 0", // yellow
-			"0, 0, 255", // blue
-			"0, 255, 0", // green
-			"255, 128, 0", // orange
-			"128, 0, 128", // purple 
-			"56, 142, 142", // teal
-			"139, 69, 0", // brown
-			"30, 30, 30", // black
-			"128, 0, 0", // darkred
-		}
 		type lineData struct {
 			AccountName string
 			RGBColor    string
@@ -295,12 +268,11 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		lData.Reports = reportConfigData.Reports
 		lData.ReportName = reportName
 
-		colorIdx := 0
-		for _, repAccount := range reportSummaryAccounts {
+		for colorIdx, repAccount := range reportSummaryAccounts {
+			r, g, b := colorPalette[colorIdx].RGB255()
 			lData.DataSets = append(lData.DataSets,
 				lineData{AccountName: repAccount.Name,
-					RGBColor: colorlist[colorIdx]})
-			colorIdx++
+					RGBColor: fmt.Sprintf("%d, %d, %d", r, g, b)})
 		}
 
 		var rType ledger.RangeType
