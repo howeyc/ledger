@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/big"
 	"net/http"
 	"strings"
 	"time"
@@ -75,6 +76,70 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 	return
 }
 
+// getAccounts will return the accounts that match accountNeedle.
+// If accountNeedle contains no wildcards (*), only case-sensitive matchs are returned.
+// In the case of wildcards:
+//	* matches any account that shares the prefix, and has the same depth as the *.
+//	** matches any account that shares the prefix, at any depth.
+func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (results []*ledger.Account) {
+	needleDepth := len(strings.Split(accountNeedle, ":"))
+
+	if dblstarIdx := strings.Index(accountNeedle, "**"); dblstarIdx != -1 {
+		prefixNeedle := accountNeedle[:dblstarIdx]
+		for _, hay := range accountsHaystack {
+			if strings.HasPrefix(hay.Name, prefixNeedle) {
+				results = append(results, hay)
+			}
+		}
+	} else if starIdx := strings.Index(accountNeedle, "*"); starIdx != -1 {
+		prefixNeedle := accountNeedle[:starIdx]
+		for _, hay := range accountsHaystack {
+			hayDepth := len(strings.Split(hay.Name, ":"))
+			if strings.HasPrefix(hay.Name, prefixNeedle) && hayDepth == needleDepth {
+				results = append(results, hay)
+			}
+		}
+	} else {
+		for _, hay := range accountsHaystack {
+			if hay.Name == accountNeedle {
+				results = append(results, hay)
+			}
+		}
+	}
+
+	return
+}
+
+func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (results []*ledger.Account) {
+	accVals := make(map[string]float64)
+	for _, calcAccount := range calcAccts {
+		for _, bal := range balances {
+			for _, acctOp := range calcAccount.AccountOperations {
+				if acctOp.Name == bal.Name {
+					fval, _ := bal.Balance.Float64()
+					fval = math.Abs(fval)
+					aval := accVals[calcAccount.Name]
+					switch acctOp.Operation {
+					case "+":
+						aval += fval
+					case "-":
+						aval -= fval
+					}
+					accVals[calcAccount.Name] = aval
+				}
+			}
+		}
+	}
+
+	for _, calcAccount := range calcAccts {
+		bal := big.NewRat(1, 1)
+		bal.SetFloat64(accVals[calcAccount.Name])
+		results = append(results, &ledger.Account{Name: calcAccount.Name, Balance: bal})
+	}
+
+	return
+}
+
 func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	reportName := params["reportName"]
 
@@ -110,10 +175,28 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 	}
 
+	balances := ledger.GetBalances(rtrans, []string{})
+	var initialAccounts []*ledger.Account
+	for _, confAccount := range rConf.Accounts {
+		initialAccounts = append(initialAccounts, getAccounts(confAccount, balances)...)
+	}
+	initialAccounts = append(initialAccounts, calcBalances(rConf.CalculatedAccounts, balances)...)
+	var reportSummaryAccounts []*ledger.Account
+	for _, account := range initialAccounts {
+		include := true
+		for _, excludeName := range rConf.ExcludeAccountsSummary {
+			if strings.Contains(account.Name, excludeName) {
+				include = false
+			}
+		}
+
+		if include {
+			reportSummaryAccounts = append(reportSummaryAccounts, account)
+		}
+	}
+
 	switch rConf.Chart {
 	case "pie":
-		balances := ledger.GetBalances(rtrans, []string{})
-
 		type pieAccount struct {
 			Name      string
 			Balance   float64
@@ -146,31 +229,13 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 
 		colorIdx := 0
-		for _, account := range balances {
+		for _, account := range reportSummaryAccounts {
 			accName := account.Name
 			value, _ := account.Balance.Float64()
-
-			include := false
-			for _, repAccount := range rConf.Accounts {
-				// Only include accounts equal to one depth below report account
-				repDepth := len(strings.Split(repAccount, ":"))
-				accDepth := len(strings.Split(accName, ":"))
-				if repAccount != accName && strings.HasPrefix(accName, repAccount) && accDepth == repDepth+1 {
-					include = true
-				}
-			}
-			for _, excludeName := range rConf.ExcludeAccountsSummary {
-				if strings.Contains(accName, excludeName) {
-					include = false
-				}
-			}
-
-			if include {
-				values = append(values, pieAccount{Name: accName, Balance: value,
-					Color:     colorlist[colorIdx].Color,
-					Highlight: colorlist[colorIdx].Highlight})
-				colorIdx++
-			}
+			values = append(values, pieAccount{Name: accName, Balance: value,
+				Color:     colorlist[colorIdx].Color,
+				Highlight: colorlist[colorIdx].Highlight})
+			colorIdx++
 		}
 
 		type piePageData struct {
@@ -217,25 +282,9 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		lData.ReportName = reportName
 
 		colorIdx := 0
-		for _, freqAccountName := range rConf.Accounts {
-			include := true
-			for _, excludeName := range rConf.ExcludeAccountsSummary {
-				if strings.Contains(freqAccountName, excludeName) {
-					include = false
-				}
-			}
-
-			if include {
-				lData.DataSets = append(lData.DataSets,
-					lineData{AccountName: freqAccountName,
-						RGBColor: colorlist[colorIdx]})
-				colorIdx++
-			}
-		}
-
-		for _, calcAccount := range rConf.CalculatedAccounts {
+		for _, repAccount := range reportSummaryAccounts {
 			lData.DataSets = append(lData.DataSets,
-				lineData{AccountName: calcAccount.Name,
+				lineData{AccountName: repAccount.Name,
 					RGBColor: colorlist[colorIdx]})
 			colorIdx++
 		}
@@ -264,36 +313,20 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
 
 			accVals := make(map[string]float64)
-			for _, freqAccountName := range rConf.Accounts {
-				accVals[freqAccountName] = 0
-			}
-			for _, freqAccountName := range rConf.Accounts {
-				for _, bal := range rb.Balances {
-					if bal.Name == freqAccountName {
-						fval, _ := bal.Balance.Float64()
-						fval = math.Abs(fval)
-						accVals[freqAccountName] = fval
-					}
+			for _, confAccount := range rConf.Accounts {
+				for _, freqAccount := range getAccounts(confAccount, rb.Balances) {
+					fval, _ := freqAccount.Balance.Float64()
+					fval = math.Abs(fval)
+					accVals[freqAccount.Name] = fval
 				}
 			}
-			for _, calcAccount := range rConf.CalculatedAccounts {
-				for _, bal := range rb.Balances {
-					for _, acctOp := range calcAccount.AccountOperations {
-						if acctOp.Name == bal.Name {
-							fval, _ := bal.Balance.Float64()
-							fval = math.Abs(fval)
-							aval := accVals[calcAccount.Name]
-							switch acctOp.Operation {
-							case "+":
-								aval += fval
-							case "-":
-								aval -= fval
-							}
-							accVals[calcAccount.Name] = aval
-						}
-					}
-				}
+
+			for _, calcAccount := range calcBalances(rConf.CalculatedAccounts, rb.Balances) {
+				fval, _ := calcAccount.Balance.Float64()
+				fval = math.Abs(fval)
+				accVals[calcAccount.Name] = fval
 			}
+
 			for dIdx := range lData.DataSets {
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
 			}
