@@ -263,7 +263,21 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			http.Error(w, err.Error(), 500)
 		}
 	case "line", "bar", "stackedbar":
-		colorlist := []string{"220,220,220", "151,187,205", "70, 191, 189", "191, 71, 73", "191, 71, 133", "71, 191, 129", "165,42,42"}
+		colorlist := []string{"220 ,220, 220", // grey
+			"128, 128, 0", // olive-green
+			"198, 113, 113", // salmon
+			"0, 255, 255", // cyan
+			"113, 113, 198", // light purple
+			"255, 255, 0", // yellow
+			"0, 0, 255", // blue
+			"0, 255, 0", // green
+			"255, 128, 0", // orange
+			"128, 0, 128", // purple 
+			"56, 142, 142", // teal
+			"139, 69, 0", // brown
+			"30, 30, 30", // black
+			"128, 0, 0", // darkred
+		}
 		type lineData struct {
 			AccountName string
 			RGBColor    string
