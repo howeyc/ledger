@@ -86,18 +86,10 @@ Example usage:
     lweb -f ledger.dat -r reports.toml --port 8080
 ```
 
-## Building components
+## Installing components
 
-Visit the cmd/{component} directories, and run "go build"
-
-Thus...
 ```sh
-   cd cmd/ledger
-   go build
-   cd ../limport
-   go build
-   cd ../lweb
-   go build
+    go get -u github.com/howeyc/ledger/...
 ```
 
 ## Incompatibilities
