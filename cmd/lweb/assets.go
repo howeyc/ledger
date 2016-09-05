@@ -1,5 +1,7 @@
 package main
 
+//go:generate go-bindata -o bindata.go public/... templates/...
+
 import (
 	"fmt"
 	"html/template"
