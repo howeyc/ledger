@@ -32,7 +32,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 		// remove heading and tailing space from the line
 		trimmedLine := strings.Trim(line, whitespace)
 		lineCount++
-		if strings.HasPrefix(line, ";") {
+		if strings.HasPrefix(trimmedLine, ";") {
 			// nop
 		} else if len(trimmedLine) == 0 {
 			if trans != nil {
