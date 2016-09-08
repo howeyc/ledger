@@ -119,6 +119,30 @@ var testCases = []testCase{
 		},
 		nil,
 	},
+	testCase{
+		`1970-01-01 Payee
+	Expense/test  123
+	; Expense/test  123
+	Assets
+`,
+		[]*Transaction{
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense/test",
+						big.NewRat(123.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-123.0, 1),
+					},
+				},
+			},
+		},
+		nil,
+	},
 }
 
 func TestParseLedger(t *testing.T) {
