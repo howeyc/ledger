@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"math"
 	"math/big"
 	"net/http"
@@ -241,7 +242,11 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		pData.RangeEnd = rEnd
 		pData.ReportName = reportName
 
-		t, err := parseAssets("templates/template.piechart.html", "templates/template.nav.html")
+		funcMap := template.FuncMap{
+			"abbrev": abbrev,
+		}
+
+		t, err := parseAssetsWithFunc(funcMap, "templates/template.piechart.html", "templates/template.nav.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

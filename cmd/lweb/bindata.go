@@ -133,7 +133,7 @@ func publicChartStackedbarJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/Chart.StackedBar.js", size: 17379, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/Chart.StackedBar.js", size: 17379, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -153,7 +153,7 @@ func publicChartMinJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/Chart.min.js", size: 52091, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/Chart.min.js", size: 52091, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -173,7 +173,7 @@ func publicAndroidIcon144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-144x144.png", size: 26897, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-144x144.png", size: 26897, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -193,7 +193,7 @@ func publicAndroidIcon192x192Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-192x192.png", size: 40064, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-192x192.png", size: 40064, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -213,7 +213,7 @@ func publicAndroidIcon36x36Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-36x36.png", size: 3277, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-36x36.png", size: 3277, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -233,7 +233,7 @@ func publicAndroidIcon48x48Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-48x48.png", size: 4935, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-48x48.png", size: 4935, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -253,7 +253,7 @@ func publicAndroidIcon72x72Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-72x72.png", size: 8473, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-72x72.png", size: 8473, mode: os.FileMode(438), modTime: time.Unix(1468202831, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -273,7 +273,7 @@ func publicAndroidIcon96x96Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/android-icon-96x96.png", size: 13813, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/android-icon-96x96.png", size: 13813, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -293,7 +293,7 @@ func publicAppleIcon114x114Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-114x114.png", size: 18614, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-114x114.png", size: 18614, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -313,7 +313,7 @@ func publicAppleIcon120x120Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-120x120.png", size: 20185, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-120x120.png", size: 20185, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -333,7 +333,7 @@ func publicAppleIcon144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-144x144.png", size: 26897, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-144x144.png", size: 26897, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -353,7 +353,7 @@ func publicAppleIcon152x152Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-152x152.png", size: 29210, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-152x152.png", size: 29210, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -373,7 +373,7 @@ func publicAppleIcon180x180Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-180x180.png", size: 38369, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-180x180.png", size: 38369, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -393,7 +393,7 @@ func publicAppleIcon57x57Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-57x57.png", size: 6208, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-57x57.png", size: 6208, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -413,7 +413,7 @@ func publicAppleIcon60x60Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-60x60.png", size: 6490, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-60x60.png", size: 6490, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -433,7 +433,7 @@ func publicAppleIcon72x72Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-72x72.png", size: 8473, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-72x72.png", size: 8473, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -453,7 +453,7 @@ func publicAppleIcon76x76Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-76x76.png", size: 9503, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-76x76.png", size: 9503, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -473,7 +473,7 @@ func publicAppleIconPrecomposedPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon-precomposed.png", size: 40638, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon-precomposed.png", size: 40638, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -493,7 +493,7 @@ func publicAppleIconPng() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/apple-icon.png", size: 40638, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/apple-icon.png", size: 40638, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -513,7 +513,7 @@ func publicBootstrap330DistCssBootstrapThemeCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.css", size: 21740, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.css", size: 21740, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -533,7 +533,7 @@ func publicBootstrap330DistCssBootstrapThemeCssMap() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.css.map", size: 41933, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.css.map", size: 41933, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -553,7 +553,7 @@ func publicBootstrap330DistCssBootstrapThemeMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.min.css", size: 19199, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap-theme.min.css", size: 19199, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -573,7 +573,7 @@ func publicBootstrap330DistCssBootstrapCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.css", size: 137590, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.css", size: 137590, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -593,7 +593,7 @@ func publicBootstrap330DistCssBootstrapCssMap() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.css.map", size: 366866, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.css.map", size: 366866, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -613,7 +613,7 @@ func publicBootstrap330DistCssBootstrapMinCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.min.css", size: 114011, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/css/bootstrap.min.css", size: 114011, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -633,7 +633,7 @@ func publicBootstrap330DistFontsGlyphiconsHalflingsRegularEot() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.eot", size: 20335, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.eot", size: 20335, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -653,7 +653,7 @@ func publicBootstrap330DistFontsGlyphiconsHalflingsRegularSvg() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.svg", size: 62926, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.svg", size: 62926, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -673,7 +673,7 @@ func publicBootstrap330DistFontsGlyphiconsHalflingsRegularTtf() (*asset, error) 
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.ttf", size: 41280, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.ttf", size: 41280, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -693,7 +693,7 @@ func publicBootstrap330DistFontsGlyphiconsHalflingsRegularWoff() (*asset, error)
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.woff", size: 23320, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/fonts/glyphicons-halflings-regular.woff", size: 23320, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -713,7 +713,7 @@ func publicBootstrap330DistJsBootstrapJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/bootstrap.js", size: 65813, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/bootstrap.js", size: 65813, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -733,7 +733,7 @@ func publicBootstrap330DistJsBootstrapMinJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/bootstrap.min.js", size: 34653, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/bootstrap.min.js", size: 34653, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -753,7 +753,7 @@ func publicBootstrap330DistJsNpmJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/npm.js", size: 484, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/bootstrap-3.3.0/dist/js/npm.js", size: 484, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -773,7 +773,7 @@ func publicBrowserconfigXml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/browserconfig.xml", size: 281, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/browserconfig.xml", size: 281, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -793,7 +793,7 @@ func publicFavicon16x16Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/favicon-16x16.png", size: 1734, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/favicon-16x16.png", size: 1734, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -813,7 +813,7 @@ func publicFavicon32x32Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/favicon-32x32.png", size: 2815, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/favicon-32x32.png", size: 2815, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -833,7 +833,7 @@ func publicFavicon96x96Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/favicon-96x96.png", size: 13813, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/favicon-96x96.png", size: 13813, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -853,7 +853,7 @@ func publicFaviconIco() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/favicon.ico", size: 1150, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/favicon.ico", size: 1150, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -873,7 +873,7 @@ func publicJqueryMinJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/jquery.min.js", size: 84246, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/jquery.min.js", size: 84246, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -893,7 +893,7 @@ func publicLegendJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/legend.js", size: 742, mode: os.FileMode(436), modTime: time.Unix(1473103217, 0)}
+	info := bindataFileInfo{name: "public/legend.js", size: 742, mode: os.FileMode(438), modTime: time.Unix(1472515004, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -913,7 +913,7 @@ func publicManifestJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/manifest.json", size: 720, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/manifest.json", size: 720, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -933,7 +933,7 @@ func publicMsIcon144x144Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/ms-icon-144x144.png", size: 26897, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/ms-icon-144x144.png", size: 26897, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -953,7 +953,7 @@ func publicMsIcon150x150Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/ms-icon-150x150.png", size: 28713, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/ms-icon-150x150.png", size: 28713, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -973,7 +973,7 @@ func publicMsIcon310x310Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/ms-icon-310x310.png", size: 88098, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/ms-icon-310x310.png", size: 88098, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -993,7 +993,7 @@ func publicMsIcon70x70Png() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/ms-icon-70x70.png", size: 8464, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/ms-icon-70x70.png", size: 8464, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1013,7 +1013,7 @@ func publicPaddingCss() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "public/padding.css", size: 49, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "public/padding.css", size: 49, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1033,7 +1033,7 @@ func templatesTemplateAccountHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.account.html", size: 3437, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "templates/template.account.html", size: 3437, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1053,7 +1053,7 @@ func templatesTemplateAccountsHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.accounts.html", size: 3465, mode: os.FileMode(436), modTime: time.Unix(1473103217, 0)}
+	info := bindataFileInfo{name: "templates/template.accounts.html", size: 3465, mode: os.FileMode(438), modTime: time.Unix(1472425200, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1073,7 +1073,7 @@ func templatesTemplateBarlinechartHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.barlinechart.html", size: 5453, mode: os.FileMode(436), modTime: time.Unix(1473104195, 0)}
+	info := bindataFileInfo{name: "templates/template.barlinechart.html", size: 5453, mode: os.FileMode(438), modTime: time.Unix(1480865165, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1093,7 +1093,7 @@ func templatesTemplateLedgerHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.ledger.html", size: 4016, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "templates/template.ledger.html", size: 4016, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1113,12 +1113,12 @@ func templatesTemplateNavHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.nav.html", size: 1224, mode: os.FileMode(436), modTime: time.Unix(1469386892, 0)}
+	info := bindataFileInfo{name: "templates/template.nav.html", size: 1224, mode: os.FileMode(438), modTime: time.Unix(1468202832, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _templatesTemplatePiechartHtml = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xa4\x58\x6d\x6f\xdb\x36\x10\xfe\x9c\xfc\x8a\x0b\xd7\xa2\x36\x10\x49\x96\x93\x38\x2f\x95\x02\xa4\x69\x8a\x66\xe8\xb6\xa0\xc9\x80\x0d\x45\x3f\x30\xe2\xd9\x62\x2a\x51\x2a\x49\x3b\xf2\x0c\xff\xf7\x81\xa4\x6c\xcb\x8d\xdc\xc4\x9b\x3f\xb4\xa4\xee\xb9\xe7\x5e\x78\xbc\x23\x12\xed\xbd\xff\xe3\xf2\xee\xef\x9b\x2b\x48\x75\x9e\x9d\xef\x46\xe6\x3f\xc8\xa8\x18\xc5\x04\x05\x39\xdf\x05\x88\x52\xa4\xcc\x2c\x00\xa2\x1c\x35\x85\x24\xa5\x52\xa1\x8e\xc9\x58\x0f\xbd\x13\xd2\x14\x09\x9a\x63\x4c\x26\x1c\x1f\xcb\x42\x6a\x02\x49\x21\x34\x0a\x1d\x93\x47\xce\x74\x1a\x33\x9c\xf0\x04\x3d\xbb\xd9\x07\x2e\xb8\xe6\x34\xf3\x54\x42\x33\x8c\x43\xbf\xd7\x42\xc5\x50\x25\x92\x97\x9a\x17\xa2\xc1\xd6\x02\xa4\x63\x9d\x16\x72\x1d\xb3\xe3\x00\xa9\xd6\xa5\x87\xdf\xc7\x7c\x12\x93\xbf\xbc\x3f\x2f\xbc\xcb\x22\x2f\xa9\xe6\xf7\x19\x36\xf0\xd7\x57\x31\xb2\x11\x1a\xb5\x9d\xdd\x9d\x68\xcf\xf3\xe0\x3a\x29\x04\x78\x9e\x21\xca\xb8\xf8\x06\x12\xb3\x98\xd0\xb2\xcc\xd0\xd3\xc5\x38\x49\x3d\x9e\x18\xb7\x14\xff\x07\x55\x4c\x8e\x8e\xab\xa3\x63\x02\xa9\xc4\x61\x4c\x02\x07\x33\x00\xcf\x0a\xfc\x52\x8c\xc8\x0b\x99\x06\xbd\x6a\xd0\x6b\x63\xb2\x82\x6d\x98\x8e\xfb\xd5\x71\xbf\x8d\xc9\x0a\xb6\x62\x1a\x54\xc7\x83\x56\x26\x23\xd8\x86\x29\x0c\x0f\xab\x30\x3c\x6c\xe3\xaa\x45\x5b\xb1\xf5\x7b\x55\xd8\x6f\xcd\x56\x2d\xda\x8a\xed\xf0\xb0\x0a\x0f\xdb\x7d\x73\xa2\xad\xd8\x8e\xfa\x55\x78\xd4\x9a\xff\x5a\xb4\x15\xdb\x49\xaf\x0a\x4f\xda\x23\x75\xa2\x16\x36\xc7\xa0\xa7\x25\xc6\x84\xe7\x74\x84\x81\xc1\x2c\x29\x4f\xfb\x55\x78\xda\x27\xb0\xe4\x14\x4c\x16\x9c\xd5\xac\x4e\xba\x35\xeb\x41\xbf\x3a\x58\x05\x3d\xa4\x13\xcb\x66\xbf\x6e\xcd\x75\x3a\xa8\x4e\x07\x4f\xb8\xec\xd7\xed\xa3\x1d\x54\xe1\x53\x2e\xfb\xb5\x85\x2b\xa7\x82\x0f\x51\xe9\xa5\xc2\xe2\x83\xff\xa0\x0a\xb1\xea\x2e\xae\xfd\xe4\xca\x1c\x07\x4f\xa8\xe9\x54\xde\x1d\xcf\xf0\xb2\xc8\xd6\xfa\xd1\x2f\x43\xfb\x7b\x5e\xf1\xda\x38\xde\x50\x0c\x72\xd5\x5e\x81\x0d\x16\x9d\x62\x8e\x5e\xb2\xd1\xa4\x6b\x97\x9a\xeb\x0c\xcf\x3f\x99\x36\x27\xc1\x83\xcf\x68\x9a\x34\x78\x30\x9b\xf9\x6e\xfd\x3b\xcd\x71\x3e\x8f\x02\x07\xac\xb5\x4c\x27\x7c\x57\x14\x5a\x69\x49\x4b\x48\x0a\x89\x70\x79\x7b\x6b\xfb\xa2\x95\xdb\x94\xd5\x39\xba\x5f\xe0\xbc\x03\xff\xc0\xef\x05\x8c\x2b\x1d\x24\x4a\xad\x04\x7e\xa2\x14\x71\x19\x56\x7a\x9a\xa1\x4a\x11\x35\x69\xda\xba\x60\x0c\x92\xb1\xd2\x45\x6e\xed\xa4\x28\xb1\xdd\x58\x49\x19\xe3\x62\xf4\x3c\xe3\xc7\xbb\xdf\x3e\x1d\x81\x4a\x79\x0e\x54\x30\xf8\x8c\xaa\x2c\x04\xf3\x1f\x14\x5c\x5f\x9d\x80\x1a\x97\x36\x0f\xc5\xb0\x06\x62\x86\x39\x0a\xad\x2c\x38\x47\xc6\x29\x7c\x1f\xa3\xe4\xa8\x56\x7e\xec\x79\xde\x17\x3e\x84\x4c\xc3\xf5\x15\x9c\x7e\x75\x5f\x01\x22\x37\xad\x40\xc9\x24\x26\x81\x8b\x22\xa0\x4a\xa1\x56\xc1\x83\x0a\xcc\x70\x3d\x52\x29\x9f\xf8\x0f\x8a\x9c\x47\x81\x43\xbf\x50\x59\xd6\x6e\xe7\x5c\xb4\xa8\x47\x7b\x5f\x50\x30\x3e\xfc\xea\x5c\x8c\x02\x37\xb5\xcd\xf2\xbe\x60\xd3\x3a\x1d\x00\xb3\x99\xc6\xbc\xcc\xa8\x46\x20\x82\x4e\x08\xd4\x47\xaf\xe6\xf3\xdd\x1d\x83\x89\x18\x9f\x40\x92\x51\xa5\x62\x62\x2a\x89\x72\x81\x92\x2c\x7d\xfc\x41\x8a\x42\x7b\xc6\x52\x03\xb2\x0e\x92\xc5\xa3\x1d\xa9\x3b\xeb\x9a\x99\x57\x29\x2f\xec\x37\x94\x96\xca\x69\x78\xfe\x43\x41\xc2\x99\x2d\x51\x2a\x46\x78\xab\xa9\xd4\xfe\x87\x42\xe6\x54\x03\xe9\xf7\x7a\x03\xaf\x17\x7a\xbd\x3e\x99\xcf\xeb\x42\x36\xa8\x2b\xc1\xda\x31\x51\x90\x86\xce\x9b\x80\xf1\x89\x59\xd5\x8b\xda\xf6\xda\xa6\xe1\x70\x49\x47\xe6\x7a\xd9\x78\x81\x0b\x65\x0b\x6c\x53\xb0\x6d\x99\x6a\x8b\xd7\x22\x38\x8b\x49\x42\xc5\x84\x2a\x2f\x2d\x32\x93\x47\xb0\x55\x5c\x3f\x99\xce\xc2\x5e\xef\xf5\xd3\x2c\x45\x4e\xc5\x69\xa7\x54\x6a\x8f\x4a\xa4\x04\xdc\x33\x8b\x1c\xf4\xcc\x98\x40\x3e\x4a\x75\xbd\x09\xd6\x0c\x6f\x8e\x79\x53\x02\xfe\x6b\x64\xd6\xb7\x0c\x47\x28\x98\xa9\xd8\x67\xec\xfe\x2f\xc3\x91\xa6\xf7\x19\x5a\xb3\x19\x57\xda\xee\xc8\x02\xee\x64\xf6\x5f\xef\xbe\x90\x0c\x25\xb2\x7a\x9b\x16\x13\x94\x50\xd2\x11\x17\x54\x23\xf3\x9c\x62\xa3\x9a\xf5\xea\x01\xbc\xf8\x22\xd7\x4f\x24\xd2\xe9\xf9\x7b\xaa\x31\x0a\x74\xda\x22\x59\xbd\x61\xa1\x73\x43\xa7\x88\xdd\x76\xe0\x45\x5e\x8c\x85\xfe\x51\x16\x05\x4d\x73\x46\xba\xe6\x4e\xa4\xdd\xfd\x5e\x29\xcc\x66\xd2\x5c\x02\xf0\xef\x24\x15\x8a\x26\xc6\xb0\xb9\xde\x3f\x0d\x80\x99\x4b\x67\x62\xd8\x74\x71\x34\x7b\xa2\xb2\x48\x6e\xca\x19\x43\xe1\x55\x8a\x18\x12\x1b\xe1\x33\x1a\x13\xae\xcc\xf3\xdb\x9c\xe0\x7d\x56\x24\xdf\x8c\x62\x29\xb9\xd0\x43\x20\xaf\xfd\x70\xa0\x08\xfc\x94\xe7\x7c\x36\x7b\xe4\x3a\x85\x57\x34\x49\xe0\x2c\x06\x2e\x18\x56\xe0\x5f\x24\x89\xc9\xe0\x65\x6a\xe2\x57\xd0\x9b\xcf\x67\x33\x03\xf1\xdf\xd1\x8c\x8a\x04\xfd\x0f\x59\x41\xf5\xad\x96\x5c\x8c\xa0\x6f\xa4\x28\xd8\x53\x13\xeb\x19\x37\x09\xb5\xb0\xe6\x19\x34\x73\x1e\x05\xb6\x64\x5e\x52\xd8\x4b\x91\x5b\xb9\xf1\x14\x2c\xdb\xac\x9d\x2f\x9b\xc7\xee\xaf\x74\x42\x6f\x6d\x29\x59\x48\xbc\xf5\x6f\x6d\x7e\xc1\x4d\x46\x13\x64\x40\x35\xe8\x14\x01\x05\x33\x23\xd0\x2c\x59\x91\x8c\xcd\x04\x04\x55\xd8\xbd\xe9\x7e\x0a\xb2\x82\x32\x18\x52\xa5\x6b\x3f\xe1\xc9\xc8\x7a\x30\x63\x72\xba\x69\x40\xad\x41\x2f\x4d\x63\x78\x11\xd2\x35\x8f\x67\x61\xad\x2f\x8f\x87\xe6\xc3\xe3\xa7\xc6\xdc\xe6\x55\x67\x11\x7a\xd7\x97\x48\xd9\xb4\x33\x1c\x0b\x7b\x7f\x3a\x5d\x98\xed\xee\x4c\xa8\x84\x44\x57\x10\x2f\x53\xe4\x8f\x50\x5f\xb9\xf7\xc2\xbb\xe9\x35\xeb\x34\xbb\x71\xd7\x08\x2f\xcd\xd0\xa8\x74\x87\xf4\x19\xe9\xbe\x75\x14\x8c\x6a\x0a\x31\x7c\xd9\x5d\xbb\xad\x36\x25\x75\x05\x2f\xae\xeb\x6c\x59\x73\x13\x9a\x8d\xd1\xce\xc1\xba\x96\xe7\xf3\xfd\xa5\xd0\x3e\xfc\xce\x80\xcc\x66\xbe\x7d\x76\xce\xe7\x64\x25\x4c\xf9\x28\xcd\xcc\x28\x70\x80\x8f\x8b\xed\x1a\x28\xa3\xf7\x98\x39\x80\x9b\xb9\xc4\x8a\x6a\x1b\x8b\x0b\xb0\xf3\xb5\x8e\x20\x9f\xde\x70\xb4\x0e\x43\x0c\x02\x1f\xc1\xae\x3b\x89\xae\xba\xfe\x0d\xc7\x8e\x89\x70\x7f\xe6\x5e\x2c\x8a\x4f\xf0\x0c\xb4\x1c\xe3\xbc\xfb\xd6\xd2\xb9\x23\xed\x6c\xca\xe1\x9b\xe6\xd4\x78\xd3\xdd\xb7\xf9\xaa\x55\x17\x14\xab\x43\xb4\x8f\x1d\x77\x1d\xa3\xc0\xfd\x11\xe3\xdf\x00\x00\x00\xff\xff\x53\x92\xea\x89\xd5\x10\x00\x00")
+var _templatesTemplatePiechartHtml = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xa4\x58\x6d\x6f\xe3\xb8\x11\xfe\x9c\xfc\x8a\x09\x7b\x87\xb3\x81\x48\xb2\x9c\xc4\x79\x39\x29\x40\x36\x97\xc3\xa6\xd8\xb6\xc1\x26\x05\x5a\x2c\xf6\x03\x2d\x8e\x2d\x66\x25\x4a\x4b\xd2\x8a\x5c\xc3\xff\xbd\x20\x29\xdb\xf2\x46\xde\xc4\xad\x3f\xec\x92\x9a\x67\x9e\x79\xe1\x70\x86\x48\x74\xf4\xc7\x3f\x6e\x9f\xfe\xfd\x70\x07\xa9\xce\xb3\xeb\xc3\xc8\xfc\x07\x19\x15\xd3\x98\xa0\x20\xd7\x87\x00\x51\x8a\x94\x99\x05\x40\x94\xa3\xa6\x90\xa4\x54\x2a\xd4\x31\x99\xe9\x89\x77\x41\xda\x22\x41\x73\x8c\x49\xc5\xf1\xa5\x2c\xa4\x26\x90\x14\x42\xa3\xd0\x31\x79\xe1\x4c\xa7\x31\xc3\x8a\x27\xe8\xd9\xcd\x31\x70\xc1\x35\xa7\x99\xa7\x12\x9a\x61\x1c\xfa\x83\x0e\x2a\x86\x2a\x91\xbc\xd4\xbc\x10\x2d\xb6\x0e\x20\x9d\xe9\xb4\x90\xdb\x98\x03\x07\x48\xb5\x2e\x3d\xfc\x3e\xe3\x55\x4c\xfe\xe5\xfd\xf3\xc6\xbb\x2d\xf2\x92\x6a\x3e\xce\xb0\x85\xbf\xbf\x8b\x91\x4d\xd1\xa8\x1d\x1c\x1e\x44\x47\x9e\x07\xf7\x49\x21\xc0\xf3\x0c\x51\xc6\xc5\x37\x90\x98\xc5\x84\x96\x65\x86\x9e\x2e\x66\x49\xea\xf1\xc4\xb8\xa5\xf8\x7f\x50\xc5\xe4\xec\xbc\x3e\x3b\x27\x90\x4a\x9c\xc4\x24\x70\x30\x03\xf0\xac\xc0\x2f\xc5\x94\xbc\x93\x69\x34\xa8\x47\x83\x2e\x26\x2b\xd8\x87\xe9\x7c\x58\x9f\x0f\xbb\x98\xac\x60\x2f\xa6\x51\x7d\x3e\xea\x64\x32\x82\x7d\x98\xc2\xf0\xb4\x0e\xc3\xd3\x2e\xae\x46\xb4\x17\xdb\x70\x50\x87\xc3\xce\x6c\x35\xa2\xbd\xd8\x4e\x4f\xeb\xf0\xb4\xdb\x37\x27\xda\x8b\xed\x6c\x58\x87\x67\x9d\xf9\x6f\x44\x7b\xb1\x5d\x0c\xea\xf0\xa2\x3b\x52\x27\xea\x60\x73\x0c\x7a\x5e\x62\x4c\x78\x4e\xa7\x18\x18\xcc\x9a\xf2\x72\x58\x87\x97\x43\x02\x6b\x4e\xc1\x64\xc1\x59\xc3\xea\xa4\x7b\xb3\x9e\x0c\xeb\x93\x4d\xd0\x13\x5a\x59\x36\xfb\x75\x6f\xae\xcb\x51\x7d\x39\x7a\xc5\x65\xbf\xee\x1f\xed\xa8\x0e\x5f\x73\xd9\xaf\x1d\x5c\x39\x15\x7c\x82\x4a\xaf\x15\x56\x1f\xfc\x67\x55\x88\x4d\x77\x71\xed\x27\x57\xe6\x38\x78\x42\x4d\xa7\xf2\x9e\x78\x86\xb7\x45\xb6\xd5\x8f\xfe\x32\xb1\xbf\xb7\x15\xef\x8d\xe3\x2d\xc5\x20\x57\xdd\x15\xd8\x62\xd1\x29\xe6\xe8\x25\x3b\x4d\xba\x76\xa9\xb9\xce\xf0\xfa\x93\x69\x73\x12\x3c\xf8\x8c\xa6\x49\x83\x07\x8b\x85\xef\xd6\x7f\xa7\x39\x2e\x97\x51\xe0\x80\x8d\x96\xe9\x84\x1f\x8a\x42\x2b\x2d\x69\x09\x49\x21\x11\x6e\x1f\x1f\x6d\x5f\xb4\x72\x9b\xb2\x26\x47\xe3\x15\xce\x3b\xf1\x4f\xfc\x41\xc0\xb8\xd2\x41\xa2\xd4\x46\xe0\x27\x4a\x11\x97\x61\xa5\xe7\x19\xaa\x14\x51\x93\xb6\xad\x1b\xc6\x20\x99\x29\x5d\xe4\xd6\x4e\x8a\x12\xbb\x8d\x95\x94\x31\x2e\xa6\x6f\x33\x7e\x7c\xfa\xdb\xa7\x33\x50\x29\xcf\x81\x0a\x06\x9f\x51\x95\x85\x60\xfe\xb3\x82\xfb\xbb\x0b\x50\xb3\xd2\xe6\xa1\x98\x34\x40\xcc\x30\x47\xa1\x95\x05\xe7\xc8\x38\x85\xef\x33\x94\x1c\xd5\xc6\x8f\x23\xcf\xfb\xc2\x27\x90\x69\xb8\xbf\x83\xcb\xaf\xee\x2b\x40\xe4\xa6\x15\x28\x99\xc4\x24\x70\x51\x04\x54\x29\xd4\x2a\x78\x56\x81\x19\xae\x67\x2a\xe5\x95\xff\xac\xc8\x75\x14\x38\xf4\x3b\x95\x65\xe3\x76\xce\x45\x87\x7a\x74\xf4\x05\x05\xe3\x93\xaf\xce\xc5\x28\x70\x53\xdb\x2c\xc7\x05\x9b\x37\xe9\x00\x58\x2c\x34\xe6\x65\x46\x35\x02\x11\xb4\x22\xd0\x1c\xbd\x5a\x2e\x0f\x0f\x0c\x26\x62\xbc\x82\x24\xa3\x4a\xc5\xc4\x54\x12\xe5\x02\x25\x59\xfb\xf8\x83\x14\x85\xf6\x8c\xa5\x16\x64\x1b\x24\x8b\x17\x3b\x52\x0f\xb6\x35\x33\xaf\x56\x5e\x38\x6c\x29\xad\x95\xd3\xf0\xfa\x87\x82\x84\x2b\x5b\xa2\x54\x4c\xf1\x51\x53\xa9\xfd\x3f\x0b\x99\x53\x0d\x64\x38\x18\x8c\xbc\x41\xe8\x0d\x86\x64\xb9\x6c\x0a\xd9\xa0\xee\x04\xeb\xc6\x44\x41\x1a\x3a\x6f\x02\xc6\x2b\xb3\x6a\x16\x8d\xed\xad\x4d\xcb\xe1\x92\x4e\xcd\xf5\xb2\xf1\x02\x17\xca\x16\xd8\xae\x60\xbb\x32\xd5\x15\xaf\x45\x70\x16\x93\x84\x8a\x8a\x2a\x2f\x2d\x32\x93\x47\xb0\x55\xdc\x3c\x99\xae\xc2\xc1\xe0\xd7\xd7\x59\x8a\x9c\x8a\xd3\x4e\xa9\xd4\x1e\x95\x48\x09\xb8\x67\x16\x39\x19\x98\x31\x81\x7c\x9a\xea\x66\x13\x6c\x19\xde\x1d\xf3\xae\x04\xfc\xaf\x91\x59\xdf\x32\x9c\xa2\x60\xa6\x62\xdf\xb0\xfb\x7f\x19\x8e\x34\x1d\x67\x68\xcd\x66\x5c\x69\xbb\x23\x2b\xb8\x93\xd9\x7f\xbd\x71\x21\x19\x4a\x64\xcd\x36\x2d\x2a\x94\x50\xd2\x29\x17\x54\x23\xf3\x9c\x62\xab\x9a\xf5\xe6\x01\xbc\xfa\x22\xb7\x4f\x24\xd2\xe9\xf5\x1f\x54\x63\x14\xe8\xb4\x43\xb2\x79\xc3\x42\xef\x81\xce\x11\xfb\xdd\xc0\x9b\xbc\x98\x09\xfd\xa3\x2c\x0a\xda\xe6\x8c\x74\xcb\x9d\x48\xbb\xfb\xbd\x51\x58\x2c\xa4\xb9\x04\xe0\x3f\x49\x2a\x14\x4d\x8c\x61\x73\xbd\x7f\x1a\x00\x33\x97\xce\xc4\xb0\xeb\xe2\x68\xf6\x4a\x65\x95\xdc\x94\x33\x86\xc2\xab\x15\x31\x24\x36\xc2\x37\x34\x2a\xae\xcc\xf3\xdb\x9c\xe0\x38\x2b\x92\x6f\x46\xb1\x94\x5c\xe8\x09\x90\x5f\xfd\x70\xa4\x08\xfc\x94\xe7\x7a\xb1\x78\xe1\x3a\x85\x5f\x68\x92\xc0\x55\x0c\x5c\x30\xac\xc1\xbf\x49\x12\x93\xc1\xdb\xd4\xc4\xaf\x60\xb0\x5c\x2e\x16\x06\xe2\x7f\xa0\x19\x15\x09\xfa\x7f\x66\x05\xd5\x8f\x5a\x72\x31\x85\xa1\x91\xa2\x60\xaf\x4d\x6c\x67\xdc\x24\xd4\xc2\xda\x67\xd0\xce\x79\x14\xd8\x92\x79\x4f\x61\xaf\x45\x6e\xe5\xc6\x53\xb0\x6e\xb3\x76\xbe\xec\x1e\xbb\x7f\xa5\x15\x7d\xb4\xa5\x64\x21\xf1\xde\xbf\xad\xf9\x05\x0f\x19\x4d\x90\x01\xd5\xa0\x53\x04\x14\xcc\x8c\x40\xb3\x64\x45\x32\x33\x13\x10\x54\x61\xf7\xa6\xfb\x29\xc8\x0a\xca\x60\x42\x95\x6e\xfc\x84\x57\x23\xeb\xd9\x8c\xc9\xf9\xae\x01\xb5\x05\xbd\x35\x8d\xe1\x5d\x48\xd7\x3c\xde\x84\x75\xbe\x3c\x9e\xdb\x0f\x8f\x9f\x1a\x73\x9b\x5f\x7a\xab\xd0\xfb\xbe\x44\xca\xe6\xbd\xc9\x4c\xd8\xfb\xd3\xeb\xc3\xe2\xf0\xa0\xa2\x12\x12\x5d\x43\xbc\x4e\x91\x3f\x45\x7d\xe7\xde\x0b\x1f\xe6\xf7\xac\xd7\xee\xc6\x7d\x23\xbc\x35\x43\xa3\xd6\x3d\x32\x64\xa4\xff\xbb\xa3\x60\x54\x53\x88\xe1\xcb\xe1\xd6\x6d\xb5\x29\x69\x2a\x78\x75\x5d\x17\xeb\x9a\xab\x68\x36\x43\x3b\x07\x9b\x5a\x5e\x2e\x8f\xd7\x42\xfb\xf0\xbb\x02\xb2\x58\xf8\xf6\xd9\xb9\x5c\x92\x8d\x30\xe5\xd3\x34\x33\xa3\xc0\x01\x3e\xae\xb6\x5b\xa0\x8c\x8e\x31\xb3\x00\x3a\x1e\x4b\xac\xc0\x77\xa3\x97\x58\x44\x63\x6a\x75\x0f\x0e\xbe\x36\x81\xe4\xf3\x07\x8e\xd6\x6f\x88\x41\xe0\x0b\xd8\x75\x2f\xd1\x75\xdf\x7f\xe0\xd8\x33\x81\x1e\x2f\xdc\xc3\x45\xf1\x0a\xaf\x40\xcb\x19\x2e\xfb\xbf\x5b\x3a\x77\xb2\xbd\x5d\xa9\xfc\xad\x3d\x3c\x7e\xeb\x1f\xdb\xb4\x35\xaa\x2b\x8a\xcd\x59\xda\x37\x8f\xbb\x95\x51\xe0\xfe\x96\xf1\xdf\x00\x00\x00\xff\xff\xd9\xc6\x41\x46\xdc\x10\x00\x00")
 
 func templatesTemplatePiechartHtmlBytes() ([]byte, error) {
 	return bindataRead(
@@ -1133,7 +1133,7 @@ func templatesTemplatePiechartHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "templates/template.piechart.html", size: 4309, mode: os.FileMode(436), modTime: time.Unix(1473104193, 0)}
+	info := bindataFileInfo{name: "templates/template.piechart.html", size: 4316, mode: os.FileMode(438), modTime: time.Unix(1480864443, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
