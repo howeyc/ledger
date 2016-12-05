@@ -314,7 +314,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 			for _, calcAccount := range calcBalances(rConf.CalculatedAccounts, rb.Balances) {
 				fval, _ := calcAccount.Balance.Float64()
-				fval = math.Abs(fval)
 				accVals[calcAccount.Name] = fval
 			}
 
