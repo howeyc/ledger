@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"math"
 	"math/big"
 	"net/http"
 	"strings"
@@ -112,19 +111,21 @@ func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (resu
 }
 
 func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (results []*ledger.Account) {
-	accVals := make(map[string]float64)
+	accVals := make(map[string]*big.Rat)
 	for _, calcAccount := range calcAccts {
 		for _, bal := range balances {
 			for _, acctOp := range calcAccount.AccountOperations {
 				if acctOp.Name == bal.Name {
-					fval, _ := bal.Balance.Float64()
-					fval = math.Abs(fval)
-					aval := accVals[calcAccount.Name]
+					fval := big.NewRat(1, 1).Abs(bal.Balance)
+					aval, found := accVals[calcAccount.Name]
+					if !found {
+						aval = big.NewRat(0, 1)
+					}
 					switch acctOp.Operation {
 					case "+":
-						aval += fval
+						aval.Add(aval, fval)
 					case "-":
-						aval -= fval
+						aval.Sub(aval, fval)
 					}
 					accVals[calcAccount.Name] = aval
 				}
@@ -133,9 +134,7 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 	}
 
 	for _, calcAccount := range calcAccts {
-		bal := big.NewRat(1, 1)
-		bal.SetFloat64(accVals[calcAccount.Name])
-		results = append(results, &ledger.Account{Name: calcAccount.Name, Balance: bal})
+		results = append(results, &ledger.Account{Name: calcAccount.Name, Balance: accVals[calcAccount.Name]})
 	}
 
 	return
@@ -207,7 +206,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 	case "pie":
 		type pieAccount struct {
 			Name      string
-			Balance   float64
+			Balance   *big.Rat
 			Color     string
 			Highlight string
 		}
@@ -221,7 +220,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		for colorIdx, account := range reportSummaryAccounts {
 			accName := account.Name
-			value, _ := account.Balance.Float64()
+			value := big.NewRat(1, 1).Set(account.Balance)
 			values = append(values, pieAccount{Name: accName, Balance: value,
 				Color:     colorPalette[colorIdx].Hex(),
 				Highlight: colorPalette[colorIdx].BlendRgb(colorBlack, 0.1).Hex()})
@@ -259,7 +258,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		type lineData struct {
 			AccountName string
 			RGBColor    string
-			Values      []float64
+			Values      []*big.Rat
 		}
 		type linePageData struct {
 			pageData
@@ -303,22 +302,23 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.RangeEnd = rb.End
 			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
 
-			accVals := make(map[string]float64)
+			accVals := make(map[string]*big.Rat)
 			for _, confAccount := range rConf.Accounts {
 				for _, freqAccount := range getAccounts(confAccount, rb.Balances) {
-					fval, _ := freqAccount.Balance.Float64()
-					fval = math.Abs(fval)
-					accVals[freqAccount.Name] = fval
+					accVals[freqAccount.Name] = big.NewRat(1, 1).Abs(freqAccount.Balance)
 				}
 			}
 
 			for _, calcAccount := range calcBalances(rConf.CalculatedAccounts, rb.Balances) {
-				fval, _ := calcAccount.Balance.Float64()
-				accVals[calcAccount.Name] = fval
+				accVals[calcAccount.Name] = calcAccount.Balance
 			}
 
 			for dIdx := range lData.DataSets {
-				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, accVals[lData.DataSets[dIdx].AccountName])
+				aval, afound := accVals[lData.DataSets[dIdx].AccountName]
+				if !afound {
+					aval = big.NewRat(0, 1)
+				}
+				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, aval)
 			}
 		}
 

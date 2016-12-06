@@ -126,7 +126,7 @@
         pointHighlightStroke: "rgba({{.RGBColor}},1)",
         data: [
         {{range .Values}}
-        {{.}},
+        {{.FloatString 2}},
         {{end}}
         ]
     },
@@ -146,7 +146,7 @@
         HighlightStroke: "rgba({{.RGBColor}},1)",
         data: [
         {{range .Values}}
-        {{.}},
+        {{.FloatString 2}},
         {{end}}
         ]
     },

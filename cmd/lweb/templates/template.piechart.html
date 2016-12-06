@@ -108,7 +108,7 @@
 	var data = [
     {{range .ChartAccounts}}
     {
-        value: {{.Balance}},
+        value: {{.Balance.FloatString 2}},
         color: "{{.Color}}",
         highlight: "{{.Highlight}}",
         label: "{{abbrev .Name}}"
