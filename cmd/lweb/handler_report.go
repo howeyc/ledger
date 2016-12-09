@@ -331,7 +331,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 			for dIdx := range lData.DataSets {
 				aval, afound := accVals[lData.DataSets[dIdx].AccountName]
-				if !afound {
+				if !afound || aval == nil {
 					aval = big.NewRat(0, 1)
 				}
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, aval)
