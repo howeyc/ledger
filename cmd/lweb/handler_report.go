@@ -195,6 +195,22 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 	}
 
+	// Filter report to only show transactions that are for the accounts in the summary of the report
+	var vtrans []*ledger.Transaction
+	for _, trans := range rtrans {
+		include := false
+		for _, accChange := range trans.AccountChanges {
+			for _, account := range reportSummaryAccounts {
+				if strings.Contains(accChange.Name, account.Name) {
+					include = true
+				}
+			}
+		}
+		if include {
+			vtrans = append(vtrans, trans)
+		}
+	}
+
 	colorPalette, cerr := colorful.HappyPalette(len(reportSummaryAccounts))
 	if cerr != nil {
 		http.Error(w, cerr.Error(), 500)
@@ -235,7 +251,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		var pData piePageData
 		pData.Reports = reportConfigData.Reports
-		pData.Transactions = rtrans
+		pData.Transactions = vtrans
 		pData.ChartAccounts = values
 		pData.RangeStart = rStart
 		pData.RangeEnd = rEnd
@@ -292,7 +308,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			lData.ChartType = "StackedBar"
 		}
 
-		lData.Transactions = rtrans
+		lData.Transactions = vtrans
 
 		rangeBalances := ledger.BalancesByPeriod(rtrans, rPeriod, rType)
 		for _, rb := range rangeBalances {
