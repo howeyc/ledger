@@ -3,9 +3,6 @@
 This is a project to parse and import transactions in a ledger file similar
 to the [Ledger](http://ledger-cli.org) command line tool written in C++.
 
-I have been using this tool to track my finances for over a year. I have data
-going back over five years.
-
 ## Simple Ledger file support
 
 The ledger file this will parse is much simpler than the C++ tool.
@@ -30,7 +27,7 @@ Example transaction:
         Expenses:Dining Out:Fast Food        5.60
         Wallet:Cash
 
-A ledger file is assumed to be a list of transactions separated by a new line.
+A ledger file is a list of transactions separated by a blank line.
 
 
 ## ledger
