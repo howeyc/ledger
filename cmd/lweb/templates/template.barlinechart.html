@@ -113,7 +113,7 @@
         {{end}}
         ],
 
-    {{if eq .ChartType "Line"}}
+    {{if eq .ChartType "Line" "Radar"}}
         datasets: [
     {{range .DataSets}}
     {
@@ -133,7 +133,8 @@
     {{end}}
         ]
     };
-    var myPieChart = new Chart(ctx).Line(data,{responsive: true});
+    {{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx).Line(data,{responsive: true});{{end}}
+    {{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx).Radar(data,{responsive: true});{{end}}
     {{end}}
     {{if eq .ChartType "Bar" "StackedBar"}}
         datasets: [

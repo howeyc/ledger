@@ -270,7 +270,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 		}
-	case "line", "bar", "stackedbar":
+	case "line", "radar", "bar", "stackedbar":
 		type lineData struct {
 			AccountName string
 			RGBColor    string
@@ -300,6 +300,9 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		case "line":
 			rType = ledger.RangeSnapshot
 			lData.ChartType = "Line"
+		case "radar":
+			rType = ledger.RangePartition
+			lData.ChartType = "Radar"
 		case "bar":
 			rType = ledger.RangePartition
 			lData.ChartType = "Bar"
@@ -307,8 +310,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			rType = ledger.RangePartition
 			lData.ChartType = "StackedBar"
 		}
-
-		lData.Transactions = vtrans
 
 		rangeBalances := ledger.BalancesByPeriod(rtrans, rPeriod, rType)
 		for _, rb := range rangeBalances {
@@ -337,6 +338,41 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, aval)
 			}
 		}
+
+		// Radar chart flips everything. Dates are each dataset and the accounts become the labels
+		if rConf.Chart == "radar" {
+			dates := lData.Labels
+			dateAccountMap := make(map[string]*big.Rat)
+			var accNames []string
+			for dsIdx := range lData.DataSets {
+				for dIdx := range dates {
+					dateAccountMap[dates[dIdx]+","+lData.DataSets[dsIdx].AccountName] = lData.DataSets[dsIdx].Values[dIdx]
+				}
+				accNames = append(accNames, lData.DataSets[dsIdx].AccountName)
+			}
+
+			lData.DataSets = []lineData{}
+
+			radarcolorPalette, rcerr := colorful.HappyPalette(len(dates))
+			if rcerr != nil {
+				http.Error(w, cerr.Error(), 500)
+				return
+			}
+			for colorIdx, date := range dates {
+				r, g, b := radarcolorPalette[colorIdx].RGB255()
+				var vals []*big.Rat
+				for _, repAccount := range reportSummaryAccounts {
+					vals = append(vals, dateAccountMap[date+","+repAccount.Name])
+				}
+				lData.DataSets = append(lData.DataSets,
+					lineData{AccountName: date,
+						RGBColor: fmt.Sprintf("%d, %d, %d", r, g, b),
+						Values:   vals})
+			}
+			lData.Labels = accNames
+		}
+
+		lData.Transactions = vtrans
 
 		t, err := parseAssets("templates/template.barlinechart.html", "templates/template.nav.html")
 		if err != nil {
