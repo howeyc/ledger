@@ -115,7 +115,9 @@
     },
     {{end}}
 	];
-	var myPieChart = new Chart(ctx).Pie(data,{responsive: true});
+    {{if eq .ChartType "Pie"}} var myPieChart = new Chart(ctx).Pie(data,{responsive: true});{{end}}
+    {{if eq .ChartType "Polar"}} var myPieChart = new Chart(ctx).PolarArea(data,{responsive: true});{{end}}
+    {{if eq .ChartType "Doughnut"}} var myPieChart = new Chart(ctx).Doughnut(data,{responsive: true});{{end}}
     legend(document.getElementById('chart-legend'), data);
     });
     </script>

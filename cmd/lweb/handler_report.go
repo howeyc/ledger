@@ -240,7 +240,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 	colorBlack := colorful.Color{R: 1, G: 1, B: 1}
 
 	switch rConf.Chart {
-	case "pie":
+	case "pie", "polar", "doughnut":
 		type pieAccount struct {
 			Name      string
 			Balance   *big.Rat
@@ -267,6 +267,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			pageData
 			ReportName           string
 			RangeStart, RangeEnd time.Time
+			ChartType            string
 			ChartAccounts        []pieAccount
 		}
 
@@ -278,6 +279,14 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		pData.RangeEnd = rEnd
 		pData.ReportName = reportName
 
+		switch rConf.Chart {
+		case "pie":
+			pData.ChartType = "Pie"
+		case "polar":
+			pData.ChartType = "Polar"
+		case "doughnut":
+			pData.ChartType = "Doughnut"
+		}
 		funcMap := template.FuncMap{
 			"abbrev": abbrev,
 		}
@@ -395,7 +404,11 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		lData.Transactions = vtrans
 
-		t, err := parseAssets("templates/template.barlinechart.html", "templates/template.nav.html")
+		funcMap := template.FuncMap{
+			"abbrev": abbrev,
+		}
+
+		t, err := parseAssetsWithFunc(funcMap, "templates/template.barlinechart.html", "templates/template.nav.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
