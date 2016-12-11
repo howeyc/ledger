@@ -62,7 +62,7 @@ Attempts to get payee, date, and amount based on headers in the csv file.
 
 Example usage:
 ```sh
-    ledger -f ledger.dat discover discover-recent-transactions.csv
+    limport -f ledger.dat discover discover-recent-transactions.csv
 ```
 
 In the above example "discover" is the account search string to use to find
