@@ -24,9 +24,10 @@ type Period string
 
 // Periods suppored by ledger
 const (
-	PeriodMonth   Period = "Monthly"
-	PeriodQuarter Period = "Quarterly"
-	PeriodYear    Period = "Yearly"
+	PeriodMonth    Period = "Monthly"
+	PeriodQuarter  Period = "Quarterly"
+	PeriodYear     Period = "Yearly"
+	PeriodSemiYear Period = "SemiYearly"
 )
 
 func getDateBoundaries(per Period, start, end time.Time) []time.Time {
@@ -48,6 +49,14 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 			periodStart = time.Date(start.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
 		default:
 			periodStart = time.Date(start.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+		}
+	case PeriodSemiYear:
+		incMonth = 6
+		switch start.Month() {
+		case time.January, time.February, time.March, time.April, time.May, time.June:
+			periodStart = time.Date(start.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+		default:
+			periodStart = time.Date(start.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
 		}
 	case PeriodYear:
 		incYear = 1

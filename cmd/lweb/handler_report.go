@@ -21,6 +21,8 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 		period = ledger.PeriodQuarter
 	case "Yearly":
 		period = ledger.PeriodYear
+	case "SemiYearly":
+		period = ledger.PeriodSemiYear
 	default:
 		period = ledger.PeriodMonth
 	}
