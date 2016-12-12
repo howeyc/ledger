@@ -407,7 +407,8 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		lData.Transactions = vtrans
 
 		funcMap := template.FuncMap{
-			"abbrev": abbrev,
+			"abbrev":      abbrev,
+			"lastaccount": lastaccount,
 		}
 
 		t, err := parseAssetsWithFunc(funcMap, "templates/template.barlinechart.html", "templates/template.nav.html")

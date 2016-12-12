@@ -15,3 +15,8 @@ func abbrev(acctName string) string {
 	shortAccounts[len(accounts)-1] = accounts[len(accounts)-1]
 	return strings.Join(shortAccounts, ":")
 }
+
+func lastaccount(acctName string) string {
+	accounts := strings.Split(acctName, ":")
+	return accounts[len(accounts)-1]
+}

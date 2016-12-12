@@ -106,12 +106,21 @@
     <script>
     $(document).ready(function() {
 	var ctx = document.getElementById("chart-area").getContext("2d");
+    {{if eq .ChartType "Radar"}}
     var data = {
         labels: [
         {{range .Labels}}
-          "{{abbrev .}}",
+          "{{lastaccount .}}",
         {{end}}
         ],
+    {{else}}
+    var data = {
+        labels: [
+        {{range .Labels}}
+          "{{.}}",
+        {{end}}
+        ],
+    {{end}}
 
     {{if eq .ChartType "Line" "Radar"}}
         datasets: [
@@ -134,7 +143,7 @@
         ]
     };
     {{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx).Line(data,{responsive: true});{{end}}
-    {{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx).Radar(data,{responsive: true});{{end}}
+    {{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx).Radar(data,{responsive: true, scaleShowLabels: true});{{end}}
     {{end}}
     {{if eq .ChartType "Bar" "StackedBar"}}
         datasets: [
