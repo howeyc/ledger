@@ -80,26 +80,39 @@ func PrintLedger(generalLedger []*ledger.Transaction, columns int) {
 
 // PrintRegister prints each transaction that matches the given filters.
 func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
+	// Calulate widths for variable-length part of output
+	// 3 10-width columns (date, account-change, running-total)
+	// 4 spaces
+	remainingWidth := columns - (10 * 3) - (4 * 1)
+	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", remainingWidth/3, (remainingWidth/3)*2)
+
+	var otherAccount string
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
-		for _, accChange := range trans.AccountChanges {
+		for aIdx, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
 			for _, filter := range filterArr {
 				if strings.Contains(accChange.Name, filter) {
 					inFilter = true
+
+					// Probably not the best way, but we just need to find one other account
+					if aIdx > 0 {
+						otherAccount = trans.AccountChanges[0].Name
+					} else {
+						otherAccount = trans.AccountChanges[1].Name
+					}
 				}
 			}
 			if inFilter {
 				runningBalance.Add(runningBalance, accChange.Balance)
-				writtenBytes, _ := fmt.Printf("%s %s", trans.Date.Format(transactionDateFormat), trans.Payee)
 				outBalanceString := accChange.Balance.FloatString(displayPrecision)
 				outRunningBalanceString := runningBalance.FloatString(displayPrecision)
-				spaceCount := columns - writtenBytes - 2 - utf8.RuneCountInString(outBalanceString) - utf8.RuneCountInString(outRunningBalanceString)
-				if spaceCount < 0 {
-					spaceCount = 0
-				}
-				fmt.Printf("%s%s %s", strings.Repeat(" ", spaceCount), outBalanceString, outRunningBalanceString)
-				fmt.Println("")
+				fmt.Printf(formatString,
+					trans.Date.Format(transactionDateFormat),
+					trans.Payee,
+					otherAccount,
+					outBalanceString,
+					outRunningBalanceString)
 			}
 		}
 	}
