@@ -83,6 +83,38 @@ const (
 	RangePartition RangeType = "Partition"
 )
 
+// RangeTransactions contains the transactions and the start and end time of the date range
+type RangeTransactions struct {
+	Start, End   time.Time
+	Transactions []*Transaction
+}
+
+// TransactionsByPeriod will return the transactions for each period.
+func TransactionsByPeriod(trans []*Transaction, per Period) []*RangeTransactions {
+	var results []*RangeTransactions
+	if len(trans) < 1 {
+		return results
+	}
+
+	tStart := trans[0].Date
+	tEnd := trans[len(trans)-1].Date
+
+	boundaries := getDateBoundaries(per, tStart, tEnd)
+
+	bStart := boundaries[0]
+	for _, boundary := range boundaries[1:] {
+		bEnd := boundary
+
+		bTrans := TransactionsInDateRange(trans, bStart, bEnd)
+		// End date should be the last day (inclusive, so subtract 1 day)
+		results = append(results, &RangeTransactions{Start: bStart, End: bEnd.AddDate(0, 0, -1), Transactions: bTrans})
+
+		bStart = bEnd
+	}
+
+	return results
+}
+
 // RangeBalance contains the account balances and the start and end time of the date range
 type RangeBalance struct {
 	Start, End time.Time

@@ -23,12 +23,14 @@ func main() {
 	var columnWidth, transactionDepth int
 	var showEmptyAccounts bool
 	var columnWide bool
+	var period string
 
 	var ledgerFileName string
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&startString, "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
 	flag.StringVar(&endString, "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
+	flag.StringVar(&period, "period", "", "Split output into periods (Monthly,Quarterly,SemiYearly,Yearly).")
 	flag.BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
 	flag.IntVar(&transactionDepth, "depth", -1, "Depth of transaction output (balance).")
 	flag.IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
@@ -95,11 +97,38 @@ func main() {
 	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
 	case "balance", "bal":
-		PrintBalances(ledger.GetBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
+		if period == "" {
+			PrintBalances(ledger.GetBalances(generalLedger, containsFilterArray), showEmptyAccounts, transactionDepth, columnWidth)
+		} else {
+			lperiod := ledger.Period(period)
+			rbalances := ledger.BalancesByPeriod(generalLedger, lperiod, ledger.RangePartition)
+			for rIdx, rb := range rbalances {
+				if rIdx > 0 {
+					fmt.Println("")
+					fmt.Println(strings.Repeat("=", columnWidth))
+				}
+				fmt.Println(rb.Start.Format(transactionDateFormat), "-", rb.End.Format(transactionDateFormat))
+				fmt.Println(strings.Repeat("=", columnWidth))
+				PrintBalances(rb.Balances, showEmptyAccounts, transactionDepth, columnWidth)
+			}
+		}
 	case "print":
 		PrintLedger(generalLedger, columnWidth)
 	case "register", "reg":
-		PrintRegister(generalLedger, containsFilterArray, columnWidth)
+		if period == "" {
+			PrintRegister(generalLedger, containsFilterArray, columnWidth)
+		} else {
+			lperiod := ledger.Period(period)
+			rtrans := ledger.TransactionsByPeriod(generalLedger, lperiod)
+			for rIdx, rt := range rtrans {
+				if rIdx > 0 {
+					fmt.Println(strings.Repeat("=", columnWidth))
+				}
+				fmt.Println(rt.Start.Format(transactionDateFormat), "-", rt.End.Format(transactionDateFormat))
+				fmt.Println(strings.Repeat("=", columnWidth))
+				PrintRegister(rt.Transactions, containsFilterArray, columnWidth)
+			}
+		}
 	case "stats":
 		PrintStats(generalLedger)
 	}
