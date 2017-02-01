@@ -64,7 +64,7 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 	}
 
 	boundaries := []time.Time{periodStart}
-	for periodStart.Before(end) {
+	for periodStart.Before(end) || periodStart.Equal(end) {
 		periodStart = periodStart.AddDate(incYear, incMonth, 0)
 		boundaries = append(boundaries, periodStart)
 	}
