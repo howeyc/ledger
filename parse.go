@@ -121,7 +121,7 @@ func balanceTransaction(input *Transaction) error {
 		if emptyAccPtr == nil {
 			return fmt.Errorf("No empty account change to place extra balance!")
 		}
-		input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
 	}
+	input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
 	return nil
 }
