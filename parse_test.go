@@ -98,8 +98,9 @@ var testCases = []testCase{
 	},
 	testCase{
 		`1970-01-01 Payee
-	Expense/test  123
-	Assets
+    Expense/another     5
+	Expense/test
+	Assets      -128
 `,
 		[]*Transaction{
 			&Transaction{
@@ -107,12 +108,16 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
+						"Expense/another",
+						big.NewRat(5.0, 1),
+					},
+					Account{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
 					Account{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						big.NewRat(-128.0, 1),
 					},
 				},
 			},
@@ -166,6 +171,40 @@ var testCases = []testCase{
 					Account{
 						"Expense/unbalanced",
 						big.NewRat(0, 1),
+					},
+				},
+			},
+		},
+		nil,
+	},
+	testCase{
+		`; comment
+	1970/01/01 Payee
+	Expense/test   58
+	Assets         -58
+	Expense/test   158
+	Assets         -158
+`,
+		[]*Transaction{
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense/test",
+						big.NewRat(58, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-58, 1),
+					},
+					Account{
+						"Expense/test",
+						big.NewRat(158, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-158, 1),
 					},
 				},
 			},

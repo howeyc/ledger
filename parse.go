@@ -104,24 +104,26 @@ func getBalance(balance string) (bool, *big.Rat) {
 // with the remaining balance.
 func balanceTransaction(input *Transaction) error {
 	balance := new(big.Rat)
-	var emptyAccPtr *Account
+	var emptyFound bool
 	var emptyAccIndex int
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance == nil {
-			if emptyAccPtr != nil {
+			if emptyFound {
 				return fmt.Errorf("More than one account change empty!")
 			}
-			emptyAccPtr = &accChange
 			emptyAccIndex = accIndex
+			emptyFound = true
 		} else {
 			balance = balance.Add(balance, accChange.Balance)
 		}
 	}
 	if balance.Sign() != 0 {
-		if emptyAccPtr == nil {
+		if !emptyFound {
 			return fmt.Errorf("No empty account change to place extra balance!")
 		}
 	}
-	input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
+	if emptyFound {
+		input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
+	}
 	return nil
 }
