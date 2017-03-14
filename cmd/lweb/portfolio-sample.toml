@@ -1,0 +1,17 @@
+[[stock]]
+name = "Vanguard"
+ticker = "VASGX"
+account = "Assets:Investments:TD Ameritrade:Invested:Fund:VASGX"
+shares = 3000
+
+[[stock]]
+name = "S&P 500"
+ticker = "IVV"
+account = "Assets:Investments:TD Ameritrade:Invested:ETF:IVV"
+shares = 3000
+
+[[stock]]
+name = "S&P 500 High Div"
+ticker = "SPHD"
+account = "Assets:Investments:TD Ameritrade:Invested:ETF:SPHD"
+shares = 3000

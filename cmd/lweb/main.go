@@ -18,6 +18,7 @@ import (
 
 var ledgerFileName string
 var reportConfigFileName string
+var stockConfigFileName string
 var ledgerLock sync.Mutex
 
 func getTransactions() ([]*ledger.Transaction, error) {
@@ -66,10 +67,35 @@ type reportConfigStruct struct {
 
 var reportConfigData reportConfigStruct
 
+type stockConfig struct {
+	Name    string
+	Ticker  string
+	Account string
+	Shares  float64
+}
+
+type stockInfo struct {
+	Name        string
+	Ticker      string
+	Account     string
+	Shares      float64
+	Price       float64
+	Cost        float64
+	MarketValue float64
+	GainLoss    float64
+}
+
+type stockConfigStruct struct {
+	Stocks []stockConfig `toml:"stock"`
+}
+
+var stockConfigData stockConfigStruct
+
 type pageData struct {
 	Reports      []reportConfig
 	Transactions []*ledger.Transaction
 	Accounts     []*ledger.Account
+	Stocks       []stockInfo
 }
 
 func main() {
@@ -78,6 +104,7 @@ func main() {
 
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&reportConfigFileName, "r", "", "Report config file name (*Required).")
+	flag.StringVar(&stockConfigFileName, "s", "", "Stock config file name (*Optional).")
 	flag.IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	flag.BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
 
@@ -97,12 +124,19 @@ func main() {
 		}
 	}()
 
+	if len(stockConfigFileName) > 0 {
+		var sLoadData stockConfigStruct
+		toml.DecodeFile(stockConfigFileName, &sLoadData)
+		stockConfigData = sLoadData
+	}
+
 	m := martini.Classic()
 	m.Use(gzip.All())
 	m.Use(staticbin.Static("public", Asset))
 
 	m.Get("/ledger", ledgerHandler)
 	m.Get("/accounts", accountsHandler)
+	m.Get("/portfolio", portfolioHandler)
 	m.Get("/account/:accountName", accountHandler)
 	m.Get("/report/:reportName", reportHandler)
 	m.Get("/", func(w http.ResponseWriter, r *http.Request) {
