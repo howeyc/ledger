@@ -71,9 +71,9 @@
           {{range .Stocks}}
           <tr>
             <td>{{.Name}}</a></td>
-            <td>{{.Cost}}</td>
-            <td>{{.MarketValue}}</td>
-            <td>{{.GainLoss}}</td>
+            <td>{{printf "%.2f" .Cost}}</td>
+            <td>{{printf "%.2f" .MarketValue}}</td>
+            <td>{{printf "%.2f" .GainLoss}}</td>
           </tr>
           {{end}}
         </tbody>

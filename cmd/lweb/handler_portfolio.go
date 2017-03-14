@@ -31,7 +31,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 		if quote != nil {
 			sprice = quote.Last
 		}
-		si := stockInfo{Name: stock.Name, Ticker: stock.Ticker, Price: sprice}
+		si := stockInfo{Name: stock.Name, Ticker: stock.Ticker, Price: sprice, Shares: stock.Shares}
 		for _, bal := range balances {
 			if stock.Account == bal.Name {
 				si.Cost, _ = bal.Balance.Float64()
