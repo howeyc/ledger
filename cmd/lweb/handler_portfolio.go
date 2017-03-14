@@ -41,6 +41,13 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 		si.GainLoss = si.MarketValue - si.Cost
 		pData.Stocks = append(pData.Stocks, si)
 	}
+	stotal := stockInfo{Name: "Total"}
+	for _, si := range pData.Stocks {
+		stotal.Cost += si.Cost
+		stotal.MarketValue += si.MarketValue
+		stotal.GainLoss += si.GainLoss
+	}
+	pData.Stocks = append(pData.Stocks, stotal)
 
 	err = t.Execute(w, pData)
 	if err != nil {

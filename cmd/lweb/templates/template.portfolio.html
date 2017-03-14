@@ -69,11 +69,11 @@
         </thead>
         <tbody>
           {{range .Stocks}}
-          <tr>
-            <td>{{.Name}}</a></td>
+          <tr {{if eq .Name "Total"}}class="active"{{end}}>
+            <td>{{.Name}}</td>
             <td>{{printf "%.2f" .Cost}}</td>
             <td>{{printf "%.2f" .MarketValue}}</td>
-            <td>{{printf "%.2f" .GainLoss}}</td>
+            <td><p {{if gt .GainLoss 0.0}}class="text-success"{{end}}{{if lt .GainLoss 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLoss}}</p></td>
           </tr>
           {{end}}
         </tbody>
