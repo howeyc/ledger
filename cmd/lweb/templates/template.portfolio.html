@@ -48,10 +48,10 @@
    <div class="container">
       <div class="content-header">
         <div class="row">
-			<div class="col-md-10">
-        		<h1>Portfolio</h1>
+			<div class="col-xs-8">
+        		<h1>Portfolio<span id="info" class="visible-xs-inline"> - Overall</span></h1>
 			</div>
-			<div class="col-md-2"></div>
+			<div class="col-xs-4"><a class="btn btn-default visible-xs-block" href="#" onclick="toggleInfo();">Toggle</a></div>
 		</div>
       </div>
       <div class="page-content inset">
@@ -62,18 +62,26 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>Cost</th>
-            <th>Market Value</th>
-            <th>Gain/Loss</th>
+            <th class="info-overall">Cost</th>
+            <th class="hidden-xs">Market Value</th>
+            <th class="info-day hidden-xs">Price</th>
+            <th class="info-day hidden-xs">Percent</th>
+            <th class="info-day hidden-xs">Gain/Loss</th>
+            <th class="info-overall">Percent</th>
+            <th class="info-overall">Gain/Loss</th>
           </tr>
         </thead>
         <tbody>
           {{range .Stocks}}
           <tr {{if eq .Name "Total"}}class="active"{{end}}>
             <td>{{.Name}}</td>
-            <td>{{printf "%.2f" .Cost}}</td>
-            <td>{{printf "%.2f" .MarketValue}}</td>
-            <td><p {{if gt .GainLoss 0.0}}class="text-success"{{end}}{{if lt .GainLoss 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLoss}}</p></td>
+            <td class="info-overall">{{printf "%.2f" .Cost}}</td>
+            <td class="hidden-xs">{{printf "%.2f" .MarketValue}}</td>
+            <td class="info-day hidden-xs">{{printf "%.2f" .Price}}</td>
+            <td class="info-day hidden-xs"><p {{if gt .PriceChangePctDay 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctDay}}</p></td>
+            <td class="info-day hidden-xs"><p {{if gt .GainLossDay 0.0}}class="text-success"{{end}}{{if lt .GainLossDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossDay}}</p></td>
+            <td class="info-overall"><p {{if gt .PriceChangePctOverall 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctOverall}}</p></td>
+            <td class="info-overall"><p {{if gt .GainLossOverall 0.0}}class="text-success"{{end}}{{if lt .GainLossOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossOverall}}</p></td>
           </tr>
           {{end}}
         </tbody>
@@ -90,12 +98,26 @@
     <script src="/jquery.min.js"></script>
     <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
     <script>
+    var overallOn = true;
     $(document).ready(function() {
     $('.popover-dismiss').popover({
           trigger: 'focus',
           animation: false
     });
     });
+    function toggleInfo() {
+      if (overallOn) {
+      $( ".info-overall" ).addClass("hidden-xs")
+      $( ".info-day" ).removeClass("hidden-xs")
+      $( "#info" ).text(' - Day');
+      overallOn = false;
+      } else {
+      $( ".info-day" ).addClass("hidden-xs")
+      $( ".info-overall" ).removeClass("hidden-xs")
+      $( "#info" ).text(' - Overall');
+      overallOn = true;
+      }
+    }
     </script>
 
   </body>
