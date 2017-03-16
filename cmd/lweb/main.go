@@ -69,6 +69,7 @@ var reportConfigData reportConfigStruct
 
 type stockConfig struct {
 	Name    string
+	Section string
 	Ticker  string
 	Account string
 	Shares  float64
@@ -76,6 +77,8 @@ type stockConfig struct {
 
 type stockInfo struct {
 	Name                  string
+	Section               string
+	Type                  string
 	Ticker                string
 	Account               string
 	Shares                float64
