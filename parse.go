@@ -20,7 +20,7 @@ const (
 // ParseLedger parses a ledger file and returns a list of Transactions.
 //
 // Transactions are sorted by date.
-func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
+func ParseLedger(ledgerReader io.Reader, ledgerFileName string) (generalLedger []*Transaction, err error) {
 	var trans *Transaction
 	scanner := bufio.NewScanner(ledgerReader)
 	var line string
@@ -38,7 +38,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 			if trans != nil {
 				transErr := balanceTransaction(trans)
 				if transErr != nil {
-					return generalLedger, fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+					return generalLedger, fmt.Errorf("%s:%d: Unable to balance transaction, %s", ledgerFileName, lineCount, transErr)
 				}
 				generalLedger = append(generalLedger, trans)
 				trans = nil
@@ -46,7 +46,7 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 		} else if trans == nil {
 			lineSplit := strings.SplitN(line, " ", 2)
 			if len(lineSplit) != 2 {
-				return generalLedger, fmt.Errorf("%d: Unable to parse payee line: %s", lineCount, line)
+				return generalLedger, fmt.Errorf("%s:%d: Unable to parse payee line: %s", ledgerFileName, lineCount, line)
 			}
 			dateString := lineSplit[0]
 			transDate, dateErr := date.Parse(dateString)

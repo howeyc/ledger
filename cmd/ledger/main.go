@@ -73,7 +73,7 @@ func main() {
 	}
 	defer ledgerFileReader.Close()
 
-	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
+	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader, ledgerFileName)
 	if parseError != nil {
 		fmt.Printf("%s:%s\n", ledgerFileName, parseError.Error())
 		return

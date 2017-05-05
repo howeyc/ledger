@@ -3,6 +3,7 @@ package ledger
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math/big"
 	"testing"
 	"time"
@@ -214,9 +215,9 @@ var testCases = []testCase{
 }
 
 func TestParseLedger(t *testing.T) {
-	for _, tc := range testCases {
+	for i, tc := range testCases {
 		b := bytes.NewBufferString(tc.data)
-		transactions, err := ParseLedger(b)
+		transactions, err := ParseLedger(b, fmt.Sprintf("testCase[%d]", i))
 		if err != tc.err {
 			t.Errorf("Error: expected `%s`, got `%s`", tc.err, err)
 		}
