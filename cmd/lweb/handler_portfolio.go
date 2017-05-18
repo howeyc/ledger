@@ -27,36 +27,43 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 	pData.Transactions = trans
 
 	sectionTotals := make(map[string]stockInfo)
+	siChan := make(chan stockInfo)
 
 	for _, stock := range stockConfigData.Stocks {
-		quote, _ := yquotes.GetPrice(stock.Ticker)
-		var sprice float64
-		var sclose float64
-		var cprice float64
-		if quote != nil {
-			sprice = quote.Last
-			sclose = quote.PreviousClose
-		}
-		si := stockInfo{Name: stock.Name,
-			Section: stock.Section,
-			Ticker:  stock.Ticker,
-			Price:   sprice,
-			Shares:  stock.Shares}
-		for _, bal := range balances {
-			if stock.Account == bal.Name {
-				si.Cost, _ = bal.Balance.Float64()
+		go func(name, account, symbol, section string, shares float64) {
+			quote, _ := yquotes.GetPrice(symbol)
+			var sprice float64
+			var sclose float64
+			var cprice float64
+			if quote != nil {
+				sprice = quote.Last
+				sclose = quote.PreviousClose
 			}
-		}
-		cprice = si.Cost / si.Shares
-		si.MarketValue = si.Shares * si.Price
-		si.GainLossOverall = si.MarketValue - si.Cost
-		si.PriceChangeDay = sprice - sclose
-		si.PriceChangePctDay = (si.PriceChangeDay / sclose) * 100.0
-		si.PriceChangeOverall = sprice - cprice
-		si.PriceChangePctOverall = (si.PriceChangeOverall / cprice) * 100.0
-		si.GainLossDay = si.Shares * si.PriceChangeDay
-		pData.Stocks = append(pData.Stocks, si)
+			si := stockInfo{Name: name,
+				Section: section,
+				Ticker:  symbol,
+				Price:   sprice,
+				Shares:  shares}
+			for _, bal := range balances {
+				if account == bal.Name {
+					si.Cost, _ = bal.Balance.Float64()
+				}
+			}
+			cprice = si.Cost / si.Shares
+			si.MarketValue = si.Shares * si.Price
+			si.GainLossOverall = si.MarketValue - si.Cost
+			si.PriceChangeDay = sprice - sclose
+			si.PriceChangePctDay = (si.PriceChangeDay / sclose) * 100.0
+			si.PriceChangeOverall = sprice - cprice
+			si.PriceChangePctOverall = (si.PriceChangeOverall / cprice) * 100.0
+			si.GainLossDay = si.Shares * si.PriceChangeDay
+			siChan <- si
+		}(stock.Name, stock.Account, stock.Ticker, stock.Section, stock.Shares)
 	}
+	for range stockConfigData.Stocks {
+		pData.Stocks = append(pData.Stocks, <-siChan)
+	}
+
 	stotal := stockInfo{Name: "Total", Section: "Total", Type: "Total"}
 	for _, si := range pData.Stocks {
 		sectionInfo := sectionTotals[si.Section]
