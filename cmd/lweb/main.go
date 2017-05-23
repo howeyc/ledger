@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"flag"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"sync"
@@ -20,22 +23,36 @@ var ledgerFileName string
 var reportConfigFileName string
 var stockConfigFileName string
 var ledgerLock sync.Mutex
+var currentSum []byte
+var currentTrans []*ledger.Transaction
 
 func getTransactions() ([]*ledger.Transaction, error) {
 	ledgerLock.Lock()
 	defer ledgerLock.Unlock()
+
+	var buf bytes.Buffer
+	h := sha256.New()
 
 	ledgerFileReader, err := os.Open(ledgerFileName)
 	if err != nil {
 		return nil, err
 
 	}
+	tr := io.TeeReader(ledgerFileReader, h)
+	io.Copy(&buf, tr)
+	ledgerFileReader.Close()
 
-	trans, terr := ledger.ParseLedger(ledgerFileReader)
+	sum := h.Sum(nil)
+	if bytes.Compare(currentSum, sum) == 0 {
+		return currentTrans, nil
+	}
+
+	trans, terr := ledger.ParseLedger(&buf)
 	if terr != nil {
 		return nil, fmt.Errorf("%s:%s", ledgerFileName, terr.Error())
 	}
-	ledgerFileReader.Close()
+	currentSum = sum
+	currentTrans = trans
 
 	return trans, nil
 }
@@ -137,6 +154,9 @@ func main() {
 		toml.DecodeFile(stockConfigFileName, &sLoadData)
 		stockConfigData = sLoadData
 	}
+
+	// initialize cache
+	getTransactions()
 
 	m := martini.Classic()
 	m.Use(gzip.All())
