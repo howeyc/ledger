@@ -234,11 +234,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 	}
 
-	colorPalette, cerr := colorful.HappyPalette(len(reportSummaryAccounts))
-	if cerr != nil {
-		http.Error(w, cerr.Error(), 500)
-		return
-	}
+	colorPalette := colorful.FastHappyPalette(len(reportSummaryAccounts))
 	colorBlack := colorful.Color{R: 1, G: 1, B: 1}
 
 	switch rConf.Chart {
@@ -385,11 +381,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 			lData.DataSets = []lineData{}
 
-			radarcolorPalette, rcerr := colorful.HappyPalette(len(dates))
-			if rcerr != nil {
-				http.Error(w, cerr.Error(), 500)
-				return
-			}
+			radarcolorPalette := colorful.FastHappyPalette(len(dates))
 			for colorIdx, date := range dates {
 				r, g, b := radarcolorPalette[colorIdx].RGB255()
 				var vals []*big.Rat
