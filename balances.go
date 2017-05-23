@@ -13,13 +13,18 @@ import (
 // Accounts are sorted by name.
 func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	balances := make(map[string]*big.Rat)
+	filters := len(filterArr) > 0
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
-			inFilter := len(filterArr) == 0
-			for _, filter := range filterArr {
-				if strings.Contains(accChange.Name, filter) {
-					inFilter = true
+			inFilter := false
+			if filters {
+				for i := 0; i < len(filterArr) && !inFilter; i++ {
+					if strings.Contains(accChange.Name, filterArr[i]) {
+						inFilter = true
+					}
 				}
+			} else {
+				inFilter = true
 			}
 			if inFilter {
 				accHier := strings.Split(accChange.Name, ":")
@@ -27,9 +32,7 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 				for currDepth := accDepth; currDepth > 0; currDepth-- {
 					currAccName := strings.Join(accHier[:currDepth], ":")
 					if ratNum, ok := balances[currAccName]; !ok {
-						ratNum = new(big.Rat)
-						ratNum.SetString(accChange.Balance.RatString())
-						balances[currAccName] = ratNum
+						balances[currAccName] = new(big.Rat).Set(accChange.Balance)
 					} else {
 						ratNum.Add(ratNum, accChange.Balance)
 					}
