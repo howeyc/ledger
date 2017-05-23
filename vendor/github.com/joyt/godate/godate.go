@@ -69,6 +69,8 @@ var (
 	daysOfWeek      = []string{"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
 
 	standardDateFormats = []string{
+		"2006-01-02",
+		"2006/01/02",
 		time.RFC1123,
 		time.RFC1123Z,
 		time.RFC3339,
