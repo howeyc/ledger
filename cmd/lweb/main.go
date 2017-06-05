@@ -58,8 +58,10 @@ func getTransactions() ([]*ledger.Transaction, error) {
 }
 
 type accountOp struct {
-	Name      string `toml:"name"`
-	Operation string `toml:"operation"` // +, -
+	Name                 string  `toml:"name"`
+	Operation            string  `toml:"operation"` // +, -
+	MultiplicationFactor float64 `toml:"factor"`
+	SubAccount           string  `toml:"other_account"` // *, /
 }
 
 type calculatedAccount struct {

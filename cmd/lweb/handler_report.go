@@ -144,11 +144,27 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 					if !found {
 						aval = big.NewRat(0, 1)
 					}
+					if acctOp.MultiplicationFactor != 0 {
+						factor := big.NewRat(1, 1).SetFloat64(acctOp.MultiplicationFactor)
+						fval = fval.Mul(factor, fval)
+					}
+					oval := big.NewRat(1, 1)
+					if acctOp.SubAccount != "" {
+						for _, obal := range balances {
+							if acctOp.SubAccount == obal.Name {
+								oval = oval.Abs(obal.Balance)
+							}
+						}
+					}
 					switch acctOp.Operation {
 					case "+":
 						aval.Add(aval, fval)
 					case "-":
 						aval.Sub(aval, fval)
+					case "*":
+						aval.Mul(fval, oval)
+					case "/":
+						aval.Quo(fval, oval)
 					}
 					accVals[calcAccount.Name] = aval
 				}
