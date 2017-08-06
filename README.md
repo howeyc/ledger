@@ -83,6 +83,12 @@ Example usage:
     lweb -f ledger.dat -r reports.toml --port 8080
 ```
 
+### Screenshots
+
+The screenshots below are taken on an Android device. To give a rough idea of what the web interface looks like.
+
+![main](cmd/lweb/screenshots/index.png) ![navigation](cmd/lweb/screenshots/nav.png) ![navigation of reports](cmd/lweb/screenshots/navreports.png) ![bar chart](cmd/lweb/screenshots/bar.png) ![stacked bar chart](cmd/lweb/screenshots/stackedbar.png) ![pie chart](cmd/lweb/screenshots/pie.png) ![line chart](cmd/lweb/screenshots/line.png)
+
 ## Installing components
 
 ```sh
