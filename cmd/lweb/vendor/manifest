@@ -16,14 +16,6 @@
 			"branch": "master"
 		},
 		{
-			"importpath": "github.com/doneland/yquotes",
-			"repository": "https://github.com/doneland/yquotes",
-			"vcs": "git",
-			"revision": "12a8815112a7d135dff0c61b8f8acbabe3dd4034",
-			"branch": "master",
-			"notests": true
-		},
-		{
 			"importpath": "github.com/go-martini/martini",
 			"repository": "https://github.com/go-martini/martini",
 			"vcs": "",

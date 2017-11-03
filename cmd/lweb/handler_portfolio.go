@@ -1,12 +1,35 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"net/http"
 	"sort"
 
-	"github.com/doneland/yquotes"
 	"github.com/howeyc/ledger"
 )
+
+type iexQuote struct {
+	Company       string  `json:"companyName"`
+	Exchange      string  `json:"primaryExchange"`
+	PreviousClose float64 `json:"close"`
+	Last          float64 `json:"latestPrice"`
+}
+
+// https://iextrading.com/developer/docs
+func stockQuote(symbol string) (quote iexQuote, err error) {
+	resp, herr := http.Get("https://api.iextrading.com/1.0/stock/" + symbol + "/quote")
+	if herr != nil {
+		return quote, herr
+	}
+	defer resp.Body.Close()
+	dec := json.NewDecoder(resp.Body)
+	dec.Decode(&quote)
+	if quote.Company == "" && quote.Exchange == "" {
+		return quote, errors.New("Unable to find data for symbol " + symbol)
+	}
+	return quote, nil
+}
 
 func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := parseAssets("templates/template.portfolio.html", "templates/template.nav.html")
@@ -31,25 +54,26 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 
 	for _, stock := range stockConfigData.Stocks {
 		go func(name, account, symbol, section string, shares float64) {
-			quote, _ := yquotes.GetPrice(symbol)
-			var sprice float64
-			var sclose float64
-			var cprice float64
-			if quote != nil {
-				sprice = quote.Last
-				sclose = quote.PreviousClose
-			}
 			si := stockInfo{Name: name,
 				Section: section,
 				Ticker:  symbol,
-				Price:   sprice,
 				Shares:  shares}
 			for _, bal := range balances {
 				if account == bal.Name {
 					si.Cost, _ = bal.Balance.Float64()
 				}
 			}
-			cprice = si.Cost / si.Shares
+			cprice := si.Cost / si.Shares
+			sprice := cprice
+			sclose := cprice
+
+			quote, qerr := stockQuote(symbol)
+			if qerr == nil {
+				sprice = quote.Last
+				sclose = quote.PreviousClose
+			}
+
+			si.Price = sprice
 			si.MarketValue = si.Shares * si.Price
 			si.GainLossOverall = si.MarketValue - si.Cost
 			si.PriceChangeDay = sprice - sclose
