@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sort"
 
+	"github.com/go-martini/martini"
 	"github.com/howeyc/ledger"
 )
 
@@ -31,7 +32,37 @@ func stockQuote(symbol string) (quote iexQuote, err error) {
 	return quote, nil
 }
 
-func portfolioHandler(w http.ResponseWriter, r *http.Request) {
+type gdaxQuote struct {
+	Volume        string  `json:"volume"`
+	PreviousClose float64 `json:"open,string"`
+	Last          float64 `json:"last,string"`
+}
+
+// https://docs.gdax.com/
+func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
+	resp, herr := http.Get("https://api.gdax.com/products/" + symbol + "/stats")
+	if herr != nil {
+		return quote, herr
+	}
+	defer resp.Body.Close()
+	dec := json.NewDecoder(resp.Body)
+	dec.Decode(&quote)
+	if quote.Volume == "" {
+		return quote, errors.New("Unable to find data for symbol " + symbol)
+	}
+	return quote, nil
+}
+
+func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
+	portfolioName := params["portfolioName"]
+
+	var portfolio portfolioStruct
+	for _, port := range portfolioConfigData.Portfolios {
+		if port.Name == portfolioName {
+			portfolio = port
+		}
+	}
+
 	t, err := parseAssets("templates/template.portfolio.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -45,15 +76,22 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	balances := ledger.GetBalances(trans, []string{})
 
-	var pData pageData
+	type portPageData struct {
+		pageData
+		PortfolioName string
+	}
+
+	var pData portPageData
 	pData.Reports = reportConfigData.Reports
+	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = trans
+	pData.PortfolioName = portfolioName
 
 	sectionTotals := make(map[string]stockInfo)
 	siChan := make(chan stockInfo)
 
-	for _, stock := range stockConfigData.Stocks {
-		go func(name, account, symbol, section string, shares float64) {
+	for _, stock := range portfolio.Stocks {
+		go func(name, account, symbol, securityType, section string, shares float64) {
 			si := stockInfo{Name: name,
 				Section: section,
 				Ticker:  symbol,
@@ -67,10 +105,19 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 			sprice := cprice
 			sclose := cprice
 
-			quote, qerr := stockQuote(symbol)
-			if qerr == nil {
-				sprice = quote.Last
-				sclose = quote.PreviousClose
+			switch securityType {
+			case "Stock":
+				quote, qerr := stockQuote(symbol)
+				if qerr == nil {
+					sprice = quote.Last
+					sclose = quote.PreviousClose
+				}
+			case "Crypto":
+				quote, qerr := cryptoQuote(symbol)
+				if qerr == nil {
+					sprice = quote.Last
+					sclose = quote.PreviousClose
+				}
 			}
 
 			si.Price = sprice
@@ -82,9 +129,9 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 			si.PriceChangePctOverall = (si.PriceChangeOverall / cprice) * 100.0
 			si.GainLossDay = si.Shares * si.PriceChangeDay
 			siChan <- si
-		}(stock.Name, stock.Account, stock.Ticker, stock.Section, stock.Shares)
+		}(stock.Name, stock.Account, stock.Ticker, stock.SecurityType, stock.Section, stock.Shares)
 	}
-	for range stockConfigData.Stocks {
+	for range portfolio.Stocks {
 		pData.Stocks = append(pData.Stocks, <-siChan)
 	}
 

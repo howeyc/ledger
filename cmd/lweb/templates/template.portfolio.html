@@ -43,13 +43,13 @@
 
   <body>
 	
-	{{template "nav" .Reports}}
+	{{template "nav" .}}
 
    <div class="container">
       <div class="content-header">
         <div class="row">
 			<div class="col-xs-8">
-        		<h1>Portfolio<span id="info" class="visible-xs-inline"> - Overall</span></h1>
+        		<h1>Portfolio {{.PortfolioName}}<span id="info" class="visible-xs-inline"> - Overall</span></h1>
 			</div>
 			<div class="col-xs-4"><a class="btn btn-default visible-xs-block" href="#" onclick="toggleInfo();">Toggle</a></div>
 		</div>

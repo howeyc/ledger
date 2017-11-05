@@ -31,6 +31,7 @@ func accountsHandler(w http.ResponseWriter, r *http.Request) {
 
 	var pData pageData
 	pData.Reports = reportConfigData.Reports
+	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Accounts = balances
 	pData.Transactions = trans
 

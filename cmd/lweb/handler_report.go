@@ -287,6 +287,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		var pData piePageData
 		pData.Reports = reportConfigData.Reports
+		pData.Portfolios = portfolioConfigData.Portfolios
 		pData.Transactions = vtrans
 		pData.ChartAccounts = values
 		pData.RangeStart = rStart

@@ -87,11 +87,12 @@ type reportConfigStruct struct {
 var reportConfigData reportConfigStruct
 
 type stockConfig struct {
-	Name    string
-	Section string
-	Ticker  string
-	Account string
-	Shares  float64
+	Name         string
+	SecurityType string `toml:"security_type"`
+	Section      string
+	Ticker       string
+	Account      string
+	Shares       float64
 }
 
 type stockInfo struct {
@@ -112,17 +113,23 @@ type stockInfo struct {
 	GainLossOverall       float64
 }
 
-type stockConfigStruct struct {
+type portfolioStruct struct {
+	Name   string
 	Stocks []stockConfig `toml:"stock"`
 }
 
-var stockConfigData stockConfigStruct
+type portfolioConfigStruct struct {
+	Portfolios []portfolioStruct `toml:"portfolio"`
+}
+
+var portfolioConfigData portfolioConfigStruct
 
 type pageData struct {
 	Reports      []reportConfig
 	Transactions []*ledger.Transaction
 	Accounts     []*ledger.Account
 	Stocks       []stockInfo
+	Portfolios   []portfolioStruct
 }
 
 func main() {
@@ -152,9 +159,9 @@ func main() {
 	}()
 
 	if len(stockConfigFileName) > 0 {
-		var sLoadData stockConfigStruct
+		var sLoadData portfolioConfigStruct
 		toml.DecodeFile(stockConfigFileName, &sLoadData)
-		stockConfigData = sLoadData
+		portfolioConfigData = sLoadData
 	}
 
 	// initialize cache
@@ -166,7 +173,7 @@ func main() {
 
 	m.Get("/ledger", ledgerHandler)
 	m.Get("/accounts", accountsHandler)
-	m.Get("/portfolio", portfolioHandler)
+	m.Get("/portfolio/:portfolioName", portfolioHandler)
 	m.Get("/account/:accountName", accountHandler)
 	m.Get("/report/:reportName", reportHandler)
 	m.Get("/", func(w http.ResponseWriter, r *http.Request) {
