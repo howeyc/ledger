@@ -159,9 +159,14 @@ func main() {
 	}()
 
 	if len(stockConfigFileName) > 0 {
-		var sLoadData portfolioConfigStruct
-		toml.DecodeFile(stockConfigFileName, &sLoadData)
-		portfolioConfigData = sLoadData
+		go func() {
+			for {
+				var sLoadData portfolioConfigStruct
+				toml.DecodeFile(stockConfigFileName, &sLoadData)
+				portfolioConfigData = sLoadData
+				time.Sleep(time.Minute * 5)
+			}
+		}()
 	}
 
 	// initialize cache
