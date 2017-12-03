@@ -331,6 +331,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		}
 		var lData linePageData
 		lData.Reports = reportConfigData.Reports
+		lData.Portfolios = portfolioConfigData.Portfolios
 		lData.ReportName = reportName
 
 		for colorIdx, repAccount := range reportSummaryAccounts {
