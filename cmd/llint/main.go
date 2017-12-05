@@ -28,7 +28,7 @@ func main() {
 	errorCount := 0
 	for {
 		select {
-		case _ = <-c:
+		case <-c:
 			continue
 		case err := <-e:
 			if err == nil {
