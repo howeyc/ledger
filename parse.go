@@ -21,73 +21,94 @@ const (
 //
 // Transactions are sorted by date.
 func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
-	var trans *Transaction
-	scanner := bufio.NewScanner(ledgerReader)
-	var line string
-	var lineCount int
+	c, e := ParseLedgerAsync(ledgerReader)
+	for {
+		select {
+		case trans := <-c:
+			generalLedger = append(generalLedger, trans)
+		case err := <-e:
+			sort.Sort(sortTransactionsByDate{generalLedger})
+			return generalLedger, err
+		}
+	}
+}
 
-	accountToAmountSpace := regexp.MustCompile(" {2,}|\t+")
-	for scanner.Scan() {
-		line = scanner.Text()
-		// remove heading and tailing space from the line
-		trimmedLine := strings.Trim(line, whitespace)
-		lineCount++
-		if strings.HasPrefix(trimmedLine, ";") {
-			// nop
-		} else if len(trimmedLine) == 0 {
-			if trans != nil {
-				transErr := balanceTransaction(trans)
-				if transErr != nil {
-					return generalLedger, fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+// ParseLedgerAsync parses a ledger file and returns a Transaction and error channels .
+//
+func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error) {
+	c = make(chan *Transaction)
+	e = make(chan error)
+
+	go func() {
+
+		var trans *Transaction
+		scanner := bufio.NewScanner(ledgerReader)
+		var line string
+		var lineCount int
+
+		accountToAmountSpace := regexp.MustCompile(" {2,}|\t+")
+		for scanner.Scan() {
+			line = scanner.Text()
+			// remove heading and tailing space from the line
+			trimmedLine := strings.Trim(line, whitespace)
+			lineCount++
+			if strings.HasPrefix(trimmedLine, ";") {
+				// nop
+			} else if len(trimmedLine) == 0 {
+				if trans != nil {
+					transErr := balanceTransaction(trans)
+					if transErr != nil {
+						e <- fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+					}
+					c <- trans
+					trans = nil
 				}
-				generalLedger = append(generalLedger, trans)
-				trans = nil
-			}
-		} else if trans == nil {
-			lineSplit := strings.SplitN(line, " ", 2)
-			if len(lineSplit) != 2 {
-				return generalLedger, fmt.Errorf("%d: Unable to parse payee line: %s", lineCount, line)
-			}
-			dateString := lineSplit[0]
-			transDate, dateErr := date.Parse(dateString)
-			if dateErr != nil {
-				return generalLedger, fmt.Errorf("%d: Unable to parse date: %s", lineCount, dateString)
-			}
-			payeeString := lineSplit[1]
-			trans = &Transaction{Payee: payeeString, Date: transDate}
-		} else {
-			var accChange Account
-			lineSplit := accountToAmountSpace.Split(trimmedLine, -1)
-			nonEmptyWords := []string{}
-			for _, word := range lineSplit {
-				if len(word) > 0 {
-					nonEmptyWords = append(nonEmptyWords, word)
+			} else if trans == nil {
+				lineSplit := strings.SplitN(line, " ", 2)
+				if len(lineSplit) != 2 {
+					e <- fmt.Errorf("%d: Unable to parse payee line: %s", lineCount, line)
 				}
-			}
-			lastIndex := len(nonEmptyWords) - 1
-			balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], whitespace))
-			if balErr == false {
-				// Assuming no balance and whole line is account name
-				accChange.Name = strings.Join(nonEmptyWords, " ")
+				dateString := lineSplit[0]
+				transDate, dateErr := date.Parse(dateString)
+				if dateErr != nil {
+					e <- fmt.Errorf("%d: Unable to parse date: %s", lineCount, dateString)
+				}
+				payeeString := lineSplit[1]
+				trans = &Transaction{Payee: payeeString, Date: transDate}
 			} else {
-				accChange.Name = strings.Join(nonEmptyWords[:lastIndex], " ")
-				accChange.Balance = rationalNum
+				var accChange Account
+				lineSplit := accountToAmountSpace.Split(trimmedLine, -1)
+				nonEmptyWords := []string{}
+				for _, word := range lineSplit {
+					if len(word) > 0 {
+						nonEmptyWords = append(nonEmptyWords, word)
+					}
+				}
+				lastIndex := len(nonEmptyWords) - 1
+				balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], whitespace))
+				if balErr == false {
+					// Assuming no balance and whole line is account name
+					accChange.Name = strings.Join(nonEmptyWords, " ")
+				} else {
+					accChange.Name = strings.Join(nonEmptyWords[:lastIndex], " ")
+					accChange.Balance = rationalNum
+				}
+				trans.AccountChanges = append(trans.AccountChanges, accChange)
 			}
-			trans.AccountChanges = append(trans.AccountChanges, accChange)
 		}
-	}
-	// If the file does not end on empty line, we must attempt to balance last
-	// transaction of the file.
-	if trans != nil {
-		transErr := balanceTransaction(trans)
-		if transErr != nil {
-			return generalLedger, fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+		// If the file does not end on empty line, we must attempt to balance last
+		// transaction of the file.
+		if trans != nil {
+			transErr := balanceTransaction(trans)
+			if transErr != nil {
+				e <- fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+			}
+			c <- trans
+			trans = nil
 		}
-		generalLedger = append(generalLedger, trans)
-		trans = nil
-	}
-	sort.Sort(sortTransactionsByDate{generalLedger})
-	return generalLedger, scanner.Err()
+		e <- nil
+	}()
+	return c, e
 }
 
 func getBalance(balance string) (bool, *big.Rat) {
