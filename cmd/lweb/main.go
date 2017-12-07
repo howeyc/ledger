@@ -43,7 +43,7 @@ func getTransactions() ([]*ledger.Transaction, error) {
 	ledgerFileReader.Close()
 
 	sum := h.Sum(nil)
-	if bytes.Compare(currentSum, sum) == 0 {
+	if bytes.Equal(currentSum, sum) {
 		return currentTrans, nil
 	}
 
@@ -186,7 +186,7 @@ func main() {
 	})
 
 	fmt.Println("Listening on port", serverPort)
-	listenAddress := ""
+	var listenAddress string
 	if localhost {
 		listenAddress = fmt.Sprintf("127.0.0.1:%d", serverPort)
 	} else {

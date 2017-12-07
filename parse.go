@@ -87,7 +87,7 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 				}
 				lastIndex := len(nonEmptyWords) - 1
 				balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], whitespace))
-				if balErr == false {
+				if !balErr {
 					// Assuming no balance and whole line is account name
 					accChange.Name = strings.Join(nonEmptyWords, " ")
 				} else {
@@ -131,7 +131,7 @@ func balanceTransaction(input *Transaction) error {
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance == nil {
 			if emptyFound {
-				return fmt.Errorf("More than one account change empty!")
+				return fmt.Errorf("more than one account change empty")
 			}
 			emptyAccIndex = accIndex
 			emptyFound = true
@@ -141,7 +141,7 @@ func balanceTransaction(input *Transaction) error {
 	}
 	if balance.Sign() != 0 {
 		if !emptyFound {
-			return fmt.Errorf("No empty account change to place extra balance!")
+			return fmt.Errorf("no empty account change to place extra balance")
 		}
 	}
 	if emptyFound {

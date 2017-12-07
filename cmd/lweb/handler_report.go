@@ -264,11 +264,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 
 		var values []pieAccount
 
-		type pieColor struct {
-			Color     string
-			Highlight string
-		}
-
 		for colorIdx, account := range reportSummaryAccounts {
 			accName := account.Name
 			value := big.NewRat(1, 1).Set(account.Balance)

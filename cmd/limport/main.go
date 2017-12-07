@@ -83,7 +83,11 @@ func main() {
 
 	csvReader := csv.NewReader(csvFileReader)
 	csvReader.Comma, _ = utf8.DecodeRuneInString(fieldDelimiter)
-	csvRecords, _ := csvReader.ReadAll()
+	csvRecords, cerr := csvReader.ReadAll()
+	if cerr != nil {
+		fmt.Println("CSV parse error:", cerr.Error())
+		return
+	}
 
 	classes := make([]bayesian.Class, len(allAccounts))
 	for i, bal := range allAccounts {
