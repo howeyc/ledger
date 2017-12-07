@@ -1,0 +1,18 @@
+# .goreleaser.yml
+# Build customization
+builds:
+  - main: ./cmd/ledger/.
+    binary: ledger
+  - main: ./cmd/limport/.
+    binary: limport
+  - main: ./cmd/llint/.
+    binary: llint
+  - main: ./cmd/lweb/.
+    binary: lweb
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
