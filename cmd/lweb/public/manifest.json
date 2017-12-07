@@ -1,5 +1,10 @@
 {
- "name": "App",
+ "name": "Ledger",
+ "short_name": "Ledger",
+ "start_url": "/",
+ "display": "fullscreen",
+ "background_color": "#fff",
+ "description": "An interface to a ledger-cli file.",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
@@ -37,5 +42,7 @@
    "type": "image\/png",
    "density": "4.0"
   }
- ]
+ ],
+ "lang": "en-US",
+ "orientation": "portrait-primary"
 }
