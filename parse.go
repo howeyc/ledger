@@ -9,7 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/joyt/godate"
+	"github.com/howeyc/ledger/internal/github.com/joyt/godate"
+
 	"github.com/marcmak/calc/calc"
 )
 
