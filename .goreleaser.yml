@@ -3,10 +3,34 @@
 builds:
   - main: ./cmd/ledger/.
     binary: ledger
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - i386
   - main: ./cmd/limport/.
     binary: limport
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - i386
   - main: ./cmd/llint/.
     binary: llint
+    goos:
+      - windows
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+      - i386
   - main: ./cmd/lweb/.
     binary: lweb
     goos:
@@ -16,3 +40,9 @@ builds:
       - freebsd
     goarch:
       - amd64
+      - i386
+archive:
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
