@@ -24,6 +24,7 @@ type Period string
 
 // Periods suppored by ledger
 const (
+	PeriodWeek     Period = "Weekly"
 	PeriodMonth    Period = "Monthly"
 	PeriodQuarter  Period = "Quarterly"
 	PeriodYear     Period = "Yearly"
@@ -31,10 +32,15 @@ const (
 )
 
 func getDateBoundaries(per Period, start, end time.Time) []time.Time {
-	var incMonth, incYear int
+	var incDays, incMonth, incYear int
 	var periodStart time.Time
 
 	switch per {
+	case PeriodWeek:
+		incDays = 7
+		for periodStart = time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, time.UTC); periodStart.Weekday() != time.Sunday; {
+			periodStart = periodStart.AddDate(0, 0, -1)
+		}
 	case PeriodMonth:
 		incMonth = 1
 		periodStart = time.Date(start.Year(), start.Month(), 1, 0, 0, 0, 0, time.UTC)
@@ -65,7 +71,7 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 
 	boundaries := []time.Time{periodStart}
 	for periodStart.Before(end) || periodStart.Equal(end) {
-		periodStart = periodStart.AddDate(incYear, incMonth, 0)
+		periodStart = periodStart.AddDate(incYear, incMonth, incDays)
 		boundaries = append(boundaries, periodStart)
 	}
 

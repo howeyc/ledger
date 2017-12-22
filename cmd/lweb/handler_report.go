@@ -15,6 +15,8 @@ import (
 
 func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period) {
 	switch dateFreq {
+	case "Weekly":
+		period = ledger.PeriodWeek
 	case "Monthly":
 		period = ledger.PeriodMonth
 	case "Quarterly":
