@@ -70,7 +70,8 @@
           {{range .Transactions}}
           <tr>
             <td>{{.Date.Format "2006-01-02"}}</td>
-            <td>{{.Payee}}</td>
+            <td class="hidden-xs">{{.Payee}}</td>
+            <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
             <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
           </tr>
           {{end}}

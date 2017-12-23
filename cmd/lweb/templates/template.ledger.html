@@ -75,7 +75,8 @@
           {{range .Transactions}}
           <tr>
             <td>{{.Date.Format "2006-01-02"}}</td>
-            <td>{{.Payee}}</td>
+            <td class="hidden-xs">{{.Payee}}</td>
+            <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
             <td>
             <button class="btn btn-default popover-dismiss"
                     data-html="true" data-placement="left"
