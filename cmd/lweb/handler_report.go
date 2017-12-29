@@ -10,24 +10,11 @@ import (
 
 	"github.com/go-martini/martini"
 	"github.com/howeyc/ledger"
-	"github.com/lucasb-eyer/go-colorful"
+	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
 func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period) {
-	switch dateFreq {
-	case "Weekly":
-		period = ledger.PeriodWeek
-	case "Monthly":
-		period = ledger.PeriodMonth
-	case "Quarterly":
-		period = ledger.PeriodQuarter
-	case "Yearly":
-		period = ledger.PeriodYear
-	case "SemiYearly":
-		period = ledger.PeriodSemiYear
-	default:
-		period = ledger.PeriodMonth
-	}
+	period = ledger.Period(dateFreq)
 
 	currentTime := time.Now()
 	switch dateRange {
