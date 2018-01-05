@@ -22,6 +22,7 @@ import (
 var ledgerFileName string
 var reportConfigFileName string
 var stockConfigFileName string
+var quickviewConfigFileName string
 var ledgerLock sync.Mutex
 var currentSum []byte
 var currentTrans []*ledger.Transaction
@@ -139,6 +140,7 @@ func main() {
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&reportConfigFileName, "r", "", "Report config file name (*Required).")
 	flag.StringVar(&stockConfigFileName, "s", "", "Stock config file name (*Optional).")
+	flag.StringVar(&quickviewConfigFileName, "q", "", "Quickview config file name (*Optional).")
 	flag.IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	flag.BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
 
@@ -181,9 +183,7 @@ func main() {
 	m.Get("/portfolio/:portfolioName", portfolioHandler)
 	m.Get("/account/:accountName", accountHandler)
 	m.Get("/report/:reportName", reportHandler)
-	m.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/accounts", http.StatusFound)
-	})
+	m.Get("/", quickviewHandler)
 
 	fmt.Println("Listening on port", serverPort)
 	var listenAddress string
