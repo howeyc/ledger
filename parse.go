@@ -53,9 +53,16 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 			// remove heading and tailing space from the line
 			trimmedLine := strings.Trim(line, whitespace)
 			lineCount++
-			if strings.HasPrefix(trimmedLine, ";") {
-				// nop
-			} else if len(trimmedLine) == 0 {
+
+			// handle comments
+			if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >=0 {
+				trimmedLine = trimmedLine[:commentIdx]
+				if len(trimmedLine) == 0 {
+					continue
+				}
+			}
+
+			if len(trimmedLine) == 0 {
 				if trans != nil {
 					transErr := balanceTransaction(trans)
 					if transErr != nil {

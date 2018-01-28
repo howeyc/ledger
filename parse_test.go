@@ -152,7 +152,7 @@ var testCases = []testCase{
 		`; comment
 	1970/01/01 Payee
 	Expense/test   58
-	Assets         -58
+	Assets         -58           ; comment in trans
 	Expense/unbalanced
 `,
 		[]*Transaction{
