@@ -24,6 +24,7 @@ func main() {
 	var showEmptyAccounts bool
 	var columnWide bool
 	var period string
+	var payeeFilter string
 
 	var ledgerFileName string
 
@@ -31,6 +32,7 @@ func main() {
 	flag.StringVar(&startString, "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
 	flag.StringVar(&endString, "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	flag.StringVar(&period, "period", "", "Split output into periods (Monthly,Quarterly,SemiYearly,Yearly).")
+	flag.StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
 	flag.BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
 	flag.IntVar(&transactionDepth, "depth", -1, "Depth of transaction output (balance).")
 	flag.IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
@@ -93,6 +95,14 @@ func main() {
 		}
 	}
 	generalLedger = generalLedger[timeStartIndex : timeEndIndex+1]
+
+	origLedger := generalLedger
+	generalLedger = make([]*ledger.Transaction, 0)
+	for _, trans := range origLedger {
+		if strings.Contains(trans.Payee, payeeFilter) {
+			generalLedger = append(generalLedger, trans)
+		}
+	}
 
 	containsFilterArray := args[1:]
 	switch strings.ToLower(args[0]) {
