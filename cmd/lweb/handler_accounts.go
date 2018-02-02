@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"time"
 	"html/template"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/howeyc/ledger"
@@ -76,6 +79,72 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 }
+
+func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
+	strDate := r.FormValue("transactionDate")
+	strPayee := r.FormValue("transactionPayee")
+
+	var accountLines []string
+	for i := 1; i < 20; i++ {
+		strAcc := r.FormValue(fmt.Sprintf("transactionAccount%d", i))
+		strAmt := r.FormValue(fmt.Sprintf("transactionAmount%d", i))
+		accountLines = append(accountLines, strings.Trim(fmt.Sprintf("%s          %s",strAcc, strAmt), " \t"))
+	}
+
+	date, _ := time.Parse("2006-01-02", strDate)
+
+	f, err := os.OpenFile(ledgerFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+    if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+
+	fmt.Fprintln(f, date.Format("2006/01/02"), strPayee)
+	for _, accLine := range accountLines {
+		if len(accLine) > 0 {
+			fmt.Fprintf(f, "    %s", accLine)
+			fmt.Fprintln(f, "")
+		}
+	}
+	fmt.Fprintln(f, "")
+	
+	f.Close()
+	getTransactions()
+
+
+	http.Redirect(w, r, "/addtrans", http.StatusFound)
+}
+
+func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	funcMap := template.FuncMap{
+		"abbrev": abbrev,
+	}
+
+	t, err := parseAssetsWithFunc(funcMap, "templates/template.addtransaction.html", "templates/template.nav.html")
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	trans, terr := getTransactions()
+	if terr != nil {
+		http.Error(w, terr.Error(), 500)
+		return
+	}
+
+	balances := ledger.GetBalances(trans, []string{})
+
+	var pData pageData
+	pData.Reports = reportConfigData.Reports
+	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Accounts = balances
+	pData.Transactions = trans
+
+	err = t.Execute(w, pData)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+}
+
 
 func accountsHandler(w http.ResponseWriter, r *http.Request) {
 	funcMap := template.FuncMap{

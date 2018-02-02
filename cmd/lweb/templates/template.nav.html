@@ -1,40 +1,56 @@
 {{define "nav"}}
-    <!-- Fixed navbar -->
-    <div class="navbar navbar-inverse navbar-fixed-top hidden-print" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href = "/">Ledger</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/ledger">General Ledger</a></li>
-            <li><a href="/accounts">Accounts</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropdown toggle" data-toggle="dropdown">Reports <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    {{range .Reports}}
-                    <li><a href="/report/{{.Name}}">{{.Name}}</a></li>
-                    {{end}}
-                </ul>
-            </li>
-            {{if .Portfolios }}
-            <li class="dropdown">
-                <a href="#" class="dropdown toggle" data-toggle="dropdown">Portfolios <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    {{range .Portfolios}}
-                    <li><a href="/portfolio/{{.Name}}">{{.Name}}</a></li>
-                    {{end}}
-                </ul>
+<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top hidden-print" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">Ledger</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/ledger">General Ledger</a>
+        </li>
+        <li>
+          <a href="/addtrans">Add Transaction</a>
+        </li>
+        <li>
+          <a href="/accounts">Accounts</a>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown toggle" data-toggle="dropdown">Reports
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {{range .Reports}}
+            <li>
+              <a href="/report/{{.Name}}">{{.Name}}</a>
             </li>
             {{end}}
           </ul>
-        </div><!--/.nav-collapse -->
-	  </div>
-	</div>
+        </li>
+        {{if .Portfolios }}
+        <li class="dropdown">
+          <a href="#" class="dropdown toggle" data-toggle="dropdown">Portfolios
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {{range .Portfolios}}
+            <li>
+              <a href="/portfolio/{{.Name}}">{{.Name}}</a>
+            </li>
+            {{end}}
+          </ul>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    <!--/.nav-collapse -->
+  </div>
+</div>
 {{end}}
