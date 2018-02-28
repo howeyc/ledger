@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+	<!-- Icon -->
+	<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/manifest.json">
+	<meta name="msapplication-TileColor" content="#ffffff">
+	<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+	<meta name="theme-color" content="#ffffff">
+
+    <title>Ledger - Report - {{.ReportName}}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="/padding.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="/custom/assets/js/html5shiv.js"></script>
+      <script src="/custom/assets/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+      {{template "nav" .}}
+	
+   <div class="container">
+      <div class="content-header">
+        <div class="row">
+			<div class="col-xs-12">
+                <h1>{{.ReportName}} : {{.RangeStart.Format "2006-01-02"}} - {{.RangeEnd.Format "2006-01-02"}}</h1>
+			</div>
+		</div>
+      </div>
+      <div class="page-content inset">
+      <div class="row">
+      <div class="col-xs-12">
+     <table id="listtable" class="table table-bordered table-hover paginated-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+            {{range .ChartAccounts}}
+          <tr>
+            <td>{{abbrev .Name}}</td>
+            <td>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="{{.Percentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{.Percentage}}%;">
+                    {{.Balance.FloatString 0}} ({{.Percentage}}%)
+                    </div>
+                  </div>
+            </td>
+          </tr>
+            {{end}}
+        </tbody>
+     </table>
+      </div>
+      </div>
+
+      <div class="row">
+      <div class="col-xs-12">
+      <table id="listtable" class="table table-bordered table-hover paginated-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Description (Payee)</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range .Transactions}}
+          <tr>
+            <td>{{.Date.Format "2006-01-02"}}</td>
+            <td class="hidden-xs">{{.Payee}}</td>
+            <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
+            <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+      </div>
+      </div>
+
+      </div>
+   </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/jquery.min.js"></script>
+    <script src="/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

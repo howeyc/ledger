@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"math/big"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -243,6 +244,73 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 	colorBlack := colorful.Color{R: 1, G: 1, B: 1}
 
 	switch rConf.Chart {
+	case "leaderboard":
+		type lbAccount struct {
+			Name       string
+			Balance    *big.Rat
+			Percentage int
+		}
+
+		var values []lbAccount
+		maxValue := big.NewRat(1, 1)
+
+		for _, account := range reportSummaryAccounts {
+			accName := account.Name
+			value := big.NewRat(1, 1).Set(account.Balance)
+			values = append(values, lbAccount{Name: accName, Balance: value})
+
+			if maxValue.Cmp(value) < 0 {
+				maxValue = value
+			}
+		}
+
+		sort.Slice(values, func(i, j int) bool { return values[i].Balance.Cmp(values[j].Balance) > 0 })
+
+		maxIdx := 0
+		for idx, _ := range values {
+			mf, _ := maxValue.Float64()
+			cf, _ := values[idx].Balance.Float64()
+			values[idx].Percentage = int((cf / mf) * 100.0)
+			if values[idx].Percentage > 9 {
+				maxIdx = idx
+			}
+		}
+		values = values[:maxIdx]
+
+		type lbPageData struct {
+			pageData
+			ReportName           string
+			RangeStart, RangeEnd time.Time
+			ChartType            string
+			ChartAccounts        []lbAccount
+			MaxValue             *big.Rat
+		}
+
+		var pData lbPageData
+		pData.Reports = reportConfigData.Reports
+		pData.Portfolios = portfolioConfigData.Portfolios
+		pData.Transactions = vtrans
+		pData.ChartType = "Leaderboard"
+		pData.ChartAccounts = values
+		pData.RangeStart = rStart
+		pData.RangeEnd = rEnd
+		pData.ReportName = reportName
+		pData.MaxValue = maxValue
+
+		funcMap := template.FuncMap{
+			"abbrev": abbrev,
+		}
+
+		t, err := parseAssetsWithFunc(funcMap, "templates/template.leaderboardchart.html", "templates/template.nav.html")
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		err = t.Execute(w, pData)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+		}
+
 	case "pie", "polar", "doughnut":
 		type pieAccount struct {
 			Name      string
