@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"html/template"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/howeyc/ledger"
 
@@ -88,13 +88,13 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 	for i := 1; i < 20; i++ {
 		strAcc := r.FormValue(fmt.Sprintf("transactionAccount%d", i))
 		strAmt := r.FormValue(fmt.Sprintf("transactionAmount%d", i))
-		accountLines = append(accountLines, strings.Trim(fmt.Sprintf("%s          %s",strAcc, strAmt), " \t"))
+		accountLines = append(accountLines, strings.Trim(fmt.Sprintf("%s          %s", strAcc, strAmt), " \t"))
 	}
 
 	date, _ := time.Parse("2006-01-02", strDate)
 
 	f, err := os.OpenFile(ledgerFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-    if err != nil {
+	if err != nil {
 		http.Error(w, err.Error(), 500)
 	}
 
@@ -106,10 +106,9 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	fmt.Fprintln(f, "")
-	
+
 	f.Close()
 	getTransactions()
-
 
 	http.Redirect(w, r, "/addtrans", http.StatusFound)
 }
@@ -144,7 +143,6 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 }
-
 
 func accountsHandler(w http.ResponseWriter, r *http.Request) {
 	funcMap := template.FuncMap{
@@ -207,6 +205,7 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 
 	var pData pageData
 	pData.Reports = reportConfigData.Reports
+	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = pageTrans
 
 	err = t.Execute(w, pData)
