@@ -26,12 +26,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense/test",
-						big.NewRat(369.0, 1),
-					},
-					Account{
 						"Assets",
 						big.NewRat(-369.0, 1),
+					},
+					Account{
+						"Expense/test",
+						big.NewRat(369.0, 1),
 					},
 				},
 			},
@@ -58,12 +58,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense:test",
-						big.NewRat(369.0, 1),
-					},
-					Account{
 						"Assets",
 						big.NewRat(-369.0, 1),
+					},
+					Account{
+						"Expense:test",
+						big.NewRat(369.0, 1),
 					},
 				},
 			},
@@ -72,23 +72,23 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense:Cars R Us",
-						big.NewRat(-388.0, 1),
-					},
-					Account{
 						"Expense:Cars",
 						big.NewRat(358.0, 1),
+					},
+					Account{
+						"Expense:Cars R Us",
+						big.NewRat(-388.0, 1),
 					},
 					Account{
 						"Expense:Cranks",
 						big.NewRat(10.0, 1),
 					},
 					Account{
-						"Expense:Cranks Unlimited",
+						"Expense:Cranks United",
 						big.NewRat(10.0, 1),
 					},
 					Account{
-						"Expense:Cranks United",
+						"Expense:Cranks Unlimited",
 						big.NewRat(10.0, 1),
 					},
 				},
@@ -108,16 +108,16 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
+						"Assets",
+						big.NewRat(-128.0, 1),
+					},
+					Account{
 						"Expense/another",
 						big.NewRat(5.0, 1),
 					},
 					Account{
 						"Expense/test",
 						big.NewRat(123.0, 1),
-					},
-					Account{
-						"Assets",
-						big.NewRat(-128.0, 1),
 					},
 				},
 			},
@@ -136,12 +136,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense/test",
-						big.NewRat(123.0, 1),
-					},
-					Account{
 						"Assets",
 						big.NewRat(-123.0, 1),
+					},
+					Account{
+						"Expense/test",
+						big.NewRat(123.0, 1),
 					},
 				},
 			},
@@ -161,12 +161,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense/test",
-						big.NewRat(58, 1),
-					},
-					Account{
 						"Assets",
 						big.NewRat(-58, 1),
+					},
+					Account{
+						"Expense/test",
+						big.NewRat(58, 1),
 					},
 					Account{
 						"Expense/unbalanced",
@@ -191,20 +191,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					Account{
-						"Expense/test",
-						big.NewRat(58, 1),
-					},
-					Account{
 						"Assets",
-						big.NewRat(-58, 1),
+						big.NewRat(-58-158, 1),
 					},
 					Account{
 						"Expense/test",
-						big.NewRat(158, 1),
-					},
-					Account{
-						"Assets",
-						big.NewRat(-158, 1),
+						big.NewRat(58+158, 1),
 					},
 				},
 			},
