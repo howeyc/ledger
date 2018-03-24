@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"math/big"
 	"net/http"
 	"os"
 	"strings"
@@ -191,9 +192,14 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 	}
 
 	var pageTrans []*ledger.Transaction
+	var mergeTrans []*ledger.Transaction
 	for _, tran := range trans {
+		include := false
+		bal := new(big.Rat)
 		for _, accChange := range tran.AccountChanges {
 			if strings.Contains(accChange.Name, accountName) {
+				include = true
+				bal = bal.Add(bal, accChange.Balance)
 				pageTrans = append(pageTrans, &ledger.Transaction{
 					Payee:          tran.Payee,
 					Date:           tran.Date,
@@ -201,12 +207,24 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params martini.Param
 				})
 			}
 		}
+		if include {
+			mergeTrans = append(mergeTrans, &ledger.Transaction{
+				Payee:          tran.Payee,
+				Date:           tran.Date,
+				AccountChanges: []ledger.Account{ledger.Account{Name: accountName, Balance: bal}},
+			})
+		}
 	}
 
-	var pData pageData
+	type accPageData struct {
+		pageData
+		MergedTransactions []*ledger.Transaction
+	}
+	var pData accPageData
 	pData.Reports = reportConfigData.Reports
 	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = pageTrans
+	pData.MergedTransactions = mergeTrans
 
 	err = t.Execute(w, pData)
 	if err != nil {

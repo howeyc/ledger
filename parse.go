@@ -55,7 +55,7 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 			lineCount++
 
 			// handle comments
-			if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
+			if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >=0 {
 				trimmedLine = trimmedLine[:commentIdx]
 				if len(trimmedLine) == 0 {
 					continue
@@ -154,29 +154,5 @@ func balanceTransaction(input *Transaction) error {
 	if emptyFound {
 		input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
 	}
-
-	// Merge multiple account changes for each distinct account
-	balmap := make(map[string]*big.Rat)
-	for _, accChange := range input.AccountChanges {
-		if bal, found := balmap[accChange.Name]; found {
-			bal = bal.Add(bal, accChange.Balance)
-			balmap[accChange.Name] = bal
-		} else {
-			balmap[accChange.Name] = accChange.Balance
-		}
-	}
-	input.AccountChanges = []Account{}
-	for accName, bal := range balmap {
-		input.AccountChanges = append(input.AccountChanges, Account{
-			Name:    accName,
-			Balance: bal,
-		})
-	}
-
-	// Map is random order, order by name for consistency (helps with tests)
-	sort.Slice(input.AccountChanges, func(i, j int) bool {
-		return input.AccountChanges[i].Name < input.AccountChanges[j].Name
-	})
-
 	return nil
 }

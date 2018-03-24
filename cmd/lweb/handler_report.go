@@ -169,6 +169,31 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 	return
 }
 
+// Merge multiple account changes for each distinct account
+func mergeAccounts(input *ledger.Transaction) {
+	balmap := make(map[string]*big.Rat)
+	for _, accChange := range input.AccountChanges {
+		if bal, found := balmap[accChange.Name]; found {
+			bal = bal.Add(bal, accChange.Balance)
+			balmap[accChange.Name] = bal
+		} else {
+			balmap[accChange.Name] = accChange.Balance
+		}
+	}
+	input.AccountChanges = []ledger.Account{}
+	for accName, bal := range balmap {
+		input.AccountChanges = append(input.AccountChanges, ledger.Account{
+			Name:    accName,
+			Balance: bal,
+		})
+	}
+
+	// Map is random order, order by name for consistency (helps with tests)
+	sort.Slice(input.AccountChanges, func(i, j int) bool {
+		return input.AccountChanges[i].Name < input.AccountChanges[j].Name
+	})
+}
+
 func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
 	reportName := params["reportName"]
 
@@ -236,6 +261,9 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			}
 		}
 		if include {
+			fmt.Println("merge")
+
+			mergeAccounts(trans)
 			vtrans = append(vtrans, trans)
 		}
 	}
