@@ -261,8 +261,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 			}
 		}
 		if include {
-			fmt.Println("merge")
-
 			mergeAccounts(trans)
 			vtrans = append(vtrans, trans)
 		}
