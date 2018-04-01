@@ -181,6 +181,7 @@ func main() {
 	m.Get("/ledger", ledgerHandler)
 	m.Get("/accounts", accountsHandler)
 	m.Get("/addtrans", addTransactionHandler)
+	m.Get("/addtrans/:accountName", addQuickTransactionHandler)
 	m.Post("/addtrans", addTransactionPostHandler)
 	m.Get("/portfolio/:portfolioName", portfolioHandler)
 	m.Get("/account/:accountName", accountHandler)

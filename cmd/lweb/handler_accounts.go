@@ -46,7 +46,7 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request) {
 		"abbrev": shorten,
 	}
 
-	t, err := parseAssetsWithFunc(funcMap, "templates/template.accounts.html", "templates/template.nav.html")
+	t, err := parseAssetsWithFunc(funcMap, "templates/template.quickview.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -114,7 +114,8 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/addtrans", http.StatusFound)
 }
 
-func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
+func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
+	accountName := params["accountName"]
 	funcMap := template.FuncMap{
 		"abbrev": abbrev,
 	}
@@ -131,6 +132,66 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Recent accounts
+	monthsago := time.Now().AddDate(0, -3, 0)
+	var atrans []*ledger.Transaction
+	for _, tran := range trans {
+		includeTrans := false
+		if tran.Date.After(monthsago) {
+			includeTrans = true
+			// Filter by supplied account
+			if accountName != ""  {
+				includeTrans = false
+				for _, acc := range tran.AccountChanges {
+					if acc.Name == accountName {
+						includeTrans = true
+					}
+				}
+			}
+		}
+		if includeTrans {
+			atrans = append(atrans, tran)
+		}
+	}
+
+	// Child non-zero balance accounts
+	balances := ledger.GetBalances(atrans, []string{})
+	var abals []*ledger.Account
+	for _, bal := range balances {
+		accDepth := len(strings.Split(bal.Name, ":"))
+		if bal.Balance.Cmp(big.NewRat(0,1)) != 0 && accDepth > 2 {
+			abals = append(abals, bal)
+		}
+	}
+
+	var pData pageData
+	pData.Reports = reportConfigData.Reports
+	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Accounts = abals
+	pData.Transactions = atrans
+
+	err = t.Execute(w, pData)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+}
+
+func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	funcMap := template.FuncMap{
+		"abbrev": abbrev,
+	}
+
+	t, err := parseAssetsWithFunc(funcMap, "templates/template.addtransaction.html", "templates/template.nav.html")
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	trans, terr := getTransactions()
+	if terr != nil {
+		http.Error(w, terr.Error(), 500)
+		return
+	}
 	balances := ledger.GetBalances(trans, []string{})
 
 	var pData pageData
