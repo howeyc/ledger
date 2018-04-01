@@ -69,11 +69,11 @@
           {{range .Accounts}}
           <tr>
             <td class="visible-xs-block">
-              <div style="float:left"><a href="/account/{{.Name}}">{{abbrev .Name}}</a></div>
+              <a href="/account/{{.Name}}">{{abbrev .Name}}</a>
               <div style="float:right"><a href="/addtrans/{{.Name}}">+</a></div>
             </td>
             <td class="hidden-xs">
-              <div style="float:left"><a href="/account/{{.Name}}">{{.Name}}</a></div>
+              <a href="/account/{{.Name}}">{{.Name}}</a>
               <div style="float:right"><a href="/addtrans/{{.Name}}">+</a></div>
             </td>
             <td align="right">{{.Balance.FloatString 2}}</td>
