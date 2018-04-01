@@ -138,10 +138,9 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 					si.Cost, _ = bal.Balance.Float64()
 				}
 			}
-			cprice := si.Cost / si.Shares
-			sprice := cprice
-			sclose := cprice
 
+			cprice := si.Cost / si.Shares
+			var sprice,sclose float64
 			switch securityType {
 			case "Stock":
 				quote, qerr := stockQuote(symbol)
@@ -161,6 +160,13 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 					sprice = quote.Last
 					sclose = quote.PreviousClose
 				}
+			case "Cash":
+				sprice = 1
+				sclose = 1
+				si.Shares = si.Cost
+			default:
+				sprice = cprice
+				sclose = cprice
 			}
 
 			si.Price = sprice
