@@ -34,6 +34,8 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 	}
 }
 
+var accountToAmountSpace = regexp.MustCompile(" {2,}|\t+")
+
 // ParseLedgerAsync parses a ledger file and returns a Transaction and error channels .
 //
 func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error) {
@@ -47,7 +49,6 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 		var line string
 		var lineCount int
 
-		accountToAmountSpace := regexp.MustCompile(" {2,}|\t+")
 		for scanner.Scan() {
 			line = scanner.Text()
 			// remove heading and tailing space from the line

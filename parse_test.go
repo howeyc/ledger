@@ -227,3 +227,34 @@ func TestParseLedger(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkParseLedger(b *testing.B) {
+	tc := testCase{
+		`1970/01/01 Payee
+	Expense/test  (123 * 3)
+	Assets
+`,
+		[]*Transaction{
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense/test",
+						big.NewRat(369.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-369.0, 1),
+					},
+				},
+			},
+		},
+		nil,
+	}
+
+	data := bytes.NewBufferString(tc.data)
+	for n := 0; n < b.N; n++ {
+		ParseLedger(data)
+	}
+}
