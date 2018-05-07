@@ -1,0 +1,14 @@
+;__ledger_file*-*testdata/ledgerReader_input_1_root*-*0
+aaa
+bbb
+;__ledger_file*-*testdata/ledgerReader_input_1_inc1*-*0
+xxx
+yyy
+;__ledger_file*-*testdata/ledgerReader_input_1_inc2*-*0
+111
+222
+333
+;__ledger_file*-*testdata/ledgerReader_input_1_inc1*-*3
+zzz
+;__ledger_file*-*testdata/ledgerReader_input_1_root*-*3
+ccc

@@ -17,12 +17,11 @@ func main() {
 		usage(os.Args[0])
 	}
 	ledgerFileName := os.Args[1]
-	ledgerFileReader, err := os.Open(ledgerFileName)
+	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFileName)
 	if err != nil {
 		fmt.Println("Ledger: ", err)
 		return
 	}
-	defer ledgerFileReader.Close()
 
 	c, e := ledger.ParseLedgerAsync(ledgerFileReader)
 	errorCount := 0
