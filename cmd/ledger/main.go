@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strings"
 	"time"
 
@@ -68,16 +67,15 @@ func main() {
 		return
 	}
 
-	ledgerFileReader, err := os.Open(ledgerFileName)
+	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFileName)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	defer ledgerFileReader.Close()
 
 	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
 	if parseError != nil {
-		fmt.Printf("%s:%s\n", ledgerFileName, parseError.Error())
+		fmt.Printf("%s\n", parseError.Error())
 		return
 	}
 

@@ -47,16 +47,28 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 		var trans *Transaction
 		scanner := bufio.NewScanner(ledgerReader)
 		var line string
+		var filename string
 		var lineCount int
+
+		errorMsg := func(msg string) {
+			e <- fmt.Errorf("%s:%d: %s", filename, lineCount, msg)
+		}
 
 		for scanner.Scan() {
 			line = scanner.Text()
+
+			// update filename/line if sentinel comment is found
+			if strings.HasPrefix(line, markerPrefix) {
+				filename, lineCount = parseMarker(line)
+				continue
+			}
+
 			// remove heading and tailing space from the line
 			trimmedLine := strings.Trim(line, whitespace)
 			lineCount++
 
 			// handle comments
-			if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >=0 {
+			if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
 				trimmedLine = trimmedLine[:commentIdx]
 				if len(trimmedLine) == 0 {
 					continue
@@ -67,7 +79,7 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 				if trans != nil {
 					transErr := balanceTransaction(trans)
 					if transErr != nil {
-						e <- fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+						errorMsg("Unable to balance transaction, " + transErr.Error())
 					}
 					c <- trans
 					trans = nil
@@ -75,12 +87,13 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 			} else if trans == nil {
 				lineSplit := strings.SplitN(line, " ", 2)
 				if len(lineSplit) != 2 {
-					e <- fmt.Errorf("%d: Unable to parse payee line: %s", lineCount, line)
+					errorMsg("Unable to parse payee line: " + line)
+					continue
 				}
 				dateString := lineSplit[0]
 				transDate, dateErr := date.Parse(dateString)
 				if dateErr != nil {
-					e <- fmt.Errorf("%d: Unable to parse date: %s", lineCount, dateString)
+					errorMsg("Unable to parse date: " + dateString)
 				}
 				payeeString := lineSplit[1]
 				trans = &Transaction{Payee: payeeString, Date: transDate}
@@ -110,7 +123,7 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 		if trans != nil {
 			transErr := balanceTransaction(trans)
 			if transErr != nil {
-				e <- fmt.Errorf("%d: Unable to balance transaction, %s", lineCount, transErr)
+				errorMsg("Unable to balance transaction, " + transErr.Error())
 			}
 			c <- trans
 			trans = nil

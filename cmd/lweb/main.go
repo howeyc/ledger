@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"sync"
 	"time"
 
@@ -34,14 +33,13 @@ func getTransactions() ([]*ledger.Transaction, error) {
 	var buf bytes.Buffer
 	h := sha256.New()
 
-	ledgerFileReader, err := os.Open(ledgerFileName)
+	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFileName)
 	if err != nil {
 		return nil, err
 
 	}
 	tr := io.TeeReader(ledgerFileReader, h)
 	io.Copy(&buf, tr)
-	ledgerFileReader.Close()
 
 	sum := h.Sum(nil)
 	if bytes.Equal(currentSum, sum) {
@@ -50,7 +48,7 @@ func getTransactions() ([]*ledger.Transaction, error) {
 
 	trans, terr := ledger.ParseLedger(&buf)
 	if terr != nil {
-		return nil, fmt.Errorf("%s:%s", ledgerFileName, terr.Error())
+		return nil, fmt.Errorf("%s", terr.Error())
 	}
 	currentSum = sum
 	currentTrans = trans

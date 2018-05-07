@@ -58,12 +58,11 @@ func main() {
 	}
 	defer csvFileReader.Close()
 
-	ledgerFileReader, err := os.Open(ledgerFileName)
+	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFileName)
 	if err != nil {
 		fmt.Println("Ledger: ", err)
 		return
 	}
-	defer ledgerFileReader.Close()
 
 	generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
 	if parseError != nil {

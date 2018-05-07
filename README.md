@@ -29,6 +29,9 @@ Example transaction:
 
 A ledger file is a list of transactions separated by a blank line.
 
+A ledger file may include other ledger files using `include <filepath>`. The
+`filepath` is relative to the including file.
+
 
 ## ledger
 
