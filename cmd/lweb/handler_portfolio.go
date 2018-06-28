@@ -184,7 +184,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 		pData.Stocks = append(pData.Stocks, <-siChan)
 	}
 
-	stotal := stockInfo{Name: "Total", Section: "Total", Type: "Total"}
+	stotal := stockInfo{Name: "Total", Section: "zzzTotal", Type: "Total"}
 	for _, si := range pData.Stocks {
 		sectionInfo := sectionTotals[si.Section]
 		sectionInfo.Name = si.Section
