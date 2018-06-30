@@ -20,40 +20,40 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 	currentTime := time.Now()
 	switch dateRange {
 	case "All Time":
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Ten Years":
 		start = time.Date(currentTime.Year()-9, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Five Years":
 		start = time.Date(currentTime.Year()-4, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Three Years":
 		start = time.Date(currentTime.Year()-2, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Two Years":
 		start = time.Date(currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "YTD", "Current Year":
 		start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Previous Year", "Last Year":
 		start = time.Date(currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
 		end = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Five Months":
 		start = time.Date(currentTime.Year(), currentTime.Month()-4, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Three Months":
 		start = time.Date(currentTime.Year(), currentTime.Month()-2, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
 	case "Last Two Months":
 		start = time.Date(currentTime.Year(), currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
 	case "Previous Month", "Last Month":
 		start = time.Date(currentTime.Year(), currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
 		end = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
 	case "Current Month":
 		start = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
-		end = currentTime.Add(time.Hour * 24)
+		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
 	case "Current Quarter":
 		switch currentTime.Month() {
 		case time.January, time.February, time.March:
