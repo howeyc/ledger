@@ -93,16 +93,29 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 // If accountNeedle contains no wildcards (*), only case-sensitive matchs are returned.
 // In the case of wildcards:
 //	* matches any account that shares the prefix, and has the same depth as the *.
-//	** matches any account that shares the prefix, at any depth.
+//	** matches any account that shares the prefix, at furthest depth possible,
+//	ignoring parent accounts to avoid duplicates
 func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (results []*ledger.Account) {
 	needleDepth := len(strings.Split(accountNeedle, ":"))
 
 	if dblstarIdx := strings.Index(accountNeedle, "**"); dblstarIdx != -1 {
+		foundAccountNames := make(map[string]*ledger.Account)
 		prefixNeedle := accountNeedle[:dblstarIdx]
 		for _, hay := range accountsHaystack {
 			if strings.HasPrefix(hay.Name, prefixNeedle) {
-				results = append(results, hay)
+				foundAccountNames[hay.Name] = hay
 			}
+		}
+		// Remove any parents
+		for k, _ := range foundAccountNames {
+			kpre := k[:strings.LastIndex(k, ":")]
+			if _, found := foundAccountNames[kpre]; found {
+				delete(foundAccountNames, kpre)
+			}
+		}
+		// Remaining are the results
+		for _, hay := range foundAccountNames {
+			results = append(results, hay)
 		}
 	} else if starIdx := strings.Index(accountNeedle, "*"); starIdx != -1 {
 		prefixNeedle := accountNeedle[:starIdx]
