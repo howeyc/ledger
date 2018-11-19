@@ -65,6 +65,7 @@ type accountOp struct {
 
 type calculatedAccount struct {
 	Name              string      `toml:"name"`
+	UseAbs            bool        `toml:"use_abs"`
 	AccountOperations []accountOp `toml:"account_operation"`
 }
 

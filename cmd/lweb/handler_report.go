@@ -173,6 +173,13 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 				}
 			}
 		}
+		if calcAccount.UseAbs {
+			if aval, found := accVals[calcAccount.Name]; !found {
+				accVals[calcAccount.Name] = big.NewRat(0, 1)
+			} else {
+				accVals[calcAccount.Name] = aval.Abs(aval)
+			}
+		}
 	}
 
 	for _, calcAccount := range calcAccts {
