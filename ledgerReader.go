@@ -56,7 +56,9 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 				return fmt.Errorf("%s:%d: invalid include directive", filename, lineNum)
 			}
 
-			err := includeFile(filepath.Join(filename, "..", pieces[1]), buf)
+			includedPath := filepath.Join(filename, "..", pieces[1])
+			fmt.Println("Attempting to open " + includedPath)
+			err := includeFile(includedPath, buf)
 			if err != nil {
 				return fmt.Errorf("%s:%d: %s", filename, lineNum, err.Error())
 			}
