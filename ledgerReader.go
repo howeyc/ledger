@@ -20,7 +20,6 @@ func NewLedgerReader(filename string) (*bytes.Buffer, error) {
 	var buf bytes.Buffer
 
 	err := includeFile(filename, &buf)
-	//fmt.Printf("Buffer: %q\n", buf)
 	return &buf, err
 }
 
