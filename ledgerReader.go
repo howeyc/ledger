@@ -20,6 +20,7 @@ func NewLedgerReader(filename string) (*bytes.Buffer, error) {
 	var buf bytes.Buffer
 
 	err := includeFile(filename, &buf)
+	//fmt.Printf("Buffer: %q\n", buf)
 	return &buf, err
 }
 
@@ -35,6 +36,7 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 	} else {
 		includedFiles[filename] = true
 	}
+
 	defer delete(includedFiles, filename)
 
 	f, err := os.Open(filename)
@@ -56,9 +58,16 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 				return fmt.Errorf("%s:%d: invalid include directive", filename, lineNum)
 			}
 
+			// Resolve filepaths
 			includedPath := filepath.Join(filename, "..", pieces[1])
-			fmt.Println("Attempting to open " + includedPath)
-			err := includeFile(includedPath, buf)
+			includedPaths, err := filepath.Glob(includedPath)
+
+			// Include all resolved filepaths
+			for i := 0; i < len(includedPaths) && err == nil; i++ {
+				if !includedFiles[includedPaths[i]] {
+					err = includeFile(includedPaths[i], buf)
+				}
+			}
 			if err != nil {
 				return fmt.Errorf("%s:%d: %s", filename, lineNum, err.Error())
 			}
@@ -71,7 +80,6 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 			lineNum++
 		}
 	}
-
 	return nil
 }
 

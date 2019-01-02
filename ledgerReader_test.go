@@ -52,7 +52,7 @@ func TestLedgerScannerSingleInclude(t *testing.T) {
 }
 
 func TestLedgerScannerWildcardInclude(t *testing.T) {
-	r, err := NewLedgerReader("testdata/ledgerReader_input_1_root")
+	r, err := NewLedgerReader("testdata/ledgerReader_input_wildcard_root")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -62,7 +62,7 @@ func TestLedgerScannerWildcardInclude(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected, _ := ioutil.ReadFile(filepath.Join("testdata", "ledgerReader_expected_1"))
+	expected, _ := ioutil.ReadFile(filepath.Join("testdata", "ledgerReader_expected_wildcard"))
 	if err != nil {
 		t.Fatal(err)
 	}
