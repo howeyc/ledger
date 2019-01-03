@@ -35,6 +35,7 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 	} else {
 		includedFiles[filename] = true
 	}
+
 	defer delete(includedFiles, filename)
 
 	f, err := os.Open(filename)
@@ -56,7 +57,16 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 				return fmt.Errorf("%s:%d: invalid include directive", filename, lineNum)
 			}
 
-			err := includeFile(filepath.Join(filename, "..", pieces[1]), buf)
+			// Resolve filepaths
+			includedPath := filepath.Join(filename, "..", pieces[1])
+			includedPaths, err := filepath.Glob(includedPath)
+
+			// Include all resolved filepaths
+			for i := 0; i < len(includedPaths) && err == nil; i++ {
+				if !includedFiles[includedPaths[i]] {
+					err = includeFile(includedPaths[i], buf)
+				}
+			}
 			if err != nil {
 				return fmt.Errorf("%s:%d: %s", filename, lineNum, err.Error())
 			}
@@ -69,7 +79,6 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 			lineNum++
 		}
 	}
-
 	return nil
 }
 

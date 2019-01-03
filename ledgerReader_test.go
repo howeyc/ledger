@@ -51,6 +51,27 @@ func TestLedgerScannerSingleInclude(t *testing.T) {
 	}
 }
 
+func TestLedgerScannerWildcardInclude(t *testing.T) {
+	r, err := NewLedgerReader("testdata/ledgerReader_input_wildcard_root")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	parsed, err := ioutil.ReadAll(r)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected, _ := ioutil.ReadFile(filepath.Join("testdata", "ledgerReader_expected_wildcard"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if !bytes.Equal(parsed, expected) {
+		t.Fatalf("expected:\n%s\n\n got:\n%s", expected, parsed)
+	}
+}
+
 func TestMarkerSplit(t *testing.T) {
 	filename, lineNum := parseMarker(";__ledger_file*-*/somedir/somefile*-*45")
 	if filename != "/somedir/somefile" {

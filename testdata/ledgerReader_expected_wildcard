@@ -1,0 +1,13 @@
+;__ledger_file*-*testdata/ledgerReader_input_wildcard_root*-*0
+the
+quick
+;__ledger_file*-*testdata/ledgerReader_input_wildcard_1*-*0
+brown
+fox
+jumps
+;__ledger_file*-*testdata/ledgerReader_input_wildcard_2*-*0
+over
+the
+;__ledger_file*-*testdata/ledgerReader_input_wildcard_root*-*3
+lazy
+dog

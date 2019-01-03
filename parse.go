@@ -9,8 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/howeyc/ledger/internal/github.com/joyt/godate"
-
+	date "github.com/howeyc/ledger/internal/github.com/joyt/godate"
 	"github.com/marcmak/calc/calc"
 )
 
