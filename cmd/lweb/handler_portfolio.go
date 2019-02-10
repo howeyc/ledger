@@ -1,51 +1,14 @@
 package main
 
 import (
-	"bufio"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"sort"
-	"strconv"
-	"strings"
 
 	"github.com/go-martini/martini"
 	"github.com/howeyc/ledger"
 )
-
-type wsjQuote struct {
-	PreviousClose float64 `json:"close"`
-	Last          float64 `json:"latestPrice"`
-}
-
-// Mutual fund quote from WSJ closing prices
-func fundQuote(symbol string) (quote wsjQuote, err error) {
-	letters := strings.Split(symbol, "")
-	firstLetter := letters[0]
-	resp, herr := http.Get("http://www.wsj.com/mdc/public/page/2_3048-usmfunds_" + firstLetter + "-usmfunds.html")
-	if herr != nil {
-		return quote, herr
-	}
-	defer resp.Body.Close()
-	scanner := bufio.NewScanner(resp.Body)
-	for scanner.Scan() {
-		line := scanner.Text()
-		// WSJ is row of "name-link, symbol-link, nav, change, ytd, 3-yr" in td cells
-		// find symbol-link and get next two cells
-		if strings.Contains(line, "?sym="+symbol+"\">"+symbol+"<") {
-			scanner.Scan() // end td
-			scanner.Scan() // priceline
-			tdline := scanner.Text()
-			quote.Last, _ = strconv.ParseFloat(tdline[strings.Index(tdline, "\">")+2:strings.Index(tdline, "</td>")], 64)
-			scanner.Scan() // change
-			tdline = scanner.Text()
-			changeAmount, _ := strconv.ParseFloat(tdline[strings.Index(tdline, "\">")+2:strings.Index(tdline, "</td>")], 64)
-			quote.PreviousClose = quote.Last - changeAmount
-			return quote, nil
-		}
-	}
-	return quote, nil
-}
 
 type iexQuote struct {
 	Company       string  `json:"companyName"`
@@ -54,9 +17,9 @@ type iexQuote struct {
 	Last          float64 `json:"latestPrice"`
 }
 
-// https://iextrading.com/developer/docs
+// https://iexcloud.io/docs/api/
 func stockQuote(symbol string) (quote iexQuote, err error) {
-	resp, herr := http.Get("https://api.iextrading.com/1.0/stock/" + symbol + "/quote")
+	resp, herr := http.Get("https://cloud.iexapis.com/beta/stock/" + symbol + "/quote?token=" + portfolioConfigData.IEXToken)
 	if herr != nil {
 		return quote, herr
 	}
@@ -140,7 +103,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 			}
 
 			cprice := si.Cost / si.Shares
-			var sprice,sclose float64
+			var sprice, sclose float64
 			switch securityType {
 			case "Stock":
 				quote, qerr := stockQuote(symbol)
@@ -149,7 +112,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 					sclose = quote.PreviousClose
 				}
 			case "Fund":
-				quote, qerr := fundQuote(symbol)
+				quote, qerr := stockQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last
 					sclose = quote.PreviousClose

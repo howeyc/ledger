@@ -1,3 +1,5 @@
+iex_token = "pk_tokenstring"
+
 [[porfolio]]
 name = "Stocks"
 
