@@ -13,7 +13,8 @@ import (
 type iexQuote struct {
 	Company       string  `json:"companyName"`
 	Exchange      string  `json:"primaryExchange"`
-	PreviousClose float64 `json:"close"`
+	Close         float64 `json:"close"`
+	PreviousClose float64 `json:"previousClose"`
 	Last          float64 `json:"latestPrice"`
 }
 
@@ -109,13 +110,22 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 				quote, qerr := stockQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last
-					sclose = quote.PreviousClose
+					if quote.Close > 0 {
+						sclose = quote.Close
+					} else {
+						sclose = quote.PreviousClose
+					}
 				}
 			case "Fund":
 				quote, qerr := stockQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last
 					sclose = quote.PreviousClose
+					if quote.Close > 0 {
+						sclose = quote.Close
+					} else {
+						sclose = quote.PreviousClose
+					}
 				}
 			case "Crypto":
 				quote, qerr := cryptoQuote(symbol)
