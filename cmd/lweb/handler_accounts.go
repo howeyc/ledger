@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
+	"io"
 	"math/big"
 	"net/http"
 	"os"
@@ -94,24 +96,34 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	date, _ := time.Parse("2006-01-02", strDate)
 
+	var cbuf, tbuf bytes.Buffer
+	mw := io.MultiWriter(&cbuf, &tbuf)
+	fmt.Fprintln(mw, date.Format("2006/01/02"), strPayee)
+	for _, accLine := range accountLines {
+		if len(accLine) > 0 {
+			fmt.Fprintf(mw, "    %s", accLine)
+			fmt.Fprintln(mw, "")
+		}
+	}
+	fmt.Fprintln(mw, "")
+
+	/* Check valid transaction is created */
+	if _, perr := ledger.ParseLedger(&tbuf); perr != nil {
+		http.Error(w, perr.Error(), 500)
+		return
+	}
+
 	f, err := os.OpenFile(ledgerFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
+		return
 	}
-
-	fmt.Fprintln(f, date.Format("2006/01/02"), strPayee)
-	for _, accLine := range accountLines {
-		if len(accLine) > 0 {
-			fmt.Fprintf(f, "    %s", accLine)
-			fmt.Fprintln(f, "")
-		}
-	}
-	fmt.Fprintln(f, "")
-
+	io.Copy(f, &cbuf)
 	f.Close()
+
 	getTransactions()
 
-	http.Redirect(w, r, "/addtrans", http.StatusFound)
+	fmt.Fprintf(w, "Transaction added!")
 }
 
 func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
@@ -140,7 +152,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params m
 		if tran.Date.After(monthsago) {
 			includeTrans = true
 			// Filter by supplied account
-			if accountName != ""  {
+			if accountName != "" {
 				includeTrans = false
 				for _, acc := range tran.AccountChanges {
 					if acc.Name == accountName {
@@ -159,7 +171,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params m
 	var abals []*ledger.Account
 	for _, bal := range balances {
 		accDepth := len(strings.Split(bal.Name, ":"))
-		if bal.Balance.Cmp(big.NewRat(0,1)) != 0 && accDepth > 2 {
+		if bal.Balance.Cmp(big.NewRat(0, 1)) != 0 && accDepth > 2 {
 			abals = append(abals, bal)
 		}
 	}
