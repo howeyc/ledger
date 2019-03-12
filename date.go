@@ -27,9 +27,10 @@ const (
 	PeriodWeek     Period = "Weekly"
 	Period2Week    Period = "BiWeekly"
 	PeriodMonth    Period = "Monthly"
+	Period2Month   Period = "BiMonthly"
 	PeriodQuarter  Period = "Quarterly"
-	PeriodYear     Period = "Yearly"
 	PeriodSemiYear Period = "SemiYearly"
+	PeriodYear     Period = "Yearly"
 )
 
 func getDateBoundaries(per Period, start, end time.Time) []time.Time {
@@ -49,6 +50,9 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 		}
 	case PeriodMonth:
 		incMonth = 1
+		periodStart = time.Date(start.Year(), start.Month(), 1, 0, 0, 0, 0, time.UTC)
+	case Period2Month:
+		incMonth = 2
 		periodStart = time.Date(start.Year(), start.Month(), 1, 0, 0, 0, 0, time.UTC)
 	case PeriodQuarter:
 		incMonth = 3
