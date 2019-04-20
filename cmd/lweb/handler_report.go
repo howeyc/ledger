@@ -107,7 +107,7 @@ func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (resu
 			}
 		}
 		// Remove any parents
-		for k, _ := range foundAccountNames {
+		for k := range foundAccountNames {
 			kpre := k[:strings.LastIndex(k, ":")]
 			if _, found := foundAccountNames[kpre]; found {
 				delete(foundAccountNames, kpre)
@@ -313,7 +313,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params
 		sort.Slice(values, func(i, j int) bool { return values[i].Balance.Cmp(values[j].Balance) > 0 })
 
 		maxIdx := 0
-		for idx, _ := range values {
+		for idx := range values {
 			mf, _ := maxValue.Float64()
 			cf, _ := values[idx].Balance.Float64()
 			values[idx].Percentage = int((cf / mf) * 100.0)

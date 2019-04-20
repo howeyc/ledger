@@ -7,8 +7,6 @@ import (
 	"testing"
 )
 
-var testDir string
-
 func TestLedgerScannerBasic(t *testing.T) {
 	r, err := NewLedgerReader("testdata/ledgerReader_input_0")
 	if err != nil {

@@ -120,7 +120,6 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 				quote, qerr := stockQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last
-					sclose = quote.PreviousClose
 					if quote.Close > 0 {
 						sclose = quote.Close
 					} else {
