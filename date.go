@@ -11,7 +11,7 @@ func TransactionsInDateRange(trans []*Transaction, start, end time.Time) []*Tran
 	start = start.Add(-1 * time.Second)
 
 	for _, tran := range trans {
-		if tran.Date.After(start) && tran.Date.Before((end)) {
+		if tran.Date.After(start) && tran.Date.Before(end) {
 			newlist = append(newlist, tran)
 		}
 	}
@@ -105,6 +105,27 @@ type RangeTransactions struct {
 	Transactions []*Transaction
 }
 
+// startEndTime will return the start and end Times of a list of transactions
+func startEndTime(trans []*Transaction) (start, end time.Time) {
+	if len(trans) < 1 {
+		return
+	}
+
+	start = trans[0].Date
+	end = trans[0].Date
+
+	for _, t := range trans {
+		if end.Before(t.Date) {
+			end = t.Date
+		}
+		if start.After(t.Date) {
+			start = t.Date
+		}
+	}
+
+	return
+}
+
 // TransactionsByPeriod will return the transactions for each period.
 func TransactionsByPeriod(trans []*Transaction, per Period) []*RangeTransactions {
 	var results []*RangeTransactions
@@ -112,8 +133,7 @@ func TransactionsByPeriod(trans []*Transaction, per Period) []*RangeTransactions
 		return results
 	}
 
-	tStart := trans[0].Date
-	tEnd := trans[len(trans)-1].Date
+	tStart, tEnd := startEndTime(trans)
 
 	boundaries := getDateBoundaries(per, tStart, tEnd)
 
@@ -144,8 +164,7 @@ func BalancesByPeriod(trans []*Transaction, per Period, rType RangeType) []*Rang
 		return results
 	}
 
-	tStart := trans[0].Date
-	tEnd := trans[len(trans)-1].Date
+	tStart, tEnd := startEndTime(trans)
 
 	boundaries := getDateBoundaries(per, tStart, tEnd)
 
