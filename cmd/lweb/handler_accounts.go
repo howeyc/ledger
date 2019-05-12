@@ -118,10 +118,18 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	io.Copy(f, &cbuf)
+	_, err = io.Copy(f, &cbuf)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 	f.Close()
 
-	getTransactions()
+	_, err = getTransactions()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 
 	fmt.Fprintf(w, "Transaction added!")
 }

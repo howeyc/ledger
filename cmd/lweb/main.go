@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
+	"log"
 	"io"
 	"net/http"
 	"sync"
@@ -36,10 +37,12 @@ func getTransactions() ([]*ledger.Transaction, error) {
 	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFileName)
 	if err != nil {
 		return nil, err
-
 	}
 	tr := io.TeeReader(ledgerFileReader, h)
-	io.Copy(&buf, tr)
+	_, err = io.Copy(&buf, tr)
+	if err != nil {
+		return nil, err
+	}
 
 	sum := h.Sum(nil)
 	if bytes.Equal(currentSum, sum) {
@@ -154,7 +157,10 @@ func main() {
 	go func() {
 		for {
 			var rLoadData reportConfigStruct
-			toml.DecodeFile(reportConfigFileName, &rLoadData)
+			_, err := toml.DecodeFile(reportConfigFileName, &rLoadData)
+			if err != nil {
+				log.Println(err)
+			}
 			reportConfigData = rLoadData
 			time.Sleep(time.Minute * 5)
 		}
@@ -164,7 +170,10 @@ func main() {
 		go func() {
 			for {
 				var sLoadData portfolioConfigStruct
-				toml.DecodeFile(stockConfigFileName, &sLoadData)
+				_, err := toml.DecodeFile(stockConfigFileName, &sLoadData)
+				if err != nil {
+					log.Println(err)
+				}
 				portfolioConfigData = sLoadData
 				time.Sleep(time.Minute * 5)
 			}
@@ -172,7 +181,9 @@ func main() {
 	}
 
 	// initialize cache
-	getTransactions()
+	if _, err := getTransactions(); err != nil {
+		log.Fatalln(err)
+	}
 
 	m := martini.Classic()
 	m.Use(gzip.All())
@@ -188,12 +199,12 @@ func main() {
 	m.Get("/report/:reportName", reportHandler)
 	m.Get("/", quickviewHandler)
 
-	fmt.Println("Listening on port", serverPort)
+	log.Println("Listening on port", serverPort)
 	var listenAddress string
 	if localhost {
 		listenAddress = fmt.Sprintf("127.0.0.1:%d", serverPort)
 	} else {
 		listenAddress = fmt.Sprintf(":%d", serverPort)
 	}
-	http.ListenAndServe(listenAddress, m)
+	log.Fatalln(http.ListenAndServe(listenAddress, m))
 }

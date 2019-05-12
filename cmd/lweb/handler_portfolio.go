@@ -26,7 +26,10 @@ func stockQuote(symbol string) (quote iexQuote, err error) {
 	}
 	defer resp.Body.Close()
 	dec := json.NewDecoder(resp.Body)
-	dec.Decode(&quote)
+	derr := dec.Decode(&quote)
+	if derr != nil {
+		return quote, derr
+	}
 	if quote.Company == "" && quote.Exchange == "" {
 		return quote, errors.New("Unable to find data for symbol " + symbol)
 	}
@@ -47,7 +50,10 @@ func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
 	}
 	defer resp.Body.Close()
 	dec := json.NewDecoder(resp.Body)
-	dec.Decode(&quote)
+	derr := dec.Decode(&quote)
+	if derr != nil {
+		return quote, derr
+	}
 	if quote.Volume == "" {
 		return quote, errors.New("Unable to find data for symbol " + symbol)
 	}

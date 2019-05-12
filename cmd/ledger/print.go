@@ -80,7 +80,7 @@ func PrintLedger(generalLedger []*ledger.Transaction, columns int) {
 
 // PrintRegister prints each transaction that matches the given filters.
 func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
-	// Calulate widths for variable-length part of output
+	// Calculate widths for variable-length part of output
 	// 3 10-width columns (date, account-change, running-total)
 	// 4 spaces
 	remainingWidth := columns - (10 * 3) - (4 * 1)
