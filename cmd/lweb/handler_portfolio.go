@@ -147,6 +147,10 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Par
 				sclose = cprice
 			}
 
+			if sprice == 0 {
+				sprice = sclose
+			}
+
 			si.Price = sprice
 			si.MarketValue = si.Shares * si.Price
 			si.GainLossOverall = si.MarketValue - si.Cost
