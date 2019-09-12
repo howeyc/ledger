@@ -63,11 +63,11 @@
           <tr>
             <th>Name</th>
             <th class="info-overall">Cost</th>
-            <th class="hidden-xs">Market Value</th>
+            <th class="info-overall">Market Value</th>
             <th class="info-day hidden-xs">Price</th>
             <th class="info-day hidden-xs">Percent</th>
             <th class="info-day hidden-xs">Gain/Loss</th>
-            <th class="info-overall">Percent</th>
+            <th class="hidden-xs">Percent</th>
             <th class="info-overall">Gain/Loss</th>
           </tr>
         </thead>
@@ -76,11 +76,11 @@
           <tr {{if eq .Type "Total"}}class="warning"{{end}}{{if eq .Type "Section Total"}}class="info"{{end}}>
             <td>{{.Name}}</td>
             <td class="info-overall">{{printf "%.2f" .Cost}}</td>
-            <td class="hidden-xs">{{printf "%.2f" .MarketValue}}</td>
+            <td class="info-overall">{{printf "%.2f" .MarketValue}}</td>
             <td class="info-day hidden-xs">{{printf "%.2f" .Price}}</td>
             <td class="info-day hidden-xs"><p {{if gt .PriceChangePctDay 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctDay}}</p></td>
             <td class="info-day hidden-xs"><p {{if gt .GainLossDay 0.0}}class="text-success"{{end}}{{if lt .GainLossDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossDay}}</p></td>
-            <td class="info-overall"><p {{if gt .PriceChangePctOverall 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctOverall}}</p></td>
+            <td class="hidden-xs"><p {{if gt .PriceChangePctOverall 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctOverall}}</p></td>
             <td class="info-overall"><p {{if gt .GainLossOverall 0.0}}class="text-success"{{end}}{{if lt .GainLossOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossOverall}}</p></td>
           </tr>
           {{end}}
