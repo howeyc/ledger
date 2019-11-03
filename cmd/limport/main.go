@@ -30,10 +30,12 @@ func main() {
 	var ledgerFileName string
 	var accountSubstring, csvFileName, csvDateFormat string
 	var negateAmount bool
+	var allowMatching bool
 	var fieldDelimiter string
 	var scaleFactor float64
 
 	flag.BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
+	flag.BoolVar(&allowMatching, "allow-matching", false, "Have output include imported transactions that\nmatch existing ledger transactions.")
 	flag.Float64Var(&scaleFactor, "scale", 1.0, "Scale factor to multiply against every imported amount.")
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
@@ -130,7 +132,7 @@ func main() {
 	for _, record := range csvRecords[1:] {
 		inputPayeeWords := strings.Split(record[payeeColumn], " ")
 		csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
-		if !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
+		if allowMatching || !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
 			// Classify into expense account
 			_, likely, _ := classifier.LogScores(inputPayeeWords)
 			if likely >= 0 {
