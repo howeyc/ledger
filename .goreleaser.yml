@@ -1,7 +1,9 @@
 # .goreleaser.yml
 # Build customization
 builds:
-  - main: ./cmd/ledger/.
+  -
+    id: "ledger"
+    main: ./cmd/ledger/.
     binary: ledger
     goos:
       - windows
@@ -11,7 +13,10 @@ builds:
     goarch:
       - amd64
       - i386
-  - main: ./cmd/limport/.
+      - arm
+  -
+    id: "limport"
+    main: ./cmd/limport/.
     binary: limport
     goos:
       - windows
@@ -21,7 +26,10 @@ builds:
     goarch:
       - amd64
       - i386
-  - main: ./cmd/llint/.
+      - arm
+  -
+    id: "llint"
+    main: ./cmd/llint/.
     binary: llint
     goos:
       - windows
@@ -31,7 +39,10 @@ builds:
     goarch:
       - amd64
       - i386
-  - main: ./cmd/lweb/.
+      - arm
+  -
+    id: "lweb"
+    main: ./cmd/lweb/.
     binary: lweb
     goos:
       - windows
@@ -41,7 +52,14 @@ builds:
     goarch:
       - amd64
       - i386
-archive:
+      - arm
+archives:
+  -
+    builds:
+    - ledger
+    - limport
+    - llint
+    - lweb
     wrap_in_directory: true
     format_overrides:
       - goos: windows
