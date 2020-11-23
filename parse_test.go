@@ -39,7 +39,7 @@ var testCases = []testCase{
 		nil,
 	},
 	testCase{
-		`1970/01/01 Payee
+		`1970/01/02 Payee
  Expense:test	369.0
  Assets
 
@@ -53,20 +53,6 @@ var testCases = []testCase{
 	Expense:Cranks United  10
 `,
 		[]*Transaction{
-			&Transaction{
-				Payee: "Payee",
-				Date:  time.Unix(0, 0).UTC(),
-				AccountChanges: []Account{
-					Account{
-						"Expense:test",
-						big.NewRat(369.0, 1),
-					},
-					Account{
-						"Assets",
-						big.NewRat(-369.0, 1),
-					},
-				},
-			},
 			&Transaction{
 				Payee: "Payee 5",
 				Date:  time.Unix(0, 0).UTC(),
@@ -90,6 +76,20 @@ var testCases = []testCase{
 					Account{
 						"Expense:Cranks United",
 						big.NewRat(10.0, 1),
+					},
+				},
+			},
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC().AddDate(0, 0, 1),
+				AccountChanges: []Account{
+					Account{
+						"Expense:test",
+						big.NewRat(369.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-369.0, 1),
 					},
 				},
 			},

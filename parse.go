@@ -32,8 +32,10 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 		return
 	})
 
-	if err != nil {
-		sort.Sort(sortTransactionsByDate{generalLedger})
+	if len(generalLedger) > 1 {
+		sort.Slice(generalLedger, func(i, j int) bool {
+			return generalLedger[i].Date.Before(generalLedger[j].Date)
+		})
 	}
 
 	return

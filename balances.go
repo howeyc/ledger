@@ -49,6 +49,8 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 		count++
 	}
 
-	sort.Sort(sortAccountsByName{accList})
+	sort.Slice(accList, func(i, j int) bool {
+		return accList[i].Name < accList[j].Name
+	})
 	return accList
 }
