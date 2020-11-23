@@ -70,6 +70,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 	var line string
 	var filename string
 	var lineCount int
+	var comments []string
 
 	errorMsg := func(msg string) (stop bool) {
 		return callback(nil, fmt.Errorf("%s:%d: %s", filename, lineCount, msg))
@@ -90,6 +91,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
+			comments = append(comments, trimmedLine[commentIdx:])
 			trimmedLine = trimmedLine[:commentIdx]
 			if len(trimmedLine) == 0 {
 				continue
@@ -102,11 +104,13 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 				if transErr != nil {
 					errorMsg("Unable to balance transaction, " + transErr.Error())
 				}
+				trans.Comments = comments
 				callback(trans, nil)
+				comments = nil
 				trans = nil
 			}
 		} else if trans == nil {
-			lineSplit := strings.SplitN(line, " ", 2)
+			lineSplit := strings.SplitN(trimmedLine, " ", 2)
 			if len(lineSplit) != 2 {
 				if errorMsg("Unable to parse payee line: " + line) {
 					return
@@ -148,6 +152,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 		if transErr != nil {
 			errorMsg("Unable to balance transaction, " + transErr.Error())
 		}
+		trans.Comments = comments
 		callback(trans, nil)
 	}
 }

@@ -78,6 +78,10 @@ var testCases = []testCase{
 						big.NewRat(10.0, 1),
 					},
 				},
+				Comments: []string{
+					"; Handle tabs between account and amount",
+					"; Also handle accounts with spaces",
+				},
 			},
 			&Transaction{
 				Payee: "Payee",
@@ -144,6 +148,9 @@ var testCases = []testCase{
 						big.NewRat(-123.0, 1),
 					},
 				},
+				Comments: []string{
+					"; Expense/test  123",
+				},
 			},
 		},
 		nil,
@@ -172,6 +179,10 @@ var testCases = []testCase{
 						"Expense/unbalanced",
 						big.NewRat(0, 1),
 					},
+				},
+				Comments: []string{
+					"; comment",
+					"; comment in trans",
 				},
 			},
 		},
@@ -206,6 +217,9 @@ var testCases = []testCase{
 						"Assets",
 						big.NewRat(-158, 1),
 					},
+				},
+				Comments: []string{
+					"; comment",
 				},
 			},
 		},
