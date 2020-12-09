@@ -105,8 +105,8 @@ func main() {
 	}
 
 	// Find columns from header
-	var dateColumn, payeeColumn, amountColumn int
-	dateColumn, payeeColumn, amountColumn = -1, -1, -1
+	var dateColumn, payeeColumn, amountColumn, commentColumn int
+	dateColumn, payeeColumn, amountColumn, commentColumn = -1, -1, -1, -1
 	for fieldIndex, fieldName := range csvRecords[0] {
 		fieldName = strings.ToLower(fieldName)
 		if strings.Contains(fieldName, "date") {
@@ -119,6 +119,10 @@ func main() {
 			amountColumn = fieldIndex
 		} else if strings.Contains(fieldName, "expense") {
 			amountColumn = fieldIndex
+		} else if strings.Contains(fieldName, "note") {
+			commentColumn = fieldIndex
+		} else if strings.Contains(fieldName, "comment") {
+			commentColumn = fieldIndex
 		}
 	}
 
@@ -154,6 +158,11 @@ func main() {
 			// Create valid transaction for print in ledger format
 			trans := &ledger.Transaction{Date: csvDate, Payee: record[payeeColumn]}
 			trans.AccountChanges = []ledger.Account{csvAccount, expenseAccount}
+
+			// Comment
+			if commentColumn >= 0 && record[commentColumn] != "" {
+				trans.Comments = []string{";" + record[commentColumn]}
+			}
 			PrintTransaction(trans, 80)
 		}
 	}
