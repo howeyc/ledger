@@ -29,6 +29,7 @@ func usage() {
 func main() {
 	var ledgerFileName string
 	var accountSubstring, csvFileName, csvDateFormat string
+	var destAccSearch string
 	var negateAmount bool
 	var allowMatching bool
 	var fieldDelimiter string
@@ -37,6 +38,7 @@ func main() {
 	flag.BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
 	flag.BoolVar(&allowMatching, "allow-matching", false, "Have output include imported transactions that\nmatch existing ledger transactions.")
 	flag.Float64Var(&scaleFactor, "scale", 1.0, "Scale factor to multiply against every imported amount.")
+	flag.StringVar(&destAccSearch, "set-search", "Expense", "Search string used to find set of accounts for classification.")
 	flag.StringVar(&ledgerFileName, "f", "", "Ledger file name (*Required).")
 	flag.StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
 	flag.StringVar(&fieldDelimiter, "delimiter", ",", "Field delimiter.")
@@ -98,7 +100,7 @@ func main() {
 	for _, tran := range generalLedger {
 		payeeWords := strings.Split(tran.Payee, " ")
 		for _, accChange := range tran.AccountChanges {
-			if strings.Contains(accChange.Name, "Expense") {
+			if strings.Contains(accChange.Name, destAccSearch) {
 				classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
 			}
 		}
