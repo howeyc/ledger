@@ -92,21 +92,13 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	remainingWidth := columns - (10 * 3) - (4 * 1)
 	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", remainingWidth/3, (remainingWidth/3)*2)
 
-	var otherAccount string
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
-		for aIdx, accChange := range trans.AccountChanges {
+		for _, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
 			for _, filter := range filterArr {
 				if strings.Contains(accChange.Name, filter) {
 					inFilter = true
-
-					// Probably not the best way, but we just need to find one other account
-					if aIdx > 0 {
-						otherAccount = trans.AccountChanges[0].Name
-					} else {
-						otherAccount = trans.AccountChanges[1].Name
-					}
 				}
 			}
 			if inFilter {
@@ -116,7 +108,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				fmt.Printf(formatString,
 					trans.Date.Format(transactionDateFormat),
 					trans.Payee,
-					otherAccount,
+					accChange.Name,
 					outBalanceString,
 					outRunningBalanceString)
 			}
