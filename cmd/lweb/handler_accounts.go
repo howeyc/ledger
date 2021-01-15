@@ -13,8 +13,8 @@ import (
 
 	"github.com/howeyc/ledger"
 
-	"github.com/BurntSushi/toml"
 	"github.com/go-martini/martini"
+	"github.com/pelletier/go-toml"
 )
 
 type quickviewAccountConfig struct {
@@ -30,8 +30,14 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request) {
 	if len(quickviewConfigFileName) == 0 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
 	}
+	ifile, ierr := os.Open(quickviewConfigFileName)
+	if ierr != nil {
+		http.Redirect(w, r, "/accounts", http.StatusFound)
+	}
+	defer ifile.Close()
+	tdec := toml.NewDecoder(ifile)
 	var quickviewConfigData quickviewConfigStruct
-	if _, lerr := toml.DecodeFile(quickviewConfigFileName, &quickviewConfigData); lerr != nil || len(quickviewConfigData.Accounts) < 1 {
+	if lerr := tdec.Decode(&quickviewConfigData); lerr != nil || len(quickviewConfigData.Accounts) < 1 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
 	}
 

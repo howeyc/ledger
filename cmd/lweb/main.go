@@ -5,18 +5,19 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
-	"log"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/howeyc/ledger"
 
-	"github.com/BurntSushi/toml"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/gzip"
 	"github.com/martini-contrib/staticbin"
+	"github.com/pelletier/go-toml"
 )
 
 var ledgerFileName string
@@ -157,10 +158,16 @@ func main() {
 	go func() {
 		for {
 			var rLoadData reportConfigStruct
-			_, err := toml.DecodeFile(reportConfigFileName, &rLoadData)
+			ifile, ierr := os.Open(reportConfigFileName)
+			if ierr != nil {
+				log.Println(ierr)
+			}
+			tdec := toml.NewDecoder(ifile)
+			err := tdec.Decode(&rLoadData)
 			if err != nil {
 				log.Println(err)
 			}
+			ifile.Close()
 			reportConfigData = rLoadData
 			time.Sleep(time.Minute * 5)
 		}
@@ -170,10 +177,16 @@ func main() {
 		go func() {
 			for {
 				var sLoadData portfolioConfigStruct
-				_, err := toml.DecodeFile(stockConfigFileName, &sLoadData)
+				ifile, ierr := os.Open(stockConfigFileName)
+				if ierr != nil {
+					log.Println(ierr)
+				}
+				tdec := toml.NewDecoder(ifile)
+				err := tdec.Decode(&sLoadData)
 				if err != nil {
 					log.Println(err)
 				}
+				ifile.Close()
 				portfolioConfigData = sLoadData
 				time.Sleep(time.Minute * 5)
 			}
