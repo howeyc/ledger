@@ -78,9 +78,19 @@ func PrintTransaction(trans *ledger.Transaction, columns int) {
 }
 
 // PrintLedger prints all transactions as a formatted ledger file.
-func PrintLedger(generalLedger []*ledger.Transaction, columns int) {
+func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
 	for _, trans := range generalLedger {
-		PrintTransaction(trans, columns)
+		inFilter := len(filterArr) == 0
+		for _, accChange := range trans.AccountChanges {
+			for _, filter := range filterArr {
+				if strings.Contains(accChange.Name, filter) {
+					inFilter = true
+				}
+			}
+		}
+		if inFilter {
+			PrintTransaction(trans, columns)
+		}
 	}
 }
 

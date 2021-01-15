@@ -130,7 +130,7 @@ func main() {
 			}
 		}
 	case "print":
-		PrintLedger(generalLedger, columnWidth)
+		PrintLedger(generalLedger, containsFilterArray, columnWidth)
 	case "register", "reg":
 		if period == "" {
 			PrintRegister(generalLedger, containsFilterArray, columnWidth)
