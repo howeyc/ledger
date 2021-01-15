@@ -14,6 +14,7 @@ builds:
       - amd64
       - i386
       - arm
+      - arm64
   -
     id: "limport"
     main: ./cmd/limport/.
@@ -27,6 +28,7 @@ builds:
       - amd64
       - i386
       - arm
+      - arm64
   -
     id: "llint"
     main: ./cmd/llint/.
@@ -40,6 +42,7 @@ builds:
       - amd64
       - i386
       - arm
+      - arm64
   -
     id: "lweb"
     main: ./cmd/lweb/.
@@ -53,6 +56,7 @@ builds:
       - amd64
       - i386
       - arm
+      - arm64
 archives:
   -
     builds:
