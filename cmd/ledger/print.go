@@ -101,7 +101,10 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	// 3 10-width columns (date, account-change, running-total)
 	// 4 spaces
 	remainingWidth := columns - (10 * 3) - (4 * 1)
-	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", remainingWidth/3, (remainingWidth/3)*2)
+	col1width := remainingWidth / 3
+	col2width := remainingWidth - col1width
+
+	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", col1width, col2width)
 
 	runningBalance := new(big.Rat)
 	for _, trans := range generalLedger {
