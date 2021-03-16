@@ -90,7 +90,8 @@ Example usage:
 
 The screenshots below are taken on an Android device. To give a rough idea of what the web interface looks like.
 
-![main](cmd/lweb/screenshots/index.png) ![navigation](cmd/lweb/screenshots/nav.png) ![navigation of reports](cmd/lweb/screenshots/navreports.png) ![bar chart](cmd/lweb/screenshots/bar.png) ![stacked bar chart](cmd/lweb/screenshots/stackedbar.png) ![pie chart](cmd/lweb/screenshots/pie.png) ![line chart](cmd/lweb/screenshots/line.png)
+<img width=200 src="cmd/lweb/screenshots/index.png"> <img width=200 src="cmd/lweb/screenshots/nav.png"> <img width=200 src="cmd/lweb/screenshots/navreports.png">
+<img width=200 src="cmd/lweb/screenshots/bar.png"> <img width=200 src="cmd/lweb/screenshots/stackedbar.png"> <img width=200 src="cmd/lweb/screenshots/pie.png"> <img width=200 src="cmd/lweb/screenshots/line.png">
 
 ## Installing components
 
