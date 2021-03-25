@@ -65,7 +65,6 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 var accountToAmountSpace = regexp.MustCompile(" {2,}|\t+")
 
 func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) {
-	var trans *Transaction
 	scanner := bufio.NewScanner(ledgerReader)
 	var line string
 	var filename string
@@ -98,32 +97,118 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 			}
 		}
 
+		// Skip empty lines
 		if len(trimmedLine) == 0 {
-			if trans != nil {
-				transErr := balanceTransaction(trans)
-				if transErr != nil {
-					errorMsg("Unable to balance transaction, " + transErr.Error())
-				}
-				trans.Comments = comments
-				callback(trans, nil)
-				comments = nil
-				trans = nil
+			continue
+		}
+
+		lineSplit := strings.SplitN(trimmedLine, " ", 2)
+		if len(lineSplit) != 2 {
+			if errorMsg("Unable to parse payee line: " + line) {
+				return
 			}
-		} else if trans == nil {
-			lineSplit := strings.SplitN(trimmedLine, " ", 2)
-			if len(lineSplit) != 2 {
-				if errorMsg("Unable to parse payee line: " + line) {
+			continue
+		}
+		commandDirective := lineSplit[0]
+		switch commandDirective {
+		case "account":
+			_, lines, _ := parseAccount(scanner)
+			lineCount += lines
+		default:
+			trans, lines, transErr := parseTransaction(scanner)
+			lineCount += lines
+			if transErr != nil {
+				if errorMsg(fmt.Errorf("Unable to parse transaction: %w", transErr).Error()) {
 					return
 				}
 				continue
 			}
-			dateString := lineSplit[0]
-			transDate, dateErr := date.Parse(dateString)
-			if dateErr != nil {
-				errorMsg("Unable to parse date: " + dateString)
+			trans.Comments = append(comments, trans.Comments...)
+			callback(trans, nil)
+			comments = nil
+		}
+	}
+}
+
+func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err error) {
+	line := scanner.Text()
+	// remove heading and tailing space from the line
+	trimmedLine := strings.Trim(line, whitespace)
+
+	lineSplit := strings.SplitN(trimmedLine, " ", 2)
+	if len(lineSplit) != 2 {
+		err = fmt.Errorf("Unable to parse account line: %s", line)
+		return
+	}
+	accountName = lineSplit[1]
+
+	for scanner.Scan() {
+		// Read until blank line (ignore all sub-directives)
+		line = scanner.Text()
+		// remove heading and tailing space from the line
+		trimmedLine = strings.Trim(line, whitespace)
+		lines++
+
+		// skip comments
+		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
+			trimmedLine = trimmedLine[:commentIdx]
+		}
+
+		// continue slurping up sub-directives until empty line
+		if len(trimmedLine) == 0 {
+			return
+		}
+	}
+
+	return
+}
+
+func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, err error) {
+	var comments []string
+
+	line := scanner.Text()
+	trimmedLine := strings.Trim(line, whitespace)
+
+	// Parse Date-Payee line
+	lineSplit := strings.SplitN(trimmedLine, " ", 2)
+	if len(lineSplit) != 2 {
+		err = fmt.Errorf("Unable to parse payee line: %s", line)
+		return
+	}
+	dateString := lineSplit[0]
+	transDate, dateErr := date.Parse(dateString)
+	if dateErr != nil {
+		err = fmt.Errorf("Unable to parse date: %s", dateString)
+		return
+	}
+	payeeString := lineSplit[1]
+	trans = &Transaction{Payee: payeeString, Date: transDate}
+
+	for scanner.Scan() {
+		line = scanner.Text()
+		// remove heading and tailing space from the line
+		trimmedLine = strings.Trim(line, whitespace)
+		lines++
+
+		// handle comments
+		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
+			comments = append(comments, trimmedLine[commentIdx:])
+			trimmedLine = trimmedLine[:commentIdx]
+			if len(trimmedLine) == 0 {
+				continue
 			}
-			payeeString := lineSplit[1]
-			trans = &Transaction{Payee: payeeString, Date: transDate}
+		}
+
+		if len(trimmedLine) == 0 {
+			if trans != nil {
+				transErr := balanceTransaction(trans)
+				if transErr != nil {
+					err = fmt.Errorf("Unable to balance transaction: %w", transErr)
+					return
+				}
+				trans.Comments = comments
+				return
+			}
 		} else {
 			var accChange Account
 			lineSplit := accountToAmountSpace.Split(trimmedLine, -1)
@@ -150,11 +235,12 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 	if trans != nil {
 		transErr := balanceTransaction(trans)
 		if transErr != nil {
-			errorMsg("Unable to balance transaction, " + transErr.Error())
+			err = fmt.Errorf("Unable to balance transaction: %w", transErr)
+			return
 		}
 		trans.Comments = comments
-		callback(trans, nil)
 	}
+	return
 }
 
 func getBalance(balance string) (bool, *big.Rat) {
@@ -176,7 +262,7 @@ func balanceTransaction(input *Transaction) error {
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance == nil {
 			if emptyFound {
-				return fmt.Errorf("more than one account change empty")
+				return fmt.Errorf("more than one account empty")
 			}
 			emptyAccIndex = accIndex
 			emptyFound = true
@@ -186,7 +272,7 @@ func balanceTransaction(input *Transaction) error {
 	}
 	if balance.Sign() != 0 {
 		if !emptyFound {
-			return fmt.Errorf("no empty account change to place extra balance")
+			return fmt.Errorf("no empty account to place extra balance")
 		}
 	}
 	if emptyFound {
