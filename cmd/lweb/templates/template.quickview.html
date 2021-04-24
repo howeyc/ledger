@@ -9,11 +9,7 @@
 		
     <title>Ledger - Account List</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <link href="/static/padding.css" rel="stylesheet">
+	{{template "common-css"}}
 
   </head>
 
@@ -44,13 +40,13 @@
         <tbody>
           {{range .Accounts}}
           <tr>
-            <td class="visible-xs-block">
+            <td class="d-block d-sm-none">
               <a href="/account/{{.Name}}">{{abbrev .Name}}</a>
-              <div style="float:right"><a href="/addtrans/{{.Name}}">+</a></div>
+              <div style="float:right"><a class="link-success" href="/addtrans/{{.Name}}">+</a></div>
             </td>
-            <td class="hidden-xs">
+            <td class="d-none d-sm-block">
               <a href="/account/{{.Name}}">{{.Name}}</a>
-              <div style="float:right"><a href="/addtrans/{{.Name}}">+</a></div>
+              <div style="float:right"><a class="link-success" href="/addtrans/{{.Name}}">+</a></div>
             </td>
             <td align="right">{{.Balance.FloatString 2}}</td>
           </tr>
@@ -63,11 +59,7 @@
    </div> <!-- /container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+   {{template "common-scripts"}}
     <script>
     $(document).ready(function() {
     $('.popover-dismiss').popover({

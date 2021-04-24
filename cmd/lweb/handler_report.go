@@ -315,7 +315,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			mf, _ := maxValue.Float64()
 			cf, _ := values[idx].Balance.Float64()
 			values[idx].Percentage = int((cf / mf) * 100.0)
-			if values[idx].Percentage > 9 {
+			if values[idx].Percentage > 5 {
 				maxIdx = idx
 			}
 		}

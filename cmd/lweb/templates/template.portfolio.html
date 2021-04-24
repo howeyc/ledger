@@ -9,11 +9,7 @@
 		
     <title>Ledger - Portfolio</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <link href="/static/padding.css" rel="stylesheet">
+	{{template "common-css"}}
 
   </head>
 
@@ -24,15 +20,15 @@
    <div class="container">
       <div class="content-header">
         <div class="row">
-			<div class="col-xs-8">
-        		<h1>Portfolio {{.PortfolioName}}<span id="info" class="visible-xs-inline"> - Overall</span></h1>
+			<div class="col-8">
+        		<h1>Portfolio {{.PortfolioName}}<span id="info" class="d-block d-sm-none"> - Overall</span></h1>
 			</div>
-			<div class="col-xs-4"><a class="btn btn-default visible-xs-block" href="#" onclick="toggleInfo();">Toggle</a></div>
+			<div class="col-4"><a class="btn btn-secondary d-block d-sm-none" href="#" onclick="toggleInfo();">Toggle</a></div>
 		</div>
       </div>
       <div class="page-content inset">
       <div class="row">
-      <div class="col-md-12">
+      <div class="col-12">
 	
       <table id="listtable" class="table table-bordered table-hover paginated-table">
         <thead>
@@ -40,23 +36,23 @@
             <th>Name</th>
             <th class="info-overall">Cost</th>
             <th class="info-overall">Market Value</th>
-            <th class="info-day hidden-xs">Price</th>
-            <th class="info-day hidden-xs">Percent</th>
-            <th class="info-day hidden-xs">Gain/Loss</th>
-            <th class="hidden-xs">Percent</th>
+            <th class="info-day d-none d-sm-table-cell">Price</th>
+            <th class="info-day d-none d-sm-table-cell">Percent</th>
+            <th class="info-day d-none d-sm-table-cell">Gain/Loss</th>
+            <th class="d-none d-sm-table-cell">Percent</th>
             <th class="info-overall">Gain/Loss</th>
           </tr>
         </thead>
         <tbody>
           {{range .Stocks}}
-          <tr {{if eq .Type "Total"}}class="warning"{{end}}{{if eq .Type "Section Total"}}class="info"{{end}}>
+          <tr {{if eq .Type "Total"}}class="bg-warning"{{end}}{{if eq .Type "Section Total"}}class="bg-info"{{end}}>
             <td>{{.Name}}</td>
             <td class="info-overall">{{printf "%.2f" .Cost}}</td>
             <td class="info-overall">{{printf "%.2f" .MarketValue}}</td>
-            <td class="info-day hidden-xs">{{printf "%.2f" .Price}}</td>
-            <td class="info-day hidden-xs"><p {{if gt .PriceChangePctDay 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctDay}}</p></td>
-            <td class="info-day hidden-xs"><p {{if gt .GainLossDay 0.0}}class="text-success"{{end}}{{if lt .GainLossDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossDay}}</p></td>
-            <td class="hidden-xs"><p {{if gt .PriceChangePctOverall 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctOverall}}</p></td>
+            <td class="info-day d-none d-sm-table-cell">{{printf "%.2f" .Price}}</td>
+            <td class="info-day d-none d-sm-table-cell"><p {{if gt .PriceChangePctDay 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctDay}}</p></td>
+            <td class="info-day d-none d-sm-table-cell"><p {{if gt .GainLossDay 0.0}}class="text-success"{{end}}{{if lt .GainLossDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossDay}}</p></td>
+            <td class="d-none d-sm-table-cell"><p {{if gt .PriceChangePctOverall 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctOverall}}</p></td>
             <td class="info-overall"><p {{if gt .GainLossOverall 0.0}}class="text-success"{{end}}{{if lt .GainLossOverall 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossOverall}}</p></td>
           </tr>
           {{end}}
@@ -68,11 +64,7 @@
    </div> <!-- /container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+   {{template "common-scripts"}}
     <script>
     var overallOn = true;
     $(document).ready(function() {
@@ -83,13 +75,17 @@
     });
     function toggleInfo() {
       if (overallOn) {
-      $( ".info-overall" ).addClass("hidden-xs")
-      $( ".info-day" ).removeClass("hidden-xs")
+      $( ".info-overall" ).addClass("d-none")
+      $( ".info-overall" ).addClass("d-sm-table-cell")
+      $( ".info-day" ).removeClass("d-none")
+      $( ".info-day" ).removeClass("d-sm-table-cell")
       $( "#info" ).text(' - Day');
       overallOn = false;
       } else {
-      $( ".info-day" ).addClass("hidden-xs")
-      $( ".info-overall" ).removeClass("hidden-xs")
+      $( ".info-day" ).addClass("d-none")
+      $( ".info-day" ).addClass("d-sm-table-cell")
+      $( ".info-overall" ).removeClass("d-none")
+      $( ".info-overall" ).removeClass("d-sm-table-cell")
       $( "#info" ).text(' - Overall');
       overallOn = true;
       }

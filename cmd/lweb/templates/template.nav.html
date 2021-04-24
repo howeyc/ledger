@@ -1,48 +1,39 @@
 {{define "nav"}}
 <!-- Fixed navbar -->
-<div class="navbar navbar-inverse navbar-fixed-top hidden-print" role="navigation">
+<div class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
   <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="/">Ledger</a>
-    </div>
-    <div class="navbar-collapse collapse">
+    <a class="navbar-brand" href="/">Ledger</a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navtopbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navtopbar">
       <ul class="nav navbar-nav">
-        <li>
-          <a href="/ledger">General Ledger</a>
+        <li class="nav-item">
+          <a class="nav-link" href="/ledger">General Ledger</a>
         </li>
-        <li>
-          <a href="/addtrans">Add Transaction</a>
+        <li class="nav-item">
+          <a class="nav-link" href="/addtrans">Add Transaction</a>
         </li>
-        <li>
-          <a href="/accounts">Accounts</a>
+        <li class="nav-item">
+          <a class="nav-link" href="/accounts">Accounts</a>
         </li>
-        <li class="dropdown">
-          <a href="#" class="dropdown toggle" data-toggle="dropdown">Reports
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
+        <li class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="reports-drowpdown">Reports</a>
+          <ul class="dropdown-menu" aria-labelledBy="reports-dropdown">
             {{range .Reports}}
             <li>
-              <a href="/report/{{.Name}}">{{.Name}}</a>
+              <a class="dropdown-item" href="/report/{{.Name}}">{{.Name}}</a>
             </li>
             {{end}}
           </ul>
         </li>
         {{if .Portfolios }}
-        <li class="dropdown">
-          <a href="#" class="dropdown toggle" data-toggle="dropdown">Portfolios
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
+        <li class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="portfolios-dropdown">Portfolios</a>
+          <ul class="dropdown-menu" aria-labelledBy="portfolios-dropdown">
             {{range .Portfolios}}
             <li>
-              <a href="/portfolio/{{.Name}}">{{.Name}}</a>
+              <a class="dropdown-item" href="/portfolio/{{.Name}}">{{.Name}}</a>
             </li>
             {{end}}
           </ul>

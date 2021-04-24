@@ -12,11 +12,7 @@
 
   <title>Ledger - Account</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="/static/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
-
-  <!-- Add custom CSS here -->
-  <link href="/static/padding.css" rel="stylesheet">
+  {{template "common-css"}}
 
 </head>
 
@@ -27,11 +23,11 @@
   <div class="container">
     <div class="content-header">
       <div class="row">
-        <div class="col-xs-8">
+        <div class="col-8">
           <h1>Account</h1>
         </div>
-        <div class="col-xs-4">
-          <h1><a class="btn btn-default" href="#" onclick="toggleInfo();">Toggle Merge</a></h1>
+        <div class="col-4">
+          <h1><a class="btn btn-secondary" href="#" onclick="toggleInfo();">Toggle Merge</a></h1>
         </div>
       </div>
     </div>
@@ -51,8 +47,8 @@
               {{range .Transactions}}
               <tr>
                 <td>{{.Date.Format "2006-01-02"}}</td>
-                <td class="hidden-xs">{{.Payee}}</td>
-                <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
+                <td class="d-none d-sm-block">{{.Payee}}</td>
+                <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
                 <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
               </tr>
               {{end}}
@@ -71,8 +67,8 @@
               {{range .MergedTransactions}}
               <tr>
                 <td>{{.Date.Format "2006-01-02"}}</td>
-                <td class="hidden-xs">{{.Payee}}</td>
-                <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
+                <td class="d-none d-sm-block">{{.Payee}}</td>
+                <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
                 <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
               </tr>
               {{end}}
@@ -87,11 +83,7 @@
   <!-- /container -->
 
 
-  <!-- Bootstrap core JavaScript
-    ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  <script src="/static/jquery.min.js"></script>
-  <script src="/static/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+  {{template "common-scripts"}}
   <script>
     $(document).ready(function () {
       $('.popover-dismiss').popover({

@@ -9,11 +9,7 @@
 		
     <title>Ledger - Report - {{.ReportName}}</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <link href="/static/padding.css" rel="stylesheet">
+	{{template "common-css"}}
 
   </head>
 
@@ -40,13 +36,13 @@
           </tr>
         </thead>
         <tbody>
-            {{range .ChartAccounts}}
+            {{range $idx, $acc := .ChartAccounts}}
           <tr>
-            <td>{{abbrev .Name}}</td>
+            <td>{{abbrev $acc.Name}}</td>
             <td>
                 <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="{{.Percentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{.Percentage}}%;">
-                    {{.Balance.FloatString 0}} ({{.Percentage}}%)
+					<div class="progress-bar{{if eq $idx 0}} bg-warning{{end}}{{if eq $idx 1}} bg-secondary{{end}}" role="progressbar" aria-valuenow="{{$acc.Percentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{.Percentage}}%;">
+                    {{$acc.Balance.FloatString 0}} ({{$acc.Percentage}}%)
                     </div>
                   </div>
             </td>
@@ -71,8 +67,8 @@
           {{range .Transactions}}
           <tr>
             <td>{{.Date.Format "2006-01-02"}}</td>
-            <td class="hidden-xs">{{.Payee}}</td>
-            <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
+            <td class="d-none d-sm-block">{{.Payee}}</td>
+            <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
             <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
           </tr>
           {{end}}
@@ -85,10 +81,6 @@
    </div> <!-- /container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+   {{template "common-scripts"}}
   </body>
 </html>

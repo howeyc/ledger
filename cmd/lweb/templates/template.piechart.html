@@ -9,11 +9,7 @@
 		
     <title>Ledger - Report - {{.ReportName}}</title>
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap-3.3.0/dist/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Add custom CSS here -->
-    <link href="/static/padding.css" rel="stylesheet">
+	{{template "common-css"}}
 
   </head>
 
@@ -57,8 +53,8 @@
           {{range .Transactions}}
           <tr>
             <td>{{.Date.Format "2006-01-02"}}</td>
-            <td class="hidden-xs">{{.Payee}}</td>
-            <td class="visible-xs-block">{{printf "%.16s" .Payee}}</td>
+            <td class="d-none d-sm-block">{{.Payee}}</td>
+            <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
             <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
           </tr>
           {{end}}
@@ -71,30 +67,23 @@
    </div> <!-- /container -->
 
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/static/jquery.min.js"></script>
-    <script src="/static/Chart.min.js"></script>
-    <script src="/static/legend.js"></script>
-    <script src="/static/bootstrap-3.3.0/dist/js/bootstrap.min.js"></script>
+   {{template "common-scripts"}}
     <script>
     $(document).ready(function() {
 	var ctx = document.getElementById("chart-area").getContext("2d");
-	var data = [
-    {{range .ChartAccounts}}
+	var data = {
+        labels: [{{range .ChartAccounts}}"{{abbrev .Name}}",{{end}}
+        ],
+        datasets: [
     {
-        value: {{.Balance.FloatString 2}},
-        color: "{{.Color}}",
-        highlight: "{{.Highlight}}",
-        label: "{{abbrev .Name}}"
-    },
-    {{end}}
-	];
-    {{if eq .ChartType "Pie"}} var myPieChart = new Chart(ctx).Pie(data,{responsive: true});{{end}}
-    {{if eq .ChartType "Polar"}} var myPieChart = new Chart(ctx).PolarArea(data,{responsive: true});{{end}}
-    {{if eq .ChartType "Doughnut"}} var myPieChart = new Chart(ctx).Doughnut(data,{responsive: true});{{end}}
-    legend(document.getElementById('chart-legend'), data);
+        label: "Dataset 1",
+		data: [{{range .ChartAccounts}}{{.Balance.FloatString 2}},{{end}}],
+		backgroundColor: [{{range .ChartAccounts}}"{{.Color}}",{{end}}],
+    }]
+	};
+    {{if eq .ChartType "Pie"}} var myPieChart = new Chart(ctx,{type: 'pie', data: data});{{end}}
+	{{if eq .ChartType "Polar"}} var myPieChart = new Chart(ctx,{type: 'polarArea', data: data});{{end}}
+    {{if eq .ChartType "Doughnut"}} var myPieChart = new Chart(ctx,{type: 'doughnut', data: data});{{end}}
     });
     </script>
 
