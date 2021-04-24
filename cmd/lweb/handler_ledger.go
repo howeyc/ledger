@@ -1,9 +1,14 @@
 package main
 
-import "net/http"
+import (
+	"html/template"
+	"net/http"
 
-func ledgerHandler(w http.ResponseWriter, r *http.Request) {
-	t, err := parseAssets("templates/template.ledger.html", "templates/template.nav.html")
+	"github.com/julienschmidt/httprouter"
+)
+
+func ledgerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	t, err := template.ParseFS(contentTemplates, "templates/template.ledger.html", "templates/template.nav.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

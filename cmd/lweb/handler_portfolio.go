@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/go-martini/martini"
 	"github.com/howeyc/ledger"
+	"github.com/julienschmidt/httprouter"
 )
 
 type iexQuote struct {
@@ -60,8 +60,8 @@ func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
 	return quote, nil
 }
 
-func portfolioHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
-	portfolioName := params["portfolioName"]
+func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	portfolioName := params.ByName("portfolioName")
 
 	var portfolio portfolioStruct
 	for _, port := range portfolioConfigData.Portfolios {

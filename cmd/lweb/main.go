@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"embed"
 	"flag"
 	"fmt"
 	"io"
@@ -13,10 +14,9 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/cmd/lweb/internal/httpcompress"
 
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/gzip"
-	"github.com/martini-contrib/staticbin"
+	"github.com/julienschmidt/httprouter"
 	"github.com/pelletier/go-toml"
 )
 
@@ -27,6 +27,12 @@ var quickviewConfigFileName string
 var ledgerLock sync.Mutex
 var currentSum []byte
 var currentTrans []*ledger.Transaction
+
+//go:embed static/*
+var contentStatic embed.FS
+
+//go:embed templates/*
+var contentTemplates embed.FS
 
 func getTransactions() ([]*ledger.Transaction, error) {
 	ledgerLock.Lock()
@@ -198,19 +204,25 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	m := martini.Classic()
-	m.Use(gzip.All())
-	m.Use(staticbin.Static("public", Asset))
+	m := httprouter.New()
 
-	m.Get("/ledger", ledgerHandler)
-	m.Get("/accounts", accountsHandler)
-	m.Get("/addtrans", addTransactionHandler)
-	m.Get("/addtrans/:accountName", addQuickTransactionHandler)
-	m.Post("/addtrans", addTransactionPostHandler)
-	m.Get("/portfolio/:portfolioName", portfolioHandler)
-	m.Get("/account/:accountName", accountHandler)
-	m.Get("/report/:reportName", reportHandler)
-	m.Get("/", quickviewHandler)
+	fileServer := http.FileServer(http.FS(contentStatic))
+	m.GET("/static/*filepath", func(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+		w.Header().Set("Vary", "Accept-Encoding")
+		w.Header().Set("Cache-Control", "public, max-age=7776000")
+		req.URL.Path = "/static/" + ps.ByName("filepath")
+		fileServer.ServeHTTP(w, req)
+	})
+
+	m.GET("/ledger", httpcompress.Middleware(ledgerHandler, false))
+	m.GET("/accounts", httpcompress.Middleware(accountsHandler, false))
+	m.GET("/addtrans", httpcompress.Middleware(addTransactionHandler, false))
+	m.GET("/addtrans/:accountName", httpcompress.Middleware(addQuickTransactionHandler, false))
+	m.POST("/addtrans", httpcompress.Middleware(addTransactionPostHandler, false))
+	m.GET("/portfolio/:portfolioName", httpcompress.Middleware(portfolioHandler, false))
+	m.GET("/account/:accountName", httpcompress.Middleware(accountHandler, false))
+	m.GET("/report/:reportName", httpcompress.Middleware(reportHandler, false))
+	m.GET("/", httpcompress.Middleware(quickviewHandler, false))
 
 	log.Println("Listening on port", serverPort)
 	var listenAddress string

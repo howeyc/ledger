@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
+	"github.com/julienschmidt/httprouter"
 
-	"github.com/go-martini/martini"
 	"github.com/pelletier/go-toml"
 )
 
@@ -26,19 +26,22 @@ type quickviewConfigStruct struct {
 	Accounts []quickviewAccountConfig `toml:"account"`
 }
 
-func quickviewHandler(w http.ResponseWriter, r *http.Request) {
+func quickviewHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if len(quickviewConfigFileName) == 0 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
+		return
 	}
 	ifile, ierr := os.Open(quickviewConfigFileName)
 	if ierr != nil {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
+		return
 	}
 	defer ifile.Close()
 	tdec := toml.NewDecoder(ifile)
 	var quickviewConfigData quickviewConfigStruct
 	if lerr := tdec.Decode(&quickviewConfigData); lerr != nil || len(quickviewConfigData.Accounts) < 1 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
+		return
 	}
 
 	shorten := func(accname string) string {
@@ -89,7 +92,7 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
+func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	strDate := r.FormValue("transactionDate")
 	strPayee := r.FormValue("transactionPayee")
 
@@ -140,8 +143,8 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Transaction added!")
 }
 
-func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
-	accountName := params["accountName"]
+func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	accountName := params.ByName("accountName")
 	funcMap := template.FuncMap{
 		"abbrev": abbrev,
 	}
@@ -202,7 +205,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params m
 	}
 }
 
-func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
+func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	funcMap := template.FuncMap{
 		"abbrev": abbrev,
 	}
@@ -232,7 +235,7 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func accountsHandler(w http.ResponseWriter, r *http.Request) {
+func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	funcMap := template.FuncMap{
 		"abbrev": abbrev,
 	}
@@ -263,8 +266,8 @@ func accountsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func accountHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
-	accountName := params["accountName"]
+func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	accountName := params.ByName("accountName")
 
 	t, err := parseAssets("templates/template.account.html", "templates/template.nav.html")
 	if err != nil {

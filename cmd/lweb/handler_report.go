@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-martini/martini"
 	"github.com/howeyc/ledger"
+	"github.com/julienschmidt/httprouter"
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
@@ -109,9 +109,7 @@ func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (resu
 		// Remove any parents
 		for k := range foundAccountNames {
 			kpre := k[:strings.LastIndex(k, ":")]
-			if _, found := foundAccountNames[kpre]; found {
-				delete(foundAccountNames, kpre)
-			}
+			delete(foundAccountNames, kpre)
 		}
 		// Remaining are the results
 		for _, hay := range foundAccountNames {
@@ -214,8 +212,8 @@ func mergeAccounts(input *ledger.Transaction) {
 	})
 }
 
-func reportHandler(w http.ResponseWriter, r *http.Request, params martini.Params) {
-	reportName := params["reportName"]
+func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	reportName := params.ByName("reportName")
 
 	trans, terr := getTransactions()
 	if terr != nil {
