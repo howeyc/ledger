@@ -222,6 +222,10 @@ func main() {
 	m.GET("/portfolio/:portfolioName", httpcompress.Middleware(portfolioHandler, false))
 	m.GET("/account/:accountName", httpcompress.Middleware(accountHandler, false))
 	m.GET("/report/:reportName", httpcompress.Middleware(reportHandler, false))
+	m.GET("/favicon.ico", func(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+		req.URL.Path = "/static/favicon.ico"
+		fileServer.ServeHTTP(w, req)
+	})
 	m.GET("/", httpcompress.Middleware(quickviewHandler, false))
 
 	log.Println("Listening on port", serverPort)
