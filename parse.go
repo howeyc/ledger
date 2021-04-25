@@ -6,7 +6,6 @@ import (
 	"io"
 	"math/big"
 	"regexp"
-	"sort"
 	"strings"
 
 	date "github.com/joyt/godate"
@@ -31,12 +30,6 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 		generalLedger = append(generalLedger, t)
 		return
 	})
-
-	if len(generalLedger) > 1 {
-		sort.Slice(generalLedger, func(i, j int) bool {
-			return generalLedger[i].Date.Before(generalLedger[j].Date)
-		})
-	}
 
 	return
 }
@@ -168,6 +161,11 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 
 	line := scanner.Text()
 	trimmedLine := strings.Trim(line, whitespace)
+	// handle comments (comment saved in calling function)
+	if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
+		trimmedLine = trimmedLine[:commentIdx]
+	}
+	trimmedLine = strings.Trim(trimmedLine, whitespace)
 
 	// Parse Date-Payee line
 	lineSplit := strings.SplitN(trimmedLine, " ", 2)
@@ -278,5 +276,6 @@ func balanceTransaction(input *Transaction) error {
 	if emptyFound {
 		input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
 	}
+
 	return nil
 }

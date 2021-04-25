@@ -122,6 +122,20 @@ var testCases = []testCase{
 `,
 		[]*Transaction{
 			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC().AddDate(0, 0, 1),
+				AccountChanges: []Account{
+					Account{
+						"Expense:test",
+						big.NewRat(369.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-369.0, 1),
+					},
+				},
+			},
+			&Transaction{
 				Payee: "Payee 5",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
@@ -151,20 +165,6 @@ var testCases = []testCase{
 					"; Also handle accounts with spaces",
 				},
 			},
-			&Transaction{
-				Payee: "Payee",
-				Date:  time.Unix(0, 0).UTC().AddDate(0, 0, 1),
-				AccountChanges: []Account{
-					Account{
-						"Expense:test",
-						big.NewRat(369.0, 1),
-					},
-					Account{
-						"Assets",
-						big.NewRat(-369.0, 1),
-					},
-				},
-			},
 		},
 		nil,
 	},
@@ -192,6 +192,33 @@ var testCases = []testCase{
 						"Assets",
 						big.NewRat(-128.0, 1),
 					},
+				},
+			},
+		},
+		nil,
+	},
+	testCase{
+		"comment after payee",
+		`1970-01-01 Payee      ; payee comment
+	Expense/test  123
+	Assets
+`,
+		[]*Transaction{
+			&Transaction{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					Account{
+						"Expense/test",
+						big.NewRat(123.0, 1),
+					},
+					Account{
+						"Assets",
+						big.NewRat(-123.0, 1),
+					},
+				},
+				Comments: []string{
+					"; payee comment",
 				},
 			},
 		},
@@ -414,23 +441,12 @@ func BenchmarkParseLedger(b *testing.B) {
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)
 	Assets
+
+1970/01/01 Payee
+	Expense/test  (123 * 3)
+	Assets
 `,
-		[]*Transaction{
-			&Transaction{
-				Payee: "Payee",
-				Date:  time.Unix(0, 0).UTC(),
-				AccountChanges: []Account{
-					Account{
-						"Expense/test",
-						big.NewRat(369.0, 1),
-					},
-					Account{
-						"Assets",
-						big.NewRat(-369.0, 1),
-					},
-				},
-			},
-		},
+		nil,
 		nil,
 	}
 

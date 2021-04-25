@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -66,6 +67,12 @@ func PrintTransaction(trans *ledger.Transaction, columns int) {
 	for _, c := range trans.Comments {
 		fmt.Println(c)
 	}
+
+	// Print accounts sorted by name
+	sort.Slice(trans.AccountChanges, func(i, j int) bool {
+		return trans.AccountChanges[i].Name < trans.AccountChanges[j].Name
+	})
+
 	fmt.Printf("%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.FloatString(displayPrecision)
@@ -80,6 +87,13 @@ func PrintTransaction(trans *ledger.Transaction, columns int) {
 
 // PrintLedger prints all transactions as a formatted ledger file.
 func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
+	// Print transactions by date
+	if len(generalLedger) > 1 {
+		sort.Slice(generalLedger, func(i, j int) bool {
+			return generalLedger[i].Date.Before(generalLedger[j].Date)
+		})
+	}
+
 	for _, trans := range generalLedger {
 		inFilter := len(filterArr) == 0
 		for _, accChange := range trans.AccountChanges {
