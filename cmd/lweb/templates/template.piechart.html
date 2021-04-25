@@ -41,25 +41,7 @@
 
       <div class="row">
       <div class="col-xs-12">
-      <table id="listtable" class="table table-bordered table-hover paginated-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description (Payee)</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          {{range .Transactions}}
-          <tr>
-            <td>{{.Date.Format "2006-01-02"}}</td>
-            <td class="d-none d-sm-block">{{.Payee}}</td>
-            <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
-            <td>{{with $acc := index .AccountChanges 0}}{{$acc.Balance.FloatString 2}}{{end}}</td>
-          </tr>
-          {{end}}
-        </tbody>
-      </table>
+		  {{template "payee-transaction-table" .}}
       </div>
       </div>
 
