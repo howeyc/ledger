@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"io"
 	"math/big"
 	"net/http"
@@ -13,51 +12,15 @@ import (
 
 	"github.com/howeyc/ledger"
 	"github.com/julienschmidt/httprouter"
-
-	"github.com/pelletier/go-toml"
 )
 
-type quickviewAccountConfig struct {
-	Name      string
-	ShortName string `toml:"short_name"`
-}
-
-type quickviewConfigStruct struct {
-	Accounts []quickviewAccountConfig `toml:"account"`
-}
-
 func quickviewHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	if len(quickviewConfigFileName) == 0 {
-		http.Redirect(w, r, "/accounts", http.StatusFound)
-		return
-	}
-	ifile, ierr := os.Open(quickviewConfigFileName)
-	if ierr != nil {
-		http.Redirect(w, r, "/accounts", http.StatusFound)
-		return
-	}
-	defer ifile.Close()
-	tdec := toml.NewDecoder(ifile)
-	var quickviewConfigData quickviewConfigStruct
-	if lerr := tdec.Decode(&quickviewConfigData); lerr != nil || len(quickviewConfigData.Accounts) < 1 {
+	if len(quickviewConfigData.Accounts) < 1 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
 		return
 	}
 
-	shorten := func(accname string) string {
-		for _, qvc := range quickviewConfigData.Accounts {
-			if qvc.Name == accname {
-				return qvc.ShortName
-			}
-		}
-		return abbrev(accname)
-	}
-
-	funcMap := template.FuncMap{
-		"abbrev": shorten,
-	}
-
-	t, err := parseAssetsWithFunc(funcMap, "templates/template.quickview.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.quickview.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -145,11 +108,8 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 
 func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	accountName := params.ByName("accountName")
-	funcMap := template.FuncMap{
-		"abbrev": abbrev,
-	}
 
-	t, err := parseAssetsWithFunc(funcMap, "templates/template.addtransaction.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.addtransaction.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -206,11 +166,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params h
 }
 
 func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	funcMap := template.FuncMap{
-		"abbrev": abbrev,
-	}
-
-	t, err := parseAssetsWithFunc(funcMap, "templates/template.addtransaction.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.addtransaction.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -236,11 +192,7 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.
 }
 
 func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	funcMap := template.FuncMap{
-		"abbrev": abbrev,
-	}
-
-	t, err := parseAssetsWithFunc(funcMap, "templates/template.accounts.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.accounts.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -269,7 +221,7 @@ func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	accountName := params.ByName("accountName")
 
-	t, err := parseAssets("templates/template.account.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.account.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -282,14 +234,9 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 	}
 
 	var pageTrans []*ledger.Transaction
-	var mergeTrans []*ledger.Transaction
 	for _, tran := range trans {
-		include := false
-		bal := new(big.Rat)
 		for _, accChange := range tran.AccountChanges {
 			if strings.Contains(accChange.Name, accountName) {
-				include = true
-				bal = bal.Add(bal, accChange.Balance)
 				pageTrans = append(pageTrans, &ledger.Transaction{
 					Payee:          tran.Payee,
 					Date:           tran.Date,
@@ -297,24 +244,12 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 				})
 			}
 		}
-		if include {
-			mergeTrans = append(mergeTrans, &ledger.Transaction{
-				Payee:          tran.Payee,
-				Date:           tran.Date,
-				AccountChanges: []ledger.Account{ledger.Account{Name: accountName, Balance: bal}},
-			})
-		}
 	}
 
-	type accPageData struct {
-		pageData
-		MergedTransactions []*ledger.Transaction
-	}
-	var pData accPageData
+	var pData pageData
 	pData.Reports = reportConfigData.Reports
 	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = pageTrans
-	pData.MergedTransactions = mergeTrans
 
 	err = t.Execute(w, pData)
 	if err != nil {

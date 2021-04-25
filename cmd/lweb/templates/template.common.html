@@ -6,4 +6,61 @@
     <script src="/static/jquery-3.6.0.min.js"></script>
     <script src="/static/bootstrap-5.0.0-beta3.bundle.min.js"></script>
     <script src="/static/chart-3.1.1.min.js"></script>
+	<script>
+    $(document).ready(function () {
+      $('.popover-dismiss').popover({
+        trigger: 'focus',
+        animation: false
+      });
+	  $('#listtable').show();
+	  $('#tableprogress').hide();
+    });
+	</script>
+{{end}}
+{{define "nav"}}
+<!-- Fixed navbar -->
+<div class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
+  <div class="container">
+    <a class="navbar-brand" href="/">Ledger</a>
+    <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navtopbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-collapse collapse" id="navtopbar">
+      <ul class="nav navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/ledger">General Ledger</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/addtrans">Add Transaction</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/accounts">Accounts</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="reports-drowpdown">Reports</a>
+          <ul class="dropdown-menu" aria-labelledBy="reports-dropdown">
+            {{range .Reports}}
+            <li>
+              <a class="dropdown-item" href="/report/{{.Name}}">{{.Name}}</a>
+            </li>
+            {{end}}
+          </ul>
+        </li>
+        {{if .Portfolios }}
+        <li class="nav-item dropdown">
+          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="portfolios-dropdown">Portfolios</a>
+          <ul class="dropdown-menu" aria-labelledBy="portfolios-dropdown">
+            {{range .Portfolios}}
+            <li>
+              <a class="dropdown-item" href="/portfolio/{{.Name}}">{{.Name}}</a>
+            </li>
+            {{end}}
+          </ul>
+        </li>
+        {{end}}
+      </ul>
+    </div>
+    <!--/.nav-collapse -->
+  </div>
+</div>
 {{end}}

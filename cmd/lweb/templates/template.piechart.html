@@ -72,7 +72,7 @@
     $(document).ready(function() {
 	var ctx = document.getElementById("chart-area").getContext("2d");
 	var data = {
-        labels: [{{range .ChartAccounts}}"{{abbrev .Name}}",{{end}}
+        labels: [{{range .ChartAccounts}}"{{.Name}}",{{end}}
         ],
         datasets: [
     {

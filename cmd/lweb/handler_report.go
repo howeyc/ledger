@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"math/big"
 	"net/http"
 	"sort"
@@ -341,11 +340,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		pData.ReportName = reportName
 		pData.MaxValue = maxValue
 
-		funcMap := template.FuncMap{
-			"abbrev": abbrev,
-		}
-
-		t, err := parseAssetsWithFunc(funcMap, "templates/template.leaderboardchart.html", "templates/template.nav.html")
+		t, err := loadTemplates("templates/template.leaderboardchart.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -398,11 +393,8 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		case "doughnut":
 			pData.ChartType = "Doughnut"
 		}
-		funcMap := template.FuncMap{
-			"abbrev": abbrev,
-		}
 
-		t, err := parseAssetsWithFunc(funcMap, "templates/template.piechart.html", "templates/template.nav.html")
+		t, err := loadTemplates("templates/template.piechart.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
@@ -512,12 +504,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 
 		lData.Transactions = vtrans
 
-		funcMap := template.FuncMap{
-			"abbrev":      abbrev,
-			"lastaccount": lastaccount,
-		}
-
-		t, err := parseAssetsWithFunc(funcMap, "templates/template.barlinechart.html", "templates/template.nav.html")
+		t, err := loadTemplates("templates/template.barlinechart.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return

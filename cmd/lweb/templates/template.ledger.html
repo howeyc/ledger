@@ -34,13 +34,18 @@
       <div class="page-content inset">
       <div class="row">
       <div class="col-md-12">
-	
-      <table id="listtable" class="table table-bordered table-hover paginated-table">
+
+		  <div id="tableprogress" class="progress">
+			  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+		  </div>
+
+      <table id="listtable" class="table table-bordered table-hover paginated-table" style="display: none;">
         <thead>
           <tr>
             <th>Date</th>
-            <th>Description (Payee)</th>
-            <th>Details</th>
+            <th class="d-none d-sm-block">Description (Payee) / Account</th>
+            <th class="d-block d-sm-none">Description (Payee) / Account</th>
+            <th>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -49,16 +54,16 @@
             <td>{{.Date.Format "2006-01-02"}}</td>
             <td class="d-none d-sm-block">{{.Payee}}</td>
             <td class="d-block d-sm-none">{{printf "%.16s" .Payee}}</td>
-            <td>
-            <button class="btn btn-secondary popover-dismiss"
-                    data-html="true" data-placement="left"
-                    data-toggle="popover" title='{{.Date.Format "2006-01-02"}} - {{.Payee}}'
-                    data-content= '<table width="100%">
-                            {{range .AccountChanges}}<tr><td width="70%"><a href="/account/{{.Name}}">{{.Name}}</a></td><td width="30%" align="right">{{.Balance.FloatString 2}}</td></tr>{{end}}
-                            </table>'>
-                    Detail</button>
-            </td>
-          </tr>
+			<td></td>
+		  </tr>
+         {{range .AccountChanges}}
+		  <tr>
+			<td></td>
+			<td class="d-none d-sm-block"><a href="/account/{{.Name}}">{{.Name}}</a></td>
+			<td class="d-block d-sm-none"><a href="/account/{{.Name}}">{{abbrev .Name}}</a></td>
+			<td align="right">{{.Balance.FloatString 2}}</td>
+		  </tr>
+		  {{end}}
           {{end}}
         </tbody>
       </table>
@@ -67,16 +72,7 @@
       </div>
    </div> <!-- /container -->
 
-
    {{template "common-scripts"}}
-    <script>
-    $(document).ready(function() {
-    $('.popover-dismiss').popover({
-          trigger: 'click',
-          animation: false
-    });
-    });
-    </script>
 
   </body>
 </html>

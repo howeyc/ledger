@@ -94,27 +94,20 @@
 
   {{template "common-scripts"}}
   <script>
-    $(document).ready(function () {
-      $('.popover-dismiss').popover({
-        trigger: 'focus',
-        animation: false
-      });
-
-      $('#formaddtrans').submit(function () {
-        var jqxhr = $.post('/addtrans', $('#formaddtrans').serialize());
-        jqxhr.always(function() {
-          $('#formresultbox').removeClass("bg-success");
-          $('#formresultbox').removeClass("bg-danger");
-          if (jqxhr.status == 200) {
+  $('#formaddtrans').submit(function () {
+	var jqxhr = $.post('/addtrans', $('#formaddtrans').serialize());
+    jqxhr.always(function() {
+        $('#formresultbox').removeClass("bg-success");
+        $('#formresultbox').removeClass("bg-danger");
+        if (jqxhr.status == 200) {
             $('#formresultbox').addClass("bg-success");
-          } else {
+        } else {
             $('#formresultbox').addClass("bg-danger");
-          }
-          $('#formresult').html(jqxhr.responseText);
-        });
-      return false;
-      });
+        }
+    $('#formresult').html(jqxhr.responseText);
     });
+    return false;
+  });
   </script>
 
 </body>

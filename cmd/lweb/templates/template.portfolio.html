@@ -67,12 +67,6 @@
    {{template "common-scripts"}}
     <script>
     var overallOn = true;
-    $(document).ready(function() {
-    $('.popover-dismiss').popover({
-          trigger: 'focus',
-          animation: false
-    });
-    });
     function toggleInfo() {
       if (overallOn) {
       $( ".info-overall" ).addClass("d-none")

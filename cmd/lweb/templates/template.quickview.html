@@ -41,7 +41,7 @@
           {{range .Accounts}}
           <tr>
             <td class="d-block d-sm-none">
-              <a href="/account/{{.Name}}">{{abbrev .Name}}</a>
+              <a href="/account/{{.Name}}">{{qvshortname .Name}}</a>
               <div style="float:right"><a class="link-success" href="/addtrans/{{.Name}}">+</a></div>
             </td>
             <td class="d-none d-sm-block">
@@ -60,13 +60,6 @@
 
 
    {{template "common-scripts"}}
-    <script>
-    $(document).ready(function() {
-    $('.popover-dismiss').popover({
-          trigger: 'focus',
-          animation: false
-    });
-    });
     </script>
 
   </body>

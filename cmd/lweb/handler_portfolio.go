@@ -70,7 +70,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 		}
 	}
 
-	t, err := parseAssets("templates/template.portfolio.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.portfolio.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

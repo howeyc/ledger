@@ -7,7 +7,7 @@ import (
 )
 
 func ledgerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	t, err := parseAssets("templates/template.ledger.html", "templates/template.nav.html")
+	t, err := loadTemplates("templates/template.ledger.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
