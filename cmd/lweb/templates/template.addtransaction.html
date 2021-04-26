@@ -104,10 +104,16 @@
         } else {
             $('#formresultbox').addClass("bg-danger");
         }
-    $('#formresult').html(jqxhr.responseText);
+        $('#formresult').html(jqxhr.responseText);
+        setTimeout(clearformresult, 5000);
     });
     return false;
   });
+  function clearformresult() {
+    $('#formresultbox').removeClass("bg-success");
+    $('#formresultbox').removeClass("bg-danger");
+    $('#formresult').html("");
+  }
   </script>
 
 </body>
