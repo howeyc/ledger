@@ -3,50 +3,8 @@
 builds:
   -
     id: "ledger"
-    main: ./cmd/ledger/.
+    main: ./ledger/.
     binary: ledger
-    goos:
-      - windows
-      - darwin
-      - linux
-      - freebsd
-    goarch:
-      - amd64
-      - i386
-      - arm
-      - arm64
-  -
-    id: "limport"
-    main: ./cmd/limport/.
-    binary: limport
-    goos:
-      - windows
-      - darwin
-      - linux
-      - freebsd
-    goarch:
-      - amd64
-      - i386
-      - arm
-      - arm64
-  -
-    id: "llint"
-    main: ./cmd/llint/.
-    binary: llint
-    goos:
-      - windows
-      - darwin
-      - linux
-      - freebsd
-    goarch:
-      - amd64
-      - i386
-      - arm
-      - arm64
-  -
-    id: "lweb"
-    main: ./cmd/lweb/.
-    binary: lweb
     goos:
       - windows
       - darwin
@@ -61,9 +19,6 @@ archives:
   -
     builds:
     - ledger
-    - limport
-    - llint
-    - lweb
     wrap_in_directory: true
     format_overrides:
       - goos: windows
