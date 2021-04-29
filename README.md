@@ -33,29 +33,32 @@ A ledger file may include other ledger files using `include <filepath>`. The
 `filepath` is relative to the including file.
 
 
-## ledger
+## ledger lib
 
 This will parse a ledger file into an array of Transaction structs.
 There is also a function get balances for all accounts in the ledger file.
 
-[GoDoc](http://godoc.org/github.com/howeyc/ledger/)
+[GoDoc](https://pkg.go.dev/github.com/howeyc/ledger/)
 
-## cmd/ledger
+## Command Use
 
-A very simplistic version of Ledger.
-Supports "balance", "register", "print" and "stats" commands.
+### Basic Commands
 
 Example usage:
 ```sh
-    ledger -f ledger.dat bal
-    ledger -f ledger.dat bal Cash
-    ledger -f ledger.dat reg
-    ledger -f ledger.dat reg Food
-    ledger -f ledger.dat print
-    ledger -f ledger.dat stats
+	export LEDGER_FILE="ledger.dat"
+
+	ledger print bal
+	ledger print bal Cash
+	ledger print reg
+	ledger print ledger
+	ledger stats
+	ledger lint
+
+	ledger -f other_ledger.dat print reg
 ```
 
-## cmd/limport
+### Import Transactions
 
 Using an existing ledger as input to a bayesian classifier, it will attempt to
 classify an imported csv of transactions based on payee names and print them in
@@ -65,7 +68,7 @@ Attempts to get payee, date, and amount based on headers in the csv file.
 
 Example usage:
 ```sh
-    limport -f ledger.dat discover discover-recent-transactions.csv
+	ledger -f ledger.dat import discover discover-recent-transactions.csv
 ```
 
 In the above example "discover" is the account search string to use to find
@@ -73,7 +76,7 @@ the account that all transactions in the csv file should be applied too. The
 second account to use for each transaction will be picked based on the
 bayesian classification of the payee.
 
-## cmd/lweb
+### Web Service
 
 A website view of the ledger file. This program will show the account list,
 and ledger for a given account.
@@ -83,21 +86,19 @@ file of the report configuration. See reports-sample.toml for examples.
 
 Example usage:
 ```sh
-    lweb -f ledger.dat -r reports.toml --port 8080
+	ledger -f ledger.dat web -r reports.toml --port 8080
 ```
 
-### Screenshots
+#### Screenshots
 
 The screenshots below are taken on an Android device. To give a rough idea of what the web interface looks like.
 
-<img width=200 src="cmd/lweb/screenshots/index.png"> <img width=200 src="cmd/lweb/screenshots/nav.png"> <img width=200 src="cmd/lweb/screenshots/navreports.png">
-<img width=200 src="cmd/lweb/screenshots/bar.png"> <img width=200 src="cmd/lweb/screenshots/stackedbar.png"> <img width=200 src="cmd/lweb/screenshots/pie.png"> <img width=200 src="cmd/lweb/screenshots/line.png">
+<img width=200 src="ledger/cmd/web_screenshots/index.png"> <img width=200 src="ledger/cmd/web_screenshots/nav.png"> <img width=200 src="ledger/cmd/web_screenshots/navreports.png">
+<img width=200 src="ledger/cmd/web_screenshots/bar.png"> <img width=200 src="ledger/cmd/web_screenshots/stackedbar.png"> <img width=200 src="ledger/cmd/web_screenshots/pie.png"> <img width=200 src="ledger/cmd/web_screenshots/line.png">
 
 ## Installing components
 
-```sh
-    go get -u github.com/howeyc/ledger/...
-```
+Download the binary for your platform from the [Github Releases](https://github.com/howeyc/ledger/releases) page.
 
 ## Incompatibilities
 

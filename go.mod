@@ -16,4 +16,5 @@ require (
 	github.com/martini-contrib/gzip v0.0.0-20151124214156-6c035326b43f
 	github.com/martini-contrib/staticbin v0.0.0-20140517153916-b9631fb8c188
 	github.com/pelletier/go-toml v1.8.1
+	github.com/spf13/cobra v1.1.3 // indirect
 )

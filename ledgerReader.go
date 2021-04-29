@@ -3,6 +3,7 @@ package ledger
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,6 +27,9 @@ func NewLedgerReader(filename string) (*bytes.Buffer, error) {
 // includeFile reads filename into buf, adding special marker comments
 // when there are step changes in file location due to 'include' directive.
 func includeFile(filename string, buf *bytes.Buffer) error {
+	if filename == "" {
+		return errors.New("must specify filename")
+	}
 	filename = filepath.Clean(filename)
 	lineNum := 0
 

@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"bytes"
@@ -85,7 +85,7 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 		return
 	}
 
-	f, err := os.OpenFile(ledgerFileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(ledgerFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return

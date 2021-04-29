@@ -1,44 +1,105 @@
-package main
+package cmd
 
 import (
+	"errors"
 	"fmt"
-	"math"
+	"io"
 	"math/big"
+	"os"
 	"sort"
 	"strings"
 	"time"
 	"unicode/utf8"
 
-	"github.com/hako/durafmt"
 	"github.com/howeyc/ledger"
+	"github.com/spf13/cobra"
 )
 
-// PrintStats prints out statistics of the ledger
-func PrintStats(generalLedger []*ledger.Transaction) {
-	if len(generalLedger) < 1 {
-		fmt.Println("Empty ledger.")
-		return
+const (
+	transactionDateFormat = "2006/01/02"
+	displayPrecision      = 2
+)
+
+var startString, endString string
+var columnWidth, transactionDepth int
+var showEmptyAccounts bool
+var columnWide bool
+var period string
+var payeeFilter string
+
+func cliTransactions() ([]*ledger.Transaction, error) {
+	if columnWidth == 80 && columnWide {
+		columnWidth = 132
 	}
-	startDate := generalLedger[0].Date
-	endDate := generalLedger[len(generalLedger)-1].Date
 
-	payees := make(map[string]struct{})
-	accounts := make(map[string]struct{})
+	parsedStartDate, tstartErr := time.Parse(transactionDateFormat, startString)
+	parsedEndDate, tendErr := time.Parse(transactionDateFormat, endString)
 
-	for _, trans := range generalLedger {
-		payees[trans.Payee] = struct{}{}
-		for _, account := range trans.AccountChanges {
-			accounts[account.Name] = struct{}{}
+	if tstartErr != nil || tendErr != nil {
+		return nil, errors.New("Unable to parse start or end date string argument.")
+	}
+
+	var lreader io.Reader
+
+	if ledgerFilePath == "-" {
+		lreader = os.Stdin
+	} else {
+		ledgerFileReader, err := ledger.NewLedgerReader(ledgerFilePath)
+		if err != nil {
+			return nil, err
+		}
+		lreader = ledgerFileReader
+	}
+
+	generalLedger, parseError := ledger.ParseLedger(lreader)
+	if parseError != nil {
+		return nil, parseError
+	}
+
+	timeStartIndex, timeEndIndex := 0, 0
+	for idx := 0; idx < len(generalLedger); idx++ {
+		if generalLedger[idx].Date.After(parsedStartDate) {
+			timeStartIndex = idx
+			break
+		}
+	}
+	for idx := len(generalLedger) - 1; idx >= 0; idx-- {
+		if generalLedger[idx].Date.Before(parsedEndDate) {
+			timeEndIndex = idx
+			break
+		}
+	}
+	generalLedger = generalLedger[timeStartIndex : timeEndIndex+1]
+
+	origLedger := generalLedger
+	generalLedger = make([]*ledger.Transaction, 0)
+	for _, trans := range origLedger {
+		if strings.Contains(trans.Payee, payeeFilter) {
+			generalLedger = append(generalLedger, trans)
 		}
 	}
 
-	days := math.Floor(endDate.Sub(startDate).Hours() / 24)
+	return generalLedger, nil
+}
 
-	fmt.Printf("%-25s : %s to %s (%s)\n", "Transactions span", startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), durafmt.Parse(endDate.Sub(startDate)).String())
-	fmt.Printf("%-25s : %s\n", "Since last post", durafmt.ParseShort(time.Since(endDate)).String())
-	fmt.Printf("%-25s : %d (%.1f per day)\n", "Transactions", len(generalLedger), float64(len(generalLedger))/days)
-	fmt.Printf("%-25s : %d\n", "Payees", len(payees))
-	fmt.Printf("%-25s : %d\n", "Referenced Accounts", len(accounts))
+// printCmd represents the print command
+var printCmd = &cobra.Command{
+	Use:   "print",
+	Short: "Print balance, register, or ledger.",
+}
+
+func init() {
+	rootCmd.AddCommand(printCmd)
+
+	var startDate, endDate time.Time
+	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
+	endDate = time.Now().Add(time.Hour * 24)
+
+	printCmd.PersistentFlags().StringVarP(&startString, "begin-date", "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
+	printCmd.PersistentFlags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
+	printCmd.PersistentFlags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
+	printCmd.PersistentFlags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
+	printCmd.PersistentFlags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
 }
 
 // PrintBalances prints out account balances formatted to a window set to a width of columns.
