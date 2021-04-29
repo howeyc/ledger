@@ -46,16 +46,16 @@ There is also a function get balances for all accounts in the ledger file.
 
 Example usage:
 ```sh
-    export LEDGER_FILE="ledger.dat"
+export LEDGER_FILE="ledger.dat"
 
-    ledger print bal
-    ledger print bal Cash
-    ledger print reg
-    ledger print ledger
-    ledger stats
-    ledger lint
+ledger print bal
+ledger print bal Cash
+ledger print reg
+ledger print ledger
+ledger stats
+ledger lint
 
-    ledger -f other_ledger.dat print reg
+ledger -f other_ledger.dat print reg
 ```
 
 ### Import Transactions
@@ -68,7 +68,7 @@ Attempts to get payee, date, and amount based on headers in the csv file.
 
 Example usage:
 ```sh
-    ledger -f ledger.dat import discover discover-recent-transactions.csv
+ledger -f ledger.dat import discover discover-recent-transactions.csv
 ```
 
 In the above example "discover" is the account search string to use to find
@@ -86,7 +86,7 @@ file of the report configuration. See reports-sample.toml for examples.
 
 Example usage:
 ```sh
-    ledger -f ledger.dat web -r reports.toml --port 8080
+ledger -f ledger.dat web -r reports.toml --port 8080
 ```
 
 #### Screenshots
