@@ -10,9 +10,10 @@ builds:
       - darwin
       - linux
       - freebsd
+      - openbsd
     goarch:
       - amd64
-      - i386
+      - 386
       - arm
       - arm64
 archives:
@@ -20,6 +21,14 @@ archives:
     builds:
     - ledger
     wrap_in_directory: true
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+      freebsd: FreeBSD
+      openbsd: OpenBSD
+      386: i386
+      amd64: x86_64
     format_overrides:
       - goos: windows
         format: zip
