@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/howeyc/ledger"
 	"github.com/spf13/cobra"
@@ -37,7 +38,16 @@ var registerCmd = &cobra.Command{
 }
 
 func init() {
-	printCmd.AddCommand(registerCmd)
+	rootCmd.AddCommand(registerCmd)
+
+	var startDate, endDate time.Time
+	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
+	endDate = time.Now().Add(time.Hour * 24)
+	registerCmd.Flags().StringVarP(&startString, "begin-date", "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
+	registerCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
+	registerCmd.Flags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
+	registerCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
+	registerCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
 
 	registerCmd.Flags().StringVar(&period, "period", "", "Split output into periods (Monthly,Quarterly,SemiYearly,Yearly).")
 }

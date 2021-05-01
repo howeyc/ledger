@@ -48,14 +48,14 @@ Example usage:
 ```sh
 export LEDGER_FILE="ledger.dat"
 
-ledger print bal
-ledger print bal Cash
-ledger print reg
-ledger print ledger
+ledger bal
+ledger bal Cash
+ledger reg
+ledger print
 ledger stats
 ledger lint
 
-ledger -f other_ledger.dat print reg
+ledger -f other_ledger.dat reg
 ```
 
 ### Import Transactions

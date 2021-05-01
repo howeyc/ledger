@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math/big"
 	"os"
 	"sort"
@@ -84,8 +85,16 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 
 // printCmd represents the print command
 var printCmd = &cobra.Command{
-	Use:   "print",
-	Short: "Print balance, register, or ledger.",
+	Use:   "print [account-substring-filter]...",
+	Short: "Print transactions in ledger file format",
+	Run: func(cmd *cobra.Command, args []string) {
+		generalLedger, err := cliTransactions()
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		PrintLedger(generalLedger, args, columnWidth)
+	},
 }
 
 func init() {
@@ -94,12 +103,11 @@ func init() {
 	var startDate, endDate time.Time
 	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
 	endDate = time.Now().Add(time.Hour * 24)
-
-	printCmd.PersistentFlags().StringVarP(&startString, "begin-date", "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
-	printCmd.PersistentFlags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
-	printCmd.PersistentFlags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
-	printCmd.PersistentFlags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	printCmd.PersistentFlags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
+	printCmd.Flags().StringVarP(&startString, "begin-date", "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
+	printCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
+	printCmd.Flags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
+	printCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
+	printCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
 }
 
 // PrintBalances prints out account balances formatted to a window set to a width of columns.
@@ -125,8 +133,13 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 
 // PrintTransaction prints a transaction formatted to fit in specified column width.
 func PrintTransaction(trans *ledger.Transaction, columns int) {
+	WriteTransaction(os.Stdout, trans, columns)
+}
+
+// WriteTransaction writes a transaction formatted to fit in specified column width.
+func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 	for _, c := range trans.Comments {
-		fmt.Println(c)
+		fmt.Fprintln(w, c)
 	}
 
 	// Print accounts sorted by name
@@ -134,16 +147,16 @@ func PrintTransaction(trans *ledger.Transaction, columns int) {
 		return trans.AccountChanges[i].Name < trans.AccountChanges[j].Name
 	})
 
-	fmt.Printf("%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
+	fmt.Fprintf(w, "%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.FloatString(displayPrecision)
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
 		}
-		fmt.Printf("    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+		fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 	}
-	fmt.Println("")
+	fmt.Fprintln(w, "")
 }
 
 // PrintLedger prints all transactions as a formatted ledger file.
