@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"math/big"
 	"net/http"
 	"os"
@@ -68,37 +67,35 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 
 	date, _ := time.Parse("2006-01-02", strDate)
 
-	var cbuf, tbuf bytes.Buffer
-	mw := io.MultiWriter(&cbuf, &tbuf)
-	fmt.Fprintln(mw, date.Format("2006/01/02"), strPayee)
+	var tbuf bytes.Buffer
+	fmt.Fprintln(&tbuf, date.Format("2006/01/02"), strPayee)
 	for _, accLine := range accountLines {
 		if len(accLine) > 0 {
-			fmt.Fprintf(mw, "    %s", accLine)
-			fmt.Fprintln(mw, "")
+			fmt.Fprintf(&tbuf, "    %s", accLine)
+			fmt.Fprintln(&tbuf, "")
 		}
 	}
-	fmt.Fprintln(mw, "")
+	fmt.Fprintln(&tbuf, "")
 
 	/* Check valid transaction is created */
-	if _, perr := ledger.ParseLedger(&tbuf); perr != nil {
+	if trans, perr := ledger.ParseLedger(&tbuf); perr != nil {
 		http.Error(w, perr.Error(), 500)
 		return
+	} else {
+		f, err := os.OpenFile(ledgerFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		for _, t := range trans {
+			WriteTransaction(f, t, 80)
+		}
+
+		f.Close()
 	}
 
-	f, err := os.OpenFile(ledgerFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	_, err = io.Copy(f, &cbuf)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	f.Close()
-
-	_, err = getTransactions()
-	if err != nil {
+	if _, err := getTransactions(); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
