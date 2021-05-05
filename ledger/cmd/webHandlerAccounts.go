@@ -155,6 +155,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params h
 	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Accounts = abals
 	pData.Transactions = atrans
+	pData.AccountNames = []string{accountName}
 
 	err = t.Execute(w, pData)
 	if err != nil {
@@ -247,6 +248,7 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 	pData.Reports = reportConfigData.Reports
 	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = pageTrans
+	pData.AccountNames = []string{accountName}
 
 	err = t.Execute(w, pData)
 	if err != nil {

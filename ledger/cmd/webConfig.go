@@ -95,6 +95,7 @@ type pageData struct {
 	Accounts     []*ledger.Account
 	Stocks       []stockInfo
 	Portfolios   []portfolioStruct
+	AccountNames []string
 }
 
 func configLoaders(dur time.Duration) {

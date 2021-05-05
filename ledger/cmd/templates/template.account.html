@@ -10,7 +10,7 @@
 
   <meta name="theme-color" content="#ffffff">
 
-  <title>Ledger - Account</title>
+  <title>Ledger - Account ({{index .AccountNames 0}})</title>
 
   {{template "common-css"}}
 
@@ -24,7 +24,7 @@
     <div class="content-header">
       <div class="row">
         <div class="col-12">
-          <h1>Account</h1>
+			<h1>Account {{index .AccountNames 0}}</h1>
         </div>
       </div>
     </div>

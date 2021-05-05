@@ -340,6 +340,12 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		pData.ReportName = reportName
 		pData.MaxValue = maxValue
 
+		pData.AccountNames = []string{"All"}
+		for _, ca := range pData.ChartAccounts {
+			pData.AccountNames = append(pData.AccountNames, ca.Name)
+		}
+		sort.Strings(pData.AccountNames[1:])
+
 		t, err := loadTemplates("templates/template.leaderboardchart.html")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
@@ -384,6 +390,12 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		pData.RangeStart = rStart
 		pData.RangeEnd = rEnd
 		pData.ReportName = reportName
+
+		pData.AccountNames = []string{"All"}
+		for _, ca := range pData.ChartAccounts {
+			pData.AccountNames = append(pData.AccountNames, ca.Name)
+		}
+		sort.Strings(pData.AccountNames[1:])
 
 		switch rConf.Chart {
 		case "pie":
@@ -472,6 +484,11 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, aval)
 			}
 		}
+		lData.AccountNames = []string{"All"}
+		for _, ca := range lData.DataSets {
+			lData.AccountNames = append(lData.AccountNames, ca.AccountName)
+		}
+		sort.Strings(lData.AccountNames[1:])
 
 		// Radar chart flips everything. Dates are each dataset and the accounts become the labels
 		if rConf.Chart == "radar" {
@@ -500,6 +517,8 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 						Values:   vals})
 			}
 			lData.Labels = accNames
+			lData.AccountNames = append([]string{"All"}, accNames...)
+			sort.Strings(lData.AccountNames[1:])
 		}
 
 		lData.Transactions = vtrans

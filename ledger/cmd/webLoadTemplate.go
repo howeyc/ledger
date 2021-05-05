@@ -42,6 +42,7 @@ func loadTemplates(filenames ...string) (*template.Template, error) {
 		"abbrev":      abbrev,
 		"lastaccount": lastaccount,
 		"qvshortname": qvshortname,
+		"substr":      strings.Contains,
 	}
 
 	filenames = append(filenames, "templates/template.common.html")
