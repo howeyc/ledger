@@ -2,6 +2,8 @@
 # Build customization
 builds:
   -
+    env:
+      - CGO_ENABLED=0
     id: "ledger"
     main: ./ledger/.
     binary: ledger
