@@ -42,9 +42,9 @@ type gdaxQuote struct {
 	Last          float64 `json:"last,string"`
 }
 
-// https://docs.gdax.com/
+// https://docs.pro.coinbase.com/
 func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
-	resp, herr := http.Get("https://api.gdax.com/products/" + symbol + "/stats")
+	resp, herr := http.Get("https://api.pro.coinbase.com/products/" + symbol + "/stats")
 	if herr != nil {
 		return quote, herr
 	}
