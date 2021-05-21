@@ -28,8 +28,8 @@ var importCmd = &cobra.Command{
 	Short: "Import transactions from csv to ledger format",
 	Run: func(cmd *cobra.Command, args []string) {
 		var accountSubstring, csvFileName string
-		accountSubstring = args[1]
-		csvFileName = args[2]
+		accountSubstring = args[0]
+		csvFileName = args[1]
 
 		ratScale := big.NewRat(1, 1)
 		ratScale.SetFloat64(scaleFactor)
