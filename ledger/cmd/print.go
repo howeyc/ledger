@@ -57,6 +57,10 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return nil, parseError
 	}
 
+	sort.Slice(generalLedger, func(i, j int) bool {
+		return generalLedger[i].Date.Before(generalLedger[j].Date)
+	})
+
 	timeStartIndex, timeEndIndex := 0, 0
 	for idx := 0; idx < len(generalLedger); idx++ {
 		if generalLedger[idx].Date.After(parsedStartDate) {
