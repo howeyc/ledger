@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math"
+	"sort"
+	"strings"
 	"time"
 
 	"github.com/hako/durafmt"
@@ -33,26 +35,33 @@ func PrintStats(generalLedger []*ledger.Transaction) {
 		fmt.Println("Empty ledger.")
 		return
 	}
+	sort.Slice(generalLedger, func(i, j int) bool {
+		return generalLedger[i].Date.Before(generalLedger[j].Date)
+	})
+
 	startDate := generalLedger[0].Date
 	endDate := generalLedger[len(generalLedger)-1].Date
 
 	payees := make(map[string]struct{})
 	accounts := make(map[string]struct{})
 
+	var postings int64
 	for _, trans := range generalLedger {
-		payees[trans.Payee] = struct{}{}
+		payees[strings.ToLower(strings.TrimSpace(trans.Payee))] = struct{}{}
 		for _, account := range trans.AccountChanges {
+			postings++
 			accounts[account.Name] = struct{}{}
 		}
 	}
 
 	days := math.Floor(endDate.Sub(startDate).Hours() / 24)
 
-	fmt.Printf("%-25s : %s to %s (%s)\n", "Transactions span", startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), durafmt.Parse(endDate.Sub(startDate)).String())
-	fmt.Printf("%-25s : %s\n", "Since last post", durafmt.ParseShort(time.Since(endDate)).String())
-	fmt.Printf("%-25s : %d (%.1f per day)\n", "Transactions", len(generalLedger), float64(len(generalLedger))/days)
-	fmt.Printf("%-25s : %d\n", "Payees", len(payees))
-	fmt.Printf("%-25s : %d\n", "Referenced Accounts", len(accounts))
+	fmt.Printf("%-25s : %s to %s (%s)\n", "Time period", startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), durafmt.Parse(endDate.Sub(startDate)).String())
+	fmt.Printf("%-25s : %d\n", "Unique payees", len(payees))
+	fmt.Printf("%-25s : %d\n", "Unique accounts", len(accounts))
+	fmt.Printf("%-25s : %d (%.1f per day)\n", "Number of transactions", len(generalLedger), float64(len(generalLedger))/days)
+	fmt.Printf("%-25s : %d (%.1f per day)\n", "Number of postings", postings, float64(postings)/days)
+	fmt.Printf("%-25s : %s\n", "Time since last post", durafmt.ParseShort(time.Since(endDate)).String())
 }
 
 func init() {
