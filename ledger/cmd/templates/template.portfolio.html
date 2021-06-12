@@ -36,6 +36,7 @@
             <th>Name</th>
             <th class="info-overall">Cost</th>
             <th class="info-overall">Market Value</th>
+            <th class="info-overall">Weight</th>
             <th class="info-day d-none d-sm-table-cell">Price</th>
             <th class="info-day d-none d-sm-table-cell">Percent</th>
             <th class="info-day d-none d-sm-table-cell">Gain/Loss</th>
@@ -49,6 +50,7 @@
             <td>{{.Name}}</td>
             <td class="info-overall">{{printf "%.2f" .Cost}}</td>
             <td class="info-overall">{{printf "%.2f" .MarketValue}}</td>
+            <td class="info-overall">{{printf "%.2f" .Weight}}</td>
             <td class="info-day d-none d-sm-table-cell">{{printf "%.2f" .Price}}</td>
             <td class="info-day d-none d-sm-table-cell"><p {{if gt .PriceChangePctDay 0.0}}class="text-success"{{end}}{{if lt .PriceChangePctDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .PriceChangePctDay}}</p></td>
             <td class="info-day d-none d-sm-table-cell"><p {{if gt .GainLossDay 0.0}}class="text-success"{{end}}{{if lt .GainLossDay 0.0}}class="text-danger"{{end}}>{{printf "%.2f" .GainLossDay}}</p></td>

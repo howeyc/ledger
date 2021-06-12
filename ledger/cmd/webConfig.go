@@ -60,21 +60,25 @@ type stockConfig struct {
 }
 
 type stockInfo struct {
-	Name                  string
-	Section               string
-	Type                  string
-	Ticker                string
-	Account               string
-	Shares                float64
+	Name    string
+	Section string
+	Type    string
+	Ticker  string
+	Account string
+	Shares  float64
+
 	Price                 float64
 	PriceChangeDay        float64
 	PriceChangePctDay     float64
 	PriceChangeOverall    float64
 	PriceChangePctOverall float64
-	Cost                  float64
-	MarketValue           float64
-	GainLossDay           float64
-	GainLossOverall       float64
+
+	Cost            float64
+	MarketValue     float64
+	GainLossDay     float64
+	GainLossOverall float64
+
+	Weight float64
 }
 
 type portfolioStruct struct {

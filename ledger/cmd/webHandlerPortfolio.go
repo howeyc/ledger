@@ -191,6 +191,14 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	for _, sectionInfo := range sectionTotals {
 		sectionInfo.PriceChangePctDay = (sectionInfo.GainLossDay / sectionInfo.Cost) * 100.0
 		sectionInfo.PriceChangePctOverall = (sectionInfo.GainLossOverall / sectionInfo.Cost) * 100.0
+
+		for i, si := range pData.Stocks {
+			if si.Section == sectionInfo.Name {
+				pData.Stocks[i].Weight = (si.MarketValue / sectionInfo.MarketValue) * 100
+			}
+		}
+		sectionInfo.Weight = (sectionInfo.MarketValue / stotal.MarketValue) * 100
+
 		pData.Stocks = append(pData.Stocks, sectionInfo)
 	}
 
