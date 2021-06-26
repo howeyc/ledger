@@ -151,6 +151,33 @@ Days since last posting
 .It Ic version
 Output version string.
 .El
+.Sh WEB SERVICE
+.Nm
+has a top-level command to run a web service.
+.Bl -tag -width balance
+.It Ic web
+Run an html http service with charts/table reporting, stock portfolios, and 
+account balance pages.
+.Bl -tag -compact -width "--collapsed FILE  (-n)"
+.It Fl \-localhost
+Bind to localhost only. Defaults to listen on all IPs/interfaces.
+.It Fl \-port Ar INT
+Port to listen on for HTTP service.
+.It Fl \-portfolio Ar FILE Pq Fl s
+Configuration file specifying the mapping between account name and stock
+information.
+.It Fl \-quickview Ar FILE Pq Fl q
+Configuration file specifying a list of accounts to show on index page. Replaces
+the default index of all accounts with names specified. Shortnames can be
+configured to be displayed in place of the hierarchical names.
+.It Fl \-reports Ar FILE Pq Fl r
+Configuration file specifying all the different reports. Accounts for each 
+report, the chart type, and computed accounts can be configured for each report
+defined.
+.El
+.El
+.Pp
+Example configuration files: web-porfolio-sample.toml, web-quickview-sample.toml, web-reports-sample.toml
 .Sh OPTIONS
 .Bl -tag -width -indent
 .It Fl \-file Ar FILE Pq Fl f
