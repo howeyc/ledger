@@ -151,6 +151,54 @@ Days since last posting
 .It Ic version
 Output version string.
 .El
+.Sh ADD TRANSACTIONS
+.Nm
+has a top-level command to convert csv formatted postings to tranaction format.
+.Pp
+Headers in the csv file are used to attempt automatic creation of transactions
+for each line in the csv file. The import process looks for (not case sensitive)
+the following fields, and uses them for the corresponding transaction
+information.
+.Bl -tag -width "description, payee"
+.It date
+Date string.
+.It payee/description
+Match against payee of existing transactions to guess the destination account
+for the given transaction. Uses a clasifier that "learns" from existing ledger
+file.
+.It amount/expense
+Value field. Amount used in transaction, after modified by
+.Ar neg
+or
+.Ar scale
+if the options are specified.
+.It note/comment
+Adds comments to the transaction if non-empty.
+.El
+.Bl -tag -width balance
+.It Ic import <account-filter> <csv file>
+Import transactions from csv. To aid in common transformations, the following
+options are available:
+.Bl -tag -compact -width "--collapsed FILE  (-n)"
+.It Fl \-allow-matching
+Prints all transactions even if they match existing transactions in the ledger
+file. By default, only new transactions are printed.
+.It Fl \-date-format Ar STR
+Date format in csv file. Specified in Go time format style.
+.It Fl \-delimeter Ar STR
+Character delimeter between fields. Defaults is ","
+.It Fl \-neg
+Negate the value. Useful if input csv is positive, but transaction should be
+negative, or vice versa.
+.It Fl \-scale Ar factor
+Multiplication factor to apply to values as they are transformed to
+transactions.
+.It Fl \-set-search Ar STR
+Account prefix to use as basis of accounts to search against when
+attempting to automatically categorize imported transactions.
+Default is "Expense"
+.El
+.El
 .Sh WEB SERVICE
 .Nm
 has a top-level command to run a web service.
@@ -193,8 +241,10 @@ A bare string is taken as a sub-expression matching the full account name.
 Thus, to report the current balance for all assets and liabilities, you would
 use:
 .Pp
-.Dl ledger bal asset liab
+.Dl ledger bal Asset Liab
 .El
+.Pp
+Note: string pattern matching is case-sensitive.
 .Sh ENVIRONMENT
 The default ledger file can be set as the environment variable
 .Ar LEDGER_FILE
