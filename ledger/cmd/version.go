@@ -11,7 +11,7 @@ var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version of ledger",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Ledger v0.3.3")
+		fmt.Println("Ledger v0.3.4")
 	},
 }
 
