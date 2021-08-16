@@ -7,6 +7,8 @@ builds:
     id: "ledger"
     main: ./ledger/.
     binary: ledger
+    ldflags:
+      - -s -w -X github.com/howeyc/ledger/ledger/cmd.version={{.Version}} -X github.com/howeyc/ledger/ledger/cmd.commit={{.Commit}} -X github.com/howeyc/ledger/ledger/cmd.date={{.Date}} -X github.com/howeyc/ledger/ledger/cmd.builtBy=goreleaser
     goos:
       - windows
       - darwin
