@@ -1,0 +1,169 @@
+package pdr
+
+import "time"
+
+type parser Peg {
+	currentTime time.Time
+	start time.Time
+	end time.Time
+	number int
+}
+
+Query
+	<- Expr EOF
+
+Expr
+	<- NOW
+	/ PAST
+	/ FUTURE
+	/ ALLTIME
+
+NOW
+	<- (CURRENT YEARS / YEARS TODATE / 'ytd' _)
+		{
+			p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+			p.end = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+		}
+	/ (CURRENT MONTHS / MONTHS TODATE / 'mtd' _)
+		{
+			p.start = time.Date(p.currentTime.Year(), p.currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
+			p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
+		}
+
+PAST
+	<- LAST Number? YEARS
+		{
+			if p.number > 0 {
+				p.start = time.Date(p.currentTime.Year()-(p.number-1), time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+			} else {
+				p.start = time.Date(p.currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+	/ LAST Number? MONTHS
+		{
+			if p.number > 0 {
+				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()-time.Month(p.number-1), 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
+			} else {
+				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+	/ LAST Number? QUARTERS
+		{
+			var startoff, endoff time.Month
+			if p.number > 1 {
+				startoff = time.Month((p.number-2)*-3)
+				endoff = time.Month(3)
+			}
+			switch p.currentTime.Month() {
+			case time.January, time.February, time.March:
+				p.start = time.Date(p.currentTime.Year()-1, time.October+startoff, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.January+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.April, time.May, time.June:
+				p.start = time.Date(p.currentTime.Year(), time.January+startoff, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.April+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.July, time.August, time.September:
+				p.start = time.Date(p.currentTime.Year(), time.April+startoff, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.July+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.October, time.November, time.December:
+				p.start = time.Date(p.currentTime.Year(), time.July+startoff, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.October+endoff, 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+
+FUTURE
+	<- NEXT Number? YEARS
+		{
+			if p.number > 0 {
+				p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year()+((p.number-1)+1), time.January, 1, 0, 0, 0, 0, time.UTC)
+			} else {
+				p.start = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year()+2, time.January, 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+	/ NEXT Number? MONTHS
+		{
+			if p.number > 0 {
+				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(1), 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month((p.number-1)+1), 1, 0, 0, 0, 0, time.UTC)
+			} else {
+				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(1), 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(2), 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+	/ NEXT Number? QUARTERS
+		{
+			var endoff time.Month
+			if p.number > 1 {
+				endoff = time.Month(3*(p.number-2))
+			}
+			switch p.currentTime.Month() {
+			case time.January, time.February, time.March:
+				p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.April+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.April, time.May, time.June:
+				p.start = time.Date(p.currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.July+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.July, time.August, time.September:
+				p.start = time.Date(p.currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year(), time.October+endoff, 1, 0, 0, 0, 0, time.UTC)
+			case time.October, time.November, time.December:
+				p.start = time.Date(p.currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+				p.end = time.Date(p.currentTime.Year()+1, time.January+endoff, 1, 0, 0, 0, 0, time.UTC)
+			}
+		}
+
+ALLTIME
+	<- ('all time' _)
+		{
+			p.start = time.Time{}
+			p.end = p.currentTime.Add(1<<63 -1)
+		}
+
+Number
+	<- < [0-9]+ > _ { n, _ := strconv.Atoi(text); p.number = n}
+	/ 'one' _       { p.number = 1 }
+	/ 'two' _       { p.number = 2 }
+	/ 'three' _     { p.number = 3 }
+	/ 'four' _      { p.number = 4 }
+	/ 'five' _      { p.number = 5 }
+	/ 'six' _       { p.number = 6 }
+	/ 'seven' _     { p.number = 7 }
+	/ 'eight' _     { p.number = 8 }
+	/ 'nine' _      { p.number = 9 }
+	/ 'ten' _       { p.number = 10 }
+	/ 'eleven' _    { p.number = 11 }
+	/ 'twelve' _    { p.number = 12 }
+	/ 'thirteen' _    { p.number = 13 }
+	/ 'fourteen' _    { p.number = 14 }
+	/ 'fifteen' _    { p.number = 15 }
+	/ 'sixteen' _    { p.number = 16 }
+	/ 'seventeen' _    { p.number = 17 }
+	/ 'eightteen' _    { p.number = 18 }
+	/ 'nineteen' _    { p.number = 19 }
+	/ 'twenty' _    { p.number = 20 }
+
+YEARS	<- 'year' 's'? _
+MONTHS	<- 'month' 's'? _
+QUARTERS	<- 'quarter' 's'? _
+
+LAST	<- ('last' / 'previous' / 'past') _
+CURRENT	<- 'current' _
+TODATE	<- 'to date' _
+NEXT	<- ('next' / 'current') _
+
+_
+	<- Whitespace*
+
+Whitespace
+	<- ' ' / '\t' / EOL
+
+EOL
+	<- '\r\n' / '\n' / '\r'
+
+EOF
+	<- !.

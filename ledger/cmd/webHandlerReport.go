@@ -9,81 +9,15 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/ledger/cmd/internal/pdr"
 	"github.com/julienschmidt/httprouter"
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
-func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period) {
+func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period, err error) {
 	period = ledger.Period(dateFreq)
 
-	currentTime := time.Now()
-	switch dateRange {
-	case "All Time":
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Ten Years":
-		start = time.Date(currentTime.Year()-9, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Five Years":
-		start = time.Date(currentTime.Year()-4, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Three Years":
-		start = time.Date(currentTime.Year()-2, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Two Years":
-		start = time.Date(currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "YTD", "Current Year":
-		start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Previous Year", "Last Year":
-		start = time.Date(currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Five Months":
-		start = time.Date(currentTime.Year(), currentTime.Month()-4, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Three Months":
-		start = time.Date(currentTime.Year(), currentTime.Month()-2, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
-	case "Last Two Months":
-		start = time.Date(currentTime.Year(), currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
-	case "Previous Month", "Last Month":
-		start = time.Date(currentTime.Year(), currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
-	case "Current Month":
-		start = time.Date(currentTime.Year(), currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
-		end = time.Date(currentTime.Year(), currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
-	case "Current Quarter":
-		switch currentTime.Month() {
-		case time.January, time.February, time.March:
-			start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
-		case time.April, time.May, time.June:
-			start = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
-		case time.July, time.August, time.September:
-			start = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
-		case time.October, time.November, time.December:
-			start = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-		}
-	case "Previous Quarter", "Last Quarter":
-		switch currentTime.Month() {
-		case time.January, time.February, time.March:
-			start = time.Date(currentTime.Year()-1, time.October, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-		case time.April, time.May, time.June:
-			start = time.Date(currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
-		case time.July, time.August, time.September:
-			start = time.Date(currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
-		case time.October, time.November, time.December:
-			start = time.Date(currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
-			end = time.Date(currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
-		}
-	}
+	start, end, err = pdr.ParseRange(dateRange, time.Now())
 
 	return
 }
@@ -226,7 +160,11 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			rConf = reportConf
 		}
 	}
-	rStart, rEnd, rPeriod := getRangeAndPeriod(rConf.DateRange, rConf.DateFreq)
+	rStart, rEnd, rPeriod, rerr := getRangeAndPeriod(rConf.DateRange, rConf.DateFreq)
+	if rerr != nil {
+		http.Error(w, rerr.Error(), 500)
+		return
+	}
 
 	trans = ledger.TransactionsInDateRange(trans, rStart, rEnd)
 
