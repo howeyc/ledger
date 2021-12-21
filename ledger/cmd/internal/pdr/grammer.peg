@@ -21,99 +21,78 @@ Expr
 NOW
 	<- (CURRENT YEARS / YEARS TODATE / 'ytd' _)
 		{
-			p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-			p.end = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsYear(p.currentTime)
 		}
 	/ (CURRENT MONTHS / MONTHS TODATE / 'mtd' _)
 		{
-			p.start = time.Date(p.currentTime.Year(), p.currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
-			p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsMonth(p.currentTime)
+		}
+	/ (CURRENT QUARTERS / QUARTERS TODATE / 'qtd' _)
+		{
+			p.start, p.end = boundsQuarter(p.currentTime)
 		}
 
 PAST
 	<- LAST Number? YEARS
 		{
-			if p.number > 0 {
-				p.start = time.Date(p.currentTime.Year()-(p.number-1), time.January, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsYear(p.currentTime)
+			if p.number > 1 {
+				p.start = p.start.AddDate(-1*(p.number-1), 0, 0)
 			} else {
-				p.start = time.Date(p.currentTime.Year()-1, time.January, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.end = p.start
+				p.start = p.start.AddDate(-1, 0, 0)
 			}
 		}
 	/ LAST Number? MONTHS
 		{
-			if p.number > 0 {
-				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()-time.Month(p.number-1), 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+1, 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsMonth(p.currentTime)
+			if p.number > 1 {
+				p.start = p.start.AddDate(0, -1*(p.number-1), 0)
 			} else {
-				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()-1, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month(), 1, 0, 0, 0, 0, time.UTC)
+				p.end = p.start
+				p.start = p.start.AddDate(0, -1, 0)
 			}
 		}
 	/ LAST Number? QUARTERS
 		{
-			var startoff, endoff time.Month
+			p.start, p.end = boundsQuarter(p.currentTime)
 			if p.number > 1 {
-				startoff = time.Month((p.number-2)*-3)
-				endoff = time.Month(3)
-			}
-			switch p.currentTime.Month() {
-			case time.January, time.February, time.March:
-				p.start = time.Date(p.currentTime.Year()-1, time.October+startoff, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.January+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.April, time.May, time.June:
-				p.start = time.Date(p.currentTime.Year(), time.January+startoff, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.April+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.July, time.August, time.September:
-				p.start = time.Date(p.currentTime.Year(), time.April+startoff, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.July+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.October, time.November, time.December:
-				p.start = time.Date(p.currentTime.Year(), time.July+startoff, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.October+endoff, 1, 0, 0, 0, 0, time.UTC)
+				p.start = p.start.AddDate(0, -3*(p.number-1), 0)
+			} else {
+				p.end = p.start
+				p.start = p.start.AddDate(0,-3,0)
 			}
 		}
 
 FUTURE
 	<- NEXT Number? YEARS
 		{
-			if p.number > 0 {
-				p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year()+((p.number-1)+1), time.January, 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsYear(p.currentTime)
+			if p.number > 1 {
+				p.end = p.start.AddDate(p.number, 0, 0)
 			} else {
-				p.start = time.Date(p.currentTime.Year()+1, time.January, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year()+2, time.January, 1, 0, 0, 0, 0, time.UTC)
+				p.start = p.end
+				p.end = p.start.AddDate(1, 0, 0)
 			}
 		}
 	/ NEXT Number? MONTHS
 		{
-			if p.number > 0 {
-				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(1), 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month((p.number-1)+1), 1, 0, 0, 0, 0, time.UTC)
+			p.start, p.end = boundsMonth(p.currentTime)
+			if p.number > 1 {
+				p.end = p.start.AddDate(0, p.number, 0)
 			} else {
-				p.start = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(1), 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), p.currentTime.Month()+time.Month(2), 1, 0, 0, 0, 0, time.UTC)
+				p.start = p.end
+				p.end = p.start.AddDate(0, 1, 0)
 			}
 		}
 	/ NEXT Number? QUARTERS
 		{
-			var endoff time.Month
+			p.start, p.end = boundsQuarter(p.currentTime)
 			if p.number > 1 {
-				endoff = time.Month(3*(p.number-2))
-			}
-			switch p.currentTime.Month() {
-			case time.January, time.February, time.March:
-				p.start = time.Date(p.currentTime.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.April+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.April, time.May, time.June:
-				p.start = time.Date(p.currentTime.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.July+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.July, time.August, time.September:
-				p.start = time.Date(p.currentTime.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year(), time.October+endoff, 1, 0, 0, 0, 0, time.UTC)
-			case time.October, time.November, time.December:
-				p.start = time.Date(p.currentTime.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
-				p.end = time.Date(p.currentTime.Year()+1, time.January+endoff, 1, 0, 0, 0, 0, time.UTC)
+				p.end = p.start.AddDate(0,3*(p.number),0)
+			} else {
+				p.start = p.start.AddDate(0,3,0)
+				p.end = p.start.AddDate(0,3,0)
 			}
 		}
 
@@ -154,7 +133,7 @@ QUARTERS	<- 'quarter' 's'? _
 LAST	<- ('last' / 'previous' / 'past') _
 CURRENT	<- 'current' _
 TODATE	<- 'to date' _
-NEXT	<- ('next' / 'current') _
+NEXT	<- ('next') _
 
 _
 	<- Whitespace*

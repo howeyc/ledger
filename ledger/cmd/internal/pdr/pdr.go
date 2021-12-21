@@ -32,3 +32,30 @@ func ParseRange(s string, baseTime time.Time) (start, end time.Time, err error) 
 	p.Execute()
 	return p.start, p.end, nil
 }
+
+func boundsMonth(t time.Time) (start, end time.Time) {
+	start = time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
+	end = start.AddDate(0, 1, 0)
+	return
+}
+
+func boundsQuarter(t time.Time) (start, end time.Time) {
+	switch t.Month() {
+	case time.January, time.February, time.March:
+		start = time.Date(t.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	case time.April, time.May, time.June:
+		start = time.Date(t.Year(), time.April, 1, 0, 0, 0, 0, time.UTC)
+	case time.July, time.August, time.September:
+		start = time.Date(t.Year(), time.July, 1, 0, 0, 0, 0, time.UTC)
+	case time.October, time.November, time.December:
+		start = time.Date(t.Year(), time.October, 1, 0, 0, 0, 0, time.UTC)
+	}
+	end = start.AddDate(0, 3, 0)
+	return
+}
+
+func boundsYear(t time.Time) (start, end time.Time) {
+	start = time.Date(t.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	end = start.AddDate(1, 0, 0)
+	return
+}
