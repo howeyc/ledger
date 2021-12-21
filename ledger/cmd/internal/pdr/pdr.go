@@ -33,6 +33,13 @@ func ParseRange(s string, baseTime time.Time) (start, end time.Time, err error) 
 	return p.start, p.end, nil
 }
 
+func boundsWeek(t time.Time) (start, end time.Time) {
+	sowDiff := t.Weekday() - time.Sunday
+	start = time.Date(t.Year(), t.Month(), t.Day()-int(sowDiff), 0, 0, 0, 0, time.UTC)
+	end = start.AddDate(0, 0, 7)
+	return
+}
+
 func boundsMonth(t time.Time) (start, end time.Time) {
 	start = time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, time.UTC)
 	end = start.AddDate(0, 1, 0)

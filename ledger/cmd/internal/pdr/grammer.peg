@@ -23,13 +23,13 @@ NOW
 		{
 			p.start, p.end = boundsYear(p.currentTime)
 		}
-	/ (CURRENT MONTHS / MONTHS TODATE / 'mtd' _)
-		{
-			p.start, p.end = boundsMonth(p.currentTime)
-		}
 	/ (CURRENT QUARTERS / QUARTERS TODATE / 'qtd' _)
 		{
 			p.start, p.end = boundsQuarter(p.currentTime)
+		}
+	/ (CURRENT MONTHS / MONTHS TODATE / 'mtd' _)
+		{
+			p.start, p.end = boundsMonth(p.currentTime)
 		}
 
 PAST
@@ -43,6 +43,16 @@ PAST
 				p.start = p.start.AddDate(-1, 0, 0)
 			}
 		}
+	/ LAST Number? QUARTERS
+		{
+			p.start, p.end = boundsQuarter(p.currentTime)
+			if p.number > 1 {
+				p.start = p.start.AddDate(0, -3*(p.number-1), 0)
+			} else {
+				p.end = p.start
+				p.start = p.start.AddDate(0,-3,0)
+			}
+		}
 	/ LAST Number? MONTHS
 		{
 			p.start, p.end = boundsMonth(p.currentTime)
@@ -53,14 +63,14 @@ PAST
 				p.start = p.start.AddDate(0, -1, 0)
 			}
 		}
-	/ LAST Number? QUARTERS
+	/ LAST Number? WEEKS
 		{
-			p.start, p.end = boundsQuarter(p.currentTime)
+			p.start, p.end = boundsWeek(p.currentTime)
 			if p.number > 1 {
-				p.start = p.start.AddDate(0, -3*(p.number-1), 0)
+				p.start = p.start.AddDate(0, 0, -7*(p.number-1))
 			} else {
 				p.end = p.start
-				p.start = p.start.AddDate(0,-3,0)
+				p.start = p.start.AddDate(0, 0, -7)
 			}
 		}
 
@@ -75,6 +85,16 @@ FUTURE
 				p.end = p.start.AddDate(1, 0, 0)
 			}
 		}
+	/ NEXT Number? QUARTERS
+		{
+			p.start, p.end = boundsQuarter(p.currentTime)
+			if p.number > 1 {
+				p.end = p.start.AddDate(0,3*(p.number),0)
+			} else {
+				p.start = p.start.AddDate(0,3,0)
+				p.end = p.start.AddDate(0,3,0)
+			}
+		}
 	/ NEXT Number? MONTHS
 		{
 			p.start, p.end = boundsMonth(p.currentTime)
@@ -85,14 +105,14 @@ FUTURE
 				p.end = p.start.AddDate(0, 1, 0)
 			}
 		}
-	/ NEXT Number? QUARTERS
+	/ NEXT Number? WEEKS
 		{
-			p.start, p.end = boundsQuarter(p.currentTime)
+			p.start, p.end = boundsWeek(p.currentTime)
 			if p.number > 1 {
-				p.end = p.start.AddDate(0,3*(p.number),0)
+				p.end = p.start.AddDate(0, 0, 7*p.number)
 			} else {
-				p.start = p.start.AddDate(0,3,0)
-				p.end = p.start.AddDate(0,3,0)
+				p.start = p.end
+				p.end = p.start.AddDate(0, 0, 7)
 			}
 		}
 
@@ -127,8 +147,9 @@ Number
 	/ 'twenty' _    { p.number = 20 }
 
 YEARS	<- 'year' 's'? _
-MONTHS	<- 'month' 's'? _
 QUARTERS	<- 'quarter' 's'? _
+MONTHS	<- 'month' 's'? _
+WEEKS	<- 'week' 's'? _
 
 LAST	<- ('last' / 'previous' / 'past') _
 CURRENT	<- 'current' _
