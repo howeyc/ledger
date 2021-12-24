@@ -1,64 +1,12 @@
 package cmd
 
 import (
-	"encoding/json"
-	"errors"
 	"net/http"
 	"sort"
 
 	"github.com/howeyc/ledger"
 	"github.com/julienschmidt/httprouter"
 )
-
-type iexQuote struct {
-	Company       string  `json:"companyName"`
-	Exchange      string  `json:"primaryExchange"`
-	Close         float64 `json:"close"`
-	PreviousClose float64 `json:"previousClose"`
-	Last          float64 `json:"latestPrice"`
-}
-
-// https://iexcloud.io/docs/api/
-func stockQuote(symbol string) (quote iexQuote, err error) {
-	resp, herr := http.Get("https://cloud.iexapis.com/beta/stock/" + symbol + "/quote?token=" + portfolioConfigData.IEXToken)
-	if herr != nil {
-		return quote, herr
-	}
-	defer resp.Body.Close()
-	dec := json.NewDecoder(resp.Body)
-	derr := dec.Decode(&quote)
-	if derr != nil {
-		return quote, derr
-	}
-	if quote.Company == "" && quote.Exchange == "" {
-		return quote, errors.New("Unable to find data for symbol " + symbol)
-	}
-	return quote, nil
-}
-
-type gdaxQuote struct {
-	Volume        string  `json:"volume"`
-	PreviousClose float64 `json:"open,string"`
-	Last          float64 `json:"last,string"`
-}
-
-// https://docs.pro.coinbase.com/
-func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
-	resp, herr := http.Get("https://api.pro.coinbase.com/products/" + symbol + "/stats")
-	if herr != nil {
-		return quote, herr
-	}
-	defer resp.Body.Close()
-	dec := json.NewDecoder(resp.Body)
-	derr := dec.Decode(&quote)
-	if derr != nil {
-		return quote, derr
-	}
-	if quote.Volume == "" {
-		return quote, errors.New("Unable to find data for symbol " + symbol)
-	}
-	return quote, nil
-}
 
 func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
 	portfolioName := params.ByName("portfolioName")
@@ -86,6 +34,8 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	type portPageData struct {
 		pageData
 		PortfolioName string
+		ShowDividends bool
+		ShowWeight    bool
 	}
 
 	var pData portPageData
@@ -93,6 +43,8 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	pData.Portfolios = portfolioConfigData.Portfolios
 	pData.Transactions = trans
 	pData.PortfolioName = portfolioName
+	pData.ShowDividends = portfolio.ShowDividends
+	pData.ShowWeight = portfolio.ShowWeight
 
 	sectionTotals := make(map[string]stockInfo)
 	siChan := make(chan stockInfo)
@@ -122,6 +74,10 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 						sclose = quote.PreviousClose
 					}
 				}
+				if portfolio.ShowDividends {
+					div, _ := stockAnnualDividends(symbol)
+					si.AnnualDividends = div * shares
+				}
 			case "Fund":
 				quote, qerr := stockQuote(symbol)
 				if qerr == nil {
@@ -131,6 +87,10 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 					} else {
 						sclose = quote.PreviousClose
 					}
+				}
+				if portfolio.ShowDividends {
+					div, _ := stockAnnualDividends(symbol)
+					si.AnnualDividends = div * shares
 				}
 			case "Crypto":
 				quote, qerr := cryptoQuote(symbol)
@@ -159,6 +119,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 			si.PriceChangeOverall = sprice - cprice
 			si.PriceChangePctOverall = (si.PriceChangeOverall / cprice) * 100.0
 			si.GainLossDay = si.Shares * si.PriceChangeDay
+			si.AnnualYield = (si.AnnualDividends / si.MarketValue) * 100
 			siChan <- si
 		}(stock.Name, stock.Account, stock.Ticker, stock.SecurityType, stock.Section, stock.Shares)
 	}
@@ -177,15 +138,19 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 		sectionInfo.MarketValue += si.MarketValue
 		sectionInfo.GainLossOverall += si.GainLossOverall
 		sectionInfo.GainLossDay += si.GainLossDay
+		sectionInfo.AnnualDividends += si.AnnualDividends
+		sectionInfo.AnnualYield = (sectionInfo.AnnualDividends / sectionInfo.MarketValue) * 100
 		sectionTotals[si.Section] = sectionInfo
 
 		stotal.Cost += si.Cost
 		stotal.MarketValue += si.MarketValue
 		stotal.GainLossOverall += si.GainLossOverall
 		stotal.GainLossDay += si.GainLossDay
+		stotal.AnnualDividends += si.AnnualDividends
 	}
 	stotal.PriceChangePctDay = (stotal.GainLossDay / stotal.Cost) * 100.0
 	stotal.PriceChangePctOverall = (stotal.GainLossOverall / stotal.Cost) * 100.0
+	stotal.AnnualYield = (stotal.AnnualDividends / stotal.MarketValue) * 100
 	pData.Stocks = append(pData.Stocks, stotal)
 
 	for _, sectionInfo := range sectionTotals {

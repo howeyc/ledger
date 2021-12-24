@@ -79,10 +79,17 @@ type stockInfo struct {
 	GainLossOverall float64
 
 	Weight float64
+
+	AnnualDividends float64
+	AnnualYield     float64
 }
 
 type portfolioStruct struct {
-	Name   string
+	Name string
+
+	ShowDividends bool `toml:"show_dividends"`
+	ShowWeight    bool `toml:"show_weight"`
+
 	Stocks []stockConfig `toml:"stock"`
 }
 
