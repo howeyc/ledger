@@ -24,15 +24,15 @@ var balanceCmd = &cobra.Command{
 			PrintBalances(ledger.GetBalances(generalLedger, args), showEmptyAccounts, transactionDepth, columnWidth)
 		} else {
 			lperiod := ledger.Period(period)
-			rbalances := ledger.BalancesByPeriod(generalLedger, lperiod, ledger.RangePartition)
-			for rIdx, rb := range rbalances {
+			rtrans := ledger.TransactionsByPeriod(generalLedger, lperiod)
+			for rIdx, rt := range rtrans {
 				if rIdx > 0 {
 					fmt.Println("")
 					fmt.Println(strings.Repeat("=", columnWidth))
 				}
-				fmt.Println(rb.Start.Format(transactionDateFormat), "-", rb.End.Format(transactionDateFormat))
+				fmt.Println(rt.Start.Format(transactionDateFormat), "-", rt.End.Format(transactionDateFormat))
 				fmt.Println(strings.Repeat("=", columnWidth))
-				PrintBalances(rb.Balances, showEmptyAccounts, transactionDepth, columnWidth)
+				PrintBalances(ledger.GetBalances(rt.Transactions, args), showEmptyAccounts, transactionDepth, columnWidth)
 			}
 		}
 	},
