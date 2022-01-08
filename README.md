@@ -1,3 +1,7 @@
+[![GitHub releases](https://img.shields.io/github/tag/howeyc/ledger.svg)](https://github.com/howeyc/ledger/releases)
+[![GitHub downloads](https://img.shields.io/github/downloads/howeyc/ledger/total.svg?logo=github&logoColor=lime)](https://github.com/howeyc/ledger/releases)
+[![Chat on Libera](https://img.shields.io/badge/chat-libera-blue.svg)](irc://irc.libera.chat/plaintextaccounting)
+
 # Ledger in Go
 
 This is a project to parse and import transactions in a ledger file similar
