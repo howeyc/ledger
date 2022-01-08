@@ -78,28 +78,26 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 	fmt.Fprintln(&tbuf, "")
 
 	/* Check valid transaction is created */
-	if trans, perr := ledger.ParseLedger(&tbuf); perr != nil {
+	trans, perr := ledger.ParseLedger(&tbuf)
+	if perr != nil {
 		http.Error(w, perr.Error(), 500)
 		return
-	} else {
-		f, err := os.OpenFile(ledgerFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
-		if err != nil {
-			http.Error(w, err.Error(), 500)
-			return
-		}
-
-		for _, t := range trans {
-			WriteTransaction(f, t, 80)
-		}
-
-		f.Close()
 	}
+
+	f, err := os.OpenFile(ledgerFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	for _, t := range trans {
+		WriteTransaction(f, t, 80)
+	}
+	f.Close()
 
 	if _, err := getTransactions(); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-
 	fmt.Fprintf(w, "Transaction added!")
 }
 

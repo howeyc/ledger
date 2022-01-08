@@ -37,7 +37,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 	parsedEndDate, tendErr := time.Parse(transactionDateFormat, endString)
 
 	if tstartErr != nil || tendErr != nil {
-		return nil, errors.New("Unable to parse start or end date string argument.")
+		return nil, errors.New("unable to parse start or end date string argument")
 	}
 
 	var lreader io.Reader

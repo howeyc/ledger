@@ -17,6 +17,8 @@ const (
 
 var includedFiles = make(map[string]bool)
 
+// NewLedgerReader reads a file and includes any files with include directives
+// and returns the whole combined ledger as a buffer for parsing.
 func NewLedgerReader(filename string) (*bytes.Buffer, error) {
 	var buf bytes.Buffer
 
@@ -36,9 +38,8 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 	// check for include cyles
 	if includedFiles[filename] {
 		return fmt.Errorf("include cycle: '%s'", filename)
-	} else {
-		includedFiles[filename] = true
 	}
+	includedFiles[filename] = true
 
 	defer delete(includedFiles, filename)
 

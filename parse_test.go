@@ -17,22 +17,22 @@ type testCase struct {
 }
 
 var testCases = []testCase{
-	testCase{
+	{
 		"simple",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(369.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-369.0, 1),
 					},
@@ -41,7 +41,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"unbalanced error",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)
@@ -50,7 +50,7 @@ var testCases = []testCase{
 		nil,
 		errors.New(":3: Unable to parse transaction: Unable to balance transaction: no empty account to place extra balance"),
 	},
-	testCase{
+	{
 		"multiple empty",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)
@@ -61,7 +61,7 @@ var testCases = []testCase{
 		nil,
 		errors.New(":5: Unable to parse transaction: Unable to balance transaction: more than one account empty"),
 	},
-	testCase{
+	{
 		"multiple empty lines",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)
@@ -74,29 +74,29 @@ var testCases = []testCase{
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(369.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-369.0, 1),
 					},
 				},
 			},
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-123.0, 1),
 					},
@@ -105,7 +105,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"accounts with spaces",
 		`1970/01/02 Payee
  Expense:test	369.0
@@ -121,41 +121,41 @@ var testCases = []testCase{
 	Expense:Cranks United  10
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC().AddDate(0, 0, 1),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense:test",
 						big.NewRat(369.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-369.0, 1),
 					},
 				},
 			},
-			&Transaction{
+			{
 				Payee: "Payee 5",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense:Cars R Us",
 						big.NewRat(-388.0, 1),
 					},
-					Account{
+					{
 						"Expense:Cars",
 						big.NewRat(358.0, 1),
 					},
-					Account{
+					{
 						"Expense:Cranks",
 						big.NewRat(10.0, 1),
 					},
-					Account{
+					{
 						"Expense:Cranks Unlimited",
 						big.NewRat(10.0, 1),
 					},
-					Account{
+					{
 						"Expense:Cranks United",
 						big.NewRat(10.0, 1),
 					},
@@ -168,7 +168,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"accounts with slashes",
 		`1970-01-01 Payee
     Expense/another     5
@@ -176,19 +176,19 @@ var testCases = []testCase{
 	Assets      -128
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/another",
 						big.NewRat(5.0, 1),
 					},
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-128.0, 1),
 					},
@@ -197,22 +197,22 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"comment after payee",
 		`1970-01-01 Payee      ; payee comment
 	Expense/test  123
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-123.0, 1),
 					},
@@ -224,7 +224,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"comment inside transaction",
 		`1970-01-01 Payee
 	Expense/test  123
@@ -232,15 +232,15 @@ var testCases = []testCase{
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-123.0, 1),
 					},
@@ -252,7 +252,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"multiple comments",
 		`; comment
 	1970/01/01 Payee
@@ -261,19 +261,19 @@ var testCases = []testCase{
 	Expense/unbalanced
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(58, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-58, 1),
 					},
-					Account{
+					{
 						"Expense/unbalanced",
 						big.NewRat(0, 1),
 					},
@@ -286,7 +286,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"header comment",
 		`; comment
 	1970/01/01 Payee
@@ -296,23 +296,23 @@ var testCases = []testCase{
 	Assets         -158
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(58, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-58, 1),
 					},
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(158, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-158, 1),
 					},
@@ -324,7 +324,7 @@ var testCases = []testCase{
 		},
 		nil,
 	},
-	testCase{
+	{
 		"account skip",
 		`1970/01/01 Payee
 	Expense/test  123
@@ -341,29 +341,29 @@ account Assets
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-123.0, 1),
 					},
 				},
 			},
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(246.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-246.0, 1),
 					},
@@ -372,7 +372,7 @@ account Assets
 		},
 		nil,
 	},
-	testCase{
+	{
 		"multiple account skip",
 		`1970/01/01 Payee
 	Expense/test  123
@@ -387,29 +387,29 @@ account Assets
 	Assets
 `,
 		[]*Transaction{
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(123.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-123.0, 1),
 					},
 				},
 			},
-			&Transaction{
+			{
 				Payee: "Payee",
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
-					Account{
+					{
 						"Expense/test",
 						big.NewRat(246.0, 1),
 					},
-					Account{
+					{
 						"Assets",
 						big.NewRat(-246.0, 1),
 					},

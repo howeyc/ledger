@@ -1,6 +1,7 @@
 [![GitHub releases](https://img.shields.io/github/tag/howeyc/ledger.svg)](https://github.com/howeyc/ledger/releases)
 [![GitHub downloads](https://img.shields.io/github/downloads/howeyc/ledger/total.svg?logo=github&logoColor=lime)](https://github.com/howeyc/ledger/releases)
 [![Chat on Libera](https://img.shields.io/badge/chat-libera-blue.svg)](https://matrix.to/#/#plaintextaccounting:libera.chat)
+[![Go Report Card](https://goreportcard.com/badge/github.com/howeyc/ledger)](https://goreportcard.com/report/github.com/howeyc/ledger)
 
 # Ledger in Go
 

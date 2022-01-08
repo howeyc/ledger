@@ -26,11 +26,11 @@ var statsCmd = &cobra.Command{
 		if terr != nil {
 			log.Fatalln(terr)
 		}
-		PrintStats(transactions)
+		printStats(transactions)
 	},
 }
 
-func PrintStats(generalLedger []*ledger.Transaction) {
+func printStats(generalLedger []*ledger.Transaction) {
 	if len(generalLedger) < 1 {
 		fmt.Println("Empty ledger.")
 		return
