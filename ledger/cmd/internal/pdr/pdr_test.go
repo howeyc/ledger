@@ -45,6 +45,7 @@ var testCases = []struct {
 
 	// Adding max duration to baseTime
 	{"all time", "0001-01-01", "2312-03-06"},
+	{"forever", "0001-01-01", "2312-03-06"},
 }
 
 func TestParse(t *testing.T) {

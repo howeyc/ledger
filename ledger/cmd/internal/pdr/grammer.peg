@@ -16,7 +16,7 @@ Expr
 	<- NOW
 	/ PAST
 	/ FUTURE
-	/ ALLTIME
+	/ EVERYTHING
 
 NOW
 	<- (CURRENT YEARS / YEARS TODATE / 'ytd' _)
@@ -116,8 +116,8 @@ FUTURE
 			}
 		}
 
-ALLTIME
-	<- ('all time' _)
+EVERYTHING
+	<- ('all time' / 'forever' / 'everything') _
 		{
 			p.start = time.Time{}
 			p.end = p.currentTime.Add(1<<63 -1)
