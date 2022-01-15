@@ -5,7 +5,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/howeyc/ledger.svg)](https://pkg.go.dev/github.com/howeyc/ledger)
 
 <div align="center">
- <img src="logo.png" width="20%" height="20%" alt="ledger-logo">
+ <img src="logo.png" width="50%" height="50%" alt="ledger-logo">
 </div>
 
 ## Purpose
