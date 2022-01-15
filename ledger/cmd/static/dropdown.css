@@ -1,9 +1,0 @@
-/*! padding.css */
-
-@media screen and (min-width: 768px) {
-    .dropdown-menu {
-		height: auto;
-    	max-height: 400px;
-    	overflow-x: hidden;
-    }
-}
