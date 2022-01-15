@@ -1,0 +1,19 @@
+[[portfolio]]
+name = "Crypto Holdings"
+
+    [[portfolio.stock]]
+    name = "Bitcoin"
+    security_type = "Crypto"
+    section = "Crypto"
+    ticker = "BTC-USD"
+    account = "Assets:Crypto:BTC"
+    shares = 0.009
+
+    [[portfolio.stock]]
+    name = "Etherium"
+    security_type = "Crypto"
+    section = "Crypto"
+    ticker = "ETH-USD"
+    account = "Assets:Crypto:ETH"
+    shares = 0.1
+

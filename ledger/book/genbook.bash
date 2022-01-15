@@ -12,3 +12,4 @@ done
 popd
 
 mdbook build
+rsync -a src/webshots html-book/

@@ -1,0 +1,48 @@
+2021-12-01 Checking balance
+    Assets:Bank:Checking                   1000.00
+    Equity:Opening Balances
+
+2021-12-25 Buy some Crypto
+    Assets:Bank:Checking
+	Assets:Crypto:BTC             300
+	Assets:Crypto:ETH             200
+
+2021-12-05 Withdrawl
+    Assets:Bank:Checking                   -100.00
+    Assets:Cash:Wallet
+
+2021-12-31 Employer
+    Assets:Bank:Checking                   2000
+    Income:Salary
+
+2022-01-15 Employer
+    Assets:Bank:Checking                   2000
+    Income:Salary
+
+2022-01-02 Dominoes Pizza   HOUSTON TX
+	Liabilities:MasterCard
+	Expenses:Food:TakeOut                23.58
+
+2021-12-22 Grocery Store
+	Assets:Bank:Checking
+	Expenses:Food:Groceries               222.0
+
+2022-01-11 Panda Express
+	Liabilities:MasterCard
+	Expenses:Food:TakeOut                17.34
+
+2022-01-09 Grocery Store
+	Assets:Bank:Checking
+	Expenses:Food:Groceries                120.0
+
+2022-01-02 Grocery Store
+	Assets:Bank:Checking
+	Expenses:Food:Groceries                145.0
+
+2022-01-02 Grocery Store
+	Assets:Bank:Checking
+	Expenses:Food:Groceries                180.0
+
+2022-01-08 Half Price Books    HOUSTON TX
+	Liabilities:MasterCard
+	Expenses:Books                         20.0

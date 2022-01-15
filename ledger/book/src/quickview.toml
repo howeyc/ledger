@@ -1,0 +1,11 @@
+[[account]]
+name = "Assets:Bank:Checking"
+short_name = "Checking"
+
+[[account]]
+name = "Assets:Cash:Wallet"
+short_name = "Wallet"
+
+[[account]]
+name = "Liabilities:MasterCard"
+short_name = "Card"
