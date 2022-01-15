@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html" class="active"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> Overview</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> Reports</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.</strong> Stock Portfolio</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html" class="active"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -143,22 +143,22 @@ ledger file, the better the matches will be.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <p>Example transactions from your credit card csv download.</p>
 <pre><code class="language-sh">Transaction Date,Description,Amount
-02/12/21,Dominoes Pizza     HOUSTON TX,12.34
-02/23/21,Dominoes Pizza     PEARLAND TX,14.34
-02/02/21,Half Price Books   AUSTIN TX,5.24
+01/12/22,Dominoes Pizza     HOUSTON TX,12.34
+01/23/22,Dominoes Pizza     PEARLAND TX,14.34
+01/02/22,Half Price Books   AUSTIN TX,5.24
 </code></pre>
 <p>Let's run our import, making sure to specify the correct date-format to match
 the CSV file.</p>
 <p>Run <code>ledger -f ledger.dat --date-format &quot;01/02/06&quot; import MasterCard transactions.csv</code></p>
-<pre><code class="language-sh">2021/02/12 Dominoes Pizza     HOUSTON TX
+<pre><code class="language-sh">2022/01/12 Dominoes Pizza     HOUSTON TX
     Expenses:Food:TakeOut                                                  12.34
     Liabilities:MasterCard                                                -12.34
 
-2021/02/23 Dominoes Pizza     PEARLAND TX
+2022/01/23 Dominoes Pizza     PEARLAND TX
     Expenses:Food:TakeOut                                                  14.34
     Liabilities:MasterCard                                                -14.34
 
-2021/02/02 Half Price Books   AUSTIN TX
+2022/01/02 Half Price Books   AUSTIN TX
     Expenses:Books                                                          5.24
     Liabilities:MasterCard                                                 -5.24
 

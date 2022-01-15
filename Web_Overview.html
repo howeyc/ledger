@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title></title>
-        <base href="/">
+        <title>Overview - Guide to Ledger</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Plain Text Accounting">
@@ -76,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html" class="active"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -135,19 +134,39 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>The web service included in <code>ledger</code> allows for the easy and quick viewing
+of financial data in a graphical format.</p>
+<p>The default pages show the accounts, and a &quot;General Ledger&quot; listing all the
+transactions.</p>
+<p>Start up the web interface with <code>ledger -f ledger.dat web</code></p>
+<p>Open a browser to the default address of <code>http://localhost:8056/</code></p>
+<p>You should see the following.</p>
+<p><img src="webshots/accounts.png" alt="accounts list" /></p>
+<p>This lists all the accounts.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="02_Stats.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="Web_Quickview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="02_Stats.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="Web_Quickview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

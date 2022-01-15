@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html" class="active"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> Overview</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> Reports</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.</strong> Stock Portfolio</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html" class="active"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -139,28 +139,31 @@
 Since we aren't specifying a specific account, we will get all postings for
 all transactions and the running total will sum to zero, as all transactions
 balance.</p>
-<pre><code class="language-sh">2020/12/01 Checking balanc Assets:Bank:Checking               1000.00    1000.00
-2020/12/01 Checking balanc Equity:Opening Balances           -1000.00       0.00
-2020/12/05 Withdrawl       Assets:Bank:Checking               -100.00    -100.00
-2020/12/05 Withdrawl       Assets:Cash:Wallet                  100.00       0.00
-2020/12/31 Employer        Assets:Bank:Checking               2000.00    2000.00
-2020/12/31 Employer        Income:Salary                     -2000.00       0.00
-2021/01/01 Save            Assets:Bank:Checking               -200.00    -200.00
-2021/01/01 Save            Assets:Bank:Savings                 200.00       0.00
-2021/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
-2021/01/02 Dominoes Pizza  Expenses:Food:TakeOut                23.58       0.00
-2021/01/05 Grocery Store   Assets:Bank:Checking               -222.00    -222.00
-2021/01/05 Grocery Store   Expenses:Food:Groceries             222.00       0.00
-2021/01/08 Half Price Book Liabilities:MasterCard              -20.00     -20.00
-2021/01/08 Half Price Book Expenses:Books                       20.00       0.00
-2021/01/11 Panda Express   Liabilities:MasterCard              -17.34     -17.34
-2021/01/11 Panda Express   Expenses:Food:TakeOut                17.34       0.00
-2021/01/19 Grocery Store   Assets:Bank:Checking               -120.00    -120.00
-2021/01/19 Grocery Store   Expenses:Food:Groceries             120.00       0.00
-2021/02/02 Grocery Store   Assets:Bank:Checking               -145.00    -145.00
-2021/02/02 Grocery Store   Expenses:Food:Groceries             145.00       0.00
-2021/02/16 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
-2021/02/16 Grocery Store   Expenses:Food:Groceries             180.00       0.00
+<pre><code class="language-sh">2021/12/01 Checking balanc Assets:Bank:Checking               1000.00    1000.00
+2021/12/01 Checking balanc Equity:Opening Balances           -1000.00       0.00
+2021/12/05 Withdrawl       Assets:Bank:Checking               -100.00    -100.00
+2021/12/05 Withdrawl       Assets:Cash:Wallet                  100.00       0.00
+2021/12/22 Grocery Store   Assets:Bank:Checking               -222.00    -222.00
+2021/12/22 Grocery Store   Expenses:Food:Groceries             222.00       0.00
+2021/12/25 Buy some Crypto Assets:Bank:Checking               -500.00    -500.00
+2021/12/25 Buy some Crypto Assets:Crypto:BTC                   300.00    -200.00
+2021/12/25 Buy some Crypto Assets:Crypto:ETH                   200.00       0.00
+2021/12/31 Employer        Assets:Bank:Checking               2000.00    2000.00
+2021/12/31 Employer        Income:Salary                     -2000.00       0.00
+2022/01/02 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00       0.00
+2022/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
+2022/01/02 Dominoes Pizza  Expenses:Food:TakeOut                23.58       0.00
+2022/01/02 Grocery Store   Assets:Bank:Checking               -145.00    -145.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00       0.00
+2022/01/08 Half Price Book Liabilities:MasterCard              -20.00     -20.00
+2022/01/08 Half Price Book Expenses:Books                       20.00       0.00
+2022/01/09 Grocery Store   Assets:Bank:Checking               -120.00    -120.00
+2022/01/09 Grocery Store   Expenses:Food:Groceries             120.00       0.00
+2022/01/11 Panda Express   Liabilities:MasterCard              -17.34     -17.34
+2022/01/11 Panda Express   Expenses:Food:TakeOut                17.34       0.00
+2022/01/15 Employer        Assets:Bank:Checking               2000.00    2000.00
+2022/01/15 Employer        Income:Salary                     -2000.00       0.00
 </code></pre>
 <h2 id="payee"><a class="header" href="#payee">Payee</a></h2>
 <p>Let's see how much money we've spend at the &quot;Grocery Store&quot; each month. Also,
@@ -168,22 +171,22 @@ to keep from seeing every posting, we are going to specify that we only want to
 see postings in the &quot;Expenses&quot; accounts. This will allow us to easily see a
 running total in the last column.</p>
 <p>Run <code>ledger -f ledger.dat reg --payee &quot;Grocery Store&quot; --period Monthly Expenses</code></p>
-<pre><code class="language-sh">2021/01/01 - 2021/01/31
+<pre><code class="language-sh">2021/12/01 - 2021/12/31
 ================================================================================
-2021/01/05 Grocery Store   Expenses:Food:Groceries             222.00     222.00
-2021/01/19 Grocery Store   Expenses:Food:Groceries             120.00     342.00
+2021/12/22 Grocery Store   Expenses:Food:Groceries             222.00     222.00
 ================================================================================
-2021/02/01 - 2021/02/28
+2022/01/01 - 2022/01/31
 ================================================================================
-2021/02/02 Grocery Store   Expenses:Food:Groceries             145.00     145.00
-2021/02/16 Grocery Store   Expenses:Food:Groceries             180.00     325.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00     180.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00     325.00
+2022/01/09 Grocery Store   Expenses:Food:Groceries             120.00     445.00
 </code></pre>
 <h2 id="accounts"><a class="header" href="#accounts">Accounts</a></h2>
 <p>Let's track down all the times we used our Credit Card.</p>
 <p>Run <code>ledger -f ledger.dat reg MasterCard</code></p>
-<pre><code class="language-sh">2021/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
-2021/01/08 Half Price Book Liabilities:MasterCard              -20.00     -43.58
-2021/01/11 Panda Express   Liabilities:MasterCard              -17.34     -60.92
+<pre><code class="language-sh">2022/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
+2022/01/08 Half Price Book Liabilities:MasterCard              -20.00     -43.58
+2022/01/11 Panda Express   Liabilities:MasterCard              -17.34     -60.92
 </code></pre>
 
                     </main>

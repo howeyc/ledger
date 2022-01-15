@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> Overview</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> Reports</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.</strong> Stock Portfolio</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -289,12 +289,14 @@ so often, it can also be specified via the environment variable
 a command is run.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="balance"><a class="header" href="#balance">Balance</a></h1>
 <p>Run <code>ledger -f ledger.dat bal</code> to see a balance report.</p>
-<pre><code class="language-sh">Assets                                                                   2333.00
-Assets:Bank                                                              2233.00
-Assets:Bank:Checking                                                     2033.00
-Assets:Bank:Savings                                                       200.00
+<pre><code class="language-sh">Assets                                                                   4333.00
+Assets:Bank                                                              3733.00
+Assets:Bank:Checking                                                     3733.00
 Assets:Cash                                                               100.00
 Assets:Cash:Wallet                                                        100.00
+Assets:Crypto                                                             500.00
+Assets:Crypto:BTC                                                         300.00
+Assets:Crypto:ETH                                                         200.00
 Equity                                                                  -1000.00
 Equity:Opening Balances                                                 -1000.00
 Expenses                                                                  727.92
@@ -302,8 +304,8 @@ Expenses:Books                                                             20.00
 Expenses:Food                                                             707.92
 Expenses:Food:Groceries                                                   667.00
 Expenses:Food:TakeOut                                                      40.92
-Income                                                                  -2000.00
-Income:Salary                                                           -2000.00
+Income                                                                  -4000.00
+Income:Salary                                                           -4000.00
 Liabilities                                                               -60.92
 Liabilities:MasterCard                                                    -60.92
 --------------------------------------------------------------------------------
@@ -313,70 +315,60 @@ Liabilities:MasterCard                                                    -60.92
 <p>You can show specific accounts by applying a filter, which is case senstive.
 For example, let's get our net worth,
 run <code>ledger -f ledger.dat bal Assets Liabilities</code></p>
-<pre><code class="language-sh">Assets                                                                   2333.00
-Assets:Bank                                                              2233.00
-Assets:Bank:Checking                                                     2033.00
-Assets:Bank:Savings                                                       200.00
+<pre><code class="language-sh">Assets                                                                   4333.00
+Assets:Bank                                                              3733.00
+Assets:Bank:Checking                                                     3733.00
 Assets:Cash                                                               100.00
 Assets:Cash:Wallet                                                        100.00
+Assets:Crypto                                                             500.00
+Assets:Crypto:BTC                                                         300.00
+Assets:Crypto:ETH                                                         200.00
 Liabilities                                                               -60.92
 Liabilities:MasterCard                                                    -60.92
 --------------------------------------------------------------------------------
-                                                                         2272.08
+                                                                         4272.08
 </code></pre>
 <h2 id="by-period"><a class="header" href="#by-period">By Period</a></h2>
 <p>We can see our balances segmented by a time period. For example, let's see all
 our expenses for each month,
 run <code>ledger -f ledger.dat --period Monthly bal Expenses</code></p>
-<pre><code class="language-sh">2020/12/01 - 2020/12/31
+<pre><code class="language-sh">2021/12/01 - 2021/12/31
 ================================================================================
+Expenses                                                                  222.00
+Expenses:Food                                                             222.00
+Expenses:Food:Groceries                                                   222.00
 --------------------------------------------------------------------------------
-                                                                            0.00
+                                                                          222.00
 
 ================================================================================
-2021/01/01 - 2021/01/31
+2022/01/01 - 2022/01/31
 ================================================================================
-Expenses                                                                  402.92
+Expenses                                                                  505.92
 Expenses:Books                                                             20.00
-Expenses:Food                                                             382.92
-Expenses:Food:Groceries                                                   342.00
+Expenses:Food                                                             485.92
+Expenses:Food:Groceries                                                   445.00
 Expenses:Food:TakeOut                                                      40.92
 --------------------------------------------------------------------------------
-                                                                          402.92
-
-================================================================================
-2021/02/01 - 2021/02/28
-================================================================================
-Expenses                                                                  325.00
-Expenses:Food                                                             325.00
-Expenses:Food:Groceries                                                   325.00
---------------------------------------------------------------------------------
-                                                                          325.00
+                                                                          505.92
 </code></pre>
 <h2 id="account-depth"><a class="header" href="#account-depth">Account Depth</a></h2>
 <p>That's a lot of accounts, let's trim it down to see it summed up to the second
 level. Run <code>ledger -f ledger.dat --period Monthly --depth 2 bal Expenses</code></p>
-<pre><code class="language-sh">2020/12/01 - 2020/12/31
+<pre><code class="language-sh">2021/12/01 - 2021/12/31
 ================================================================================
+Expenses                                                                  222.00
+Expenses:Food                                                             222.00
 --------------------------------------------------------------------------------
-                                                                            0.00
+                                                                          222.00
 
 ================================================================================
-2021/01/01 - 2021/01/31
+2022/01/01 - 2022/01/31
 ================================================================================
-Expenses                                                                  402.92
+Expenses                                                                  505.92
 Expenses:Books                                                             20.00
-Expenses:Food                                                             382.92
+Expenses:Food                                                             485.92
 --------------------------------------------------------------------------------
-                                                                          402.92
-
-================================================================================
-2021/02/01 - 2021/02/28
-================================================================================
-Expenses                                                                  325.00
-Expenses:Food                                                             325.00
---------------------------------------------------------------------------------
-                                                                          325.00
+                                                                          505.92
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="equity"><a class="header" href="#equity">Equity</a></h1>
 <p>Some users like to keep ledger files for each year. To aid in creating a new
@@ -385,11 +377,9 @@ generate the required transaction to have the correct starting balances.</p>
 <p>Let's start 2021, using all transactions upto the end of 2020. As the end date
 on the command line is not included, we can use 2021/01/01 as the end date.</p>
 <p>Run <code>ledger -f ledger.dat equity -e &quot;2021/01/01&quot;</code></p>
-<pre><code class="language-sh">2020/12/31 Opening Balances
-    Assets:Bank:Checking                                                 2900.00
-    Assets:Cash:Wallet                                                    100.00
+<pre><code class="language-sh">2021/12/01 Opening Balances
+    Assets:Bank:Checking                                                 1000.00
     Equity:Opening Balances                                             -1000.00
-    Income:Salary                                                       -2000.00
 
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="import"><a class="header" href="#import">Import</a></h1>
@@ -401,22 +391,22 @@ ledger file, the better the matches will be.</p>
 <h2 id="example"><a class="header" href="#example">Example</a></h2>
 <p>Example transactions from your credit card csv download.</p>
 <pre><code class="language-sh">Transaction Date,Description,Amount
-02/12/21,Dominoes Pizza     HOUSTON TX,12.34
-02/23/21,Dominoes Pizza     PEARLAND TX,14.34
-02/02/21,Half Price Books   AUSTIN TX,5.24
+01/12/22,Dominoes Pizza     HOUSTON TX,12.34
+01/23/22,Dominoes Pizza     PEARLAND TX,14.34
+01/02/22,Half Price Books   AUSTIN TX,5.24
 </code></pre>
 <p>Let's run our import, making sure to specify the correct date-format to match
 the CSV file.</p>
 <p>Run <code>ledger -f ledger.dat --date-format &quot;01/02/06&quot; import MasterCard transactions.csv</code></p>
-<pre><code class="language-sh">2021/02/12 Dominoes Pizza     HOUSTON TX
+<pre><code class="language-sh">2022/01/12 Dominoes Pizza     HOUSTON TX
     Expenses:Food:TakeOut                                                  12.34
     Liabilities:MasterCard                                                -12.34
 
-2021/02/23 Dominoes Pizza     PEARLAND TX
+2022/01/23 Dominoes Pizza     PEARLAND TX
     Expenses:Food:TakeOut                                                  14.34
     Liabilities:MasterCard                                                -14.34
 
-2021/02/02 Half Price Books   AUSTIN TX
+2022/01/02 Half Price Books   AUSTIN TX
     Expenses:Books                                                          5.24
     Liabilities:MasterCard                                                 -5.24
 
@@ -429,65 +419,62 @@ running <code>ledger -f ledger.dat --date-format &quot;01/02/06&quot; import Mas
 transactions to be in a consistent format and your file to always be ordered by
 date.</p>
 <p>Run <code>ledger -f ledger.dat print</code></p>
-<pre><code class="language-sh">2020/12/01 Checking balance
+<pre><code class="language-sh">2021/12/01 Checking balance
     Assets:Bank:Checking                                                 1000.00
     Equity:Opening Balances                                             -1000.00
 
-2020/12/05 Withdrawl
+2021/12/05 Withdrawl
     Assets:Bank:Checking                                                 -100.00
     Assets:Cash:Wallet                                                    100.00
 
-2020/12/31 Employer
-    Assets:Bank:Checking                                                 2000.00
-    Income:Salary                                                       -2000.00
-
-2021/01/01 Save
-    Assets:Bank:Checking                                                 -200.00
-    Assets:Bank:Savings                                                   200.00
-
-2021/01/02 Dominoes Pizza   HOUSTON TX
-    Expenses:Food:TakeOut                                                  23.58
-    Liabilities:MasterCard                                                -23.58
-
-2021/01/05 Grocery Store
+2021/12/22 Grocery Store
     Assets:Bank:Checking                                                 -222.00
     Expenses:Food:Groceries                                               222.00
 
-2021/01/08 Half Price Books    HOUSTON TX
-    Expenses:Books                                                         20.00
-    Liabilities:MasterCard                                                -20.00
+2021/12/25 Buy some Crypto
+    Assets:Bank:Checking                                                 -500.00
+    Assets:Crypto:BTC                                                     300.00
+    Assets:Crypto:ETH                                                     200.00
 
-2021/01/11 Panda Express
-    Expenses:Food:TakeOut                                                  17.34
-    Liabilities:MasterCard                                                -17.34
+2021/12/31 Employer
+    Assets:Bank:Checking                                                 2000.00
+    Income:Salary                                                       -2000.00
 
-2021/01/19 Grocery Store
-    Assets:Bank:Checking                                                 -120.00
-    Expenses:Food:Groceries                                               120.00
+2022/01/02 Grocery Store
+    Assets:Bank:Checking                                                 -180.00
+    Expenses:Food:Groceries                                               180.00
 
-2021/02/02 Grocery Store
+2022/01/02 Dominoes Pizza   HOUSTON TX
+    Expenses:Food:TakeOut                                                  23.58
+    Liabilities:MasterCard                                                -23.58
+
+2022/01/02 Grocery Store
     Assets:Bank:Checking                                                 -145.00
     Expenses:Food:Groceries                                               145.00
 
-2021/02/16 Grocery Store
-    Assets:Bank:Checking                                                 -180.00
-    Expenses:Food:Groceries                                               180.00
+2022/01/08 Half Price Books    HOUSTON TX
+    Expenses:Books                                                         20.00
+    Liabilities:MasterCard                                                -20.00
+
+2022/01/09 Grocery Store
+    Assets:Bank:Checking                                                 -120.00
+    Expenses:Food:Groceries                                               120.00
+
+2022/01/11 Panda Express
+    Expenses:Food:TakeOut                                                  17.34
+    Liabilities:MasterCard                                                -17.34
+
+2022/01/15 Employer
+    Assets:Bank:Checking                                                 2000.00
+    Income:Salary                                                       -2000.00
 
 </code></pre>
 <p>You can also use this if your splitting off transactions into separate files by
 date range, or account.</p>
 <p>All 2020 transactions for example <code>ledger -f ledger.dat -b &quot;2020/01/01&quot; -e &quot;2021/01/01&quot; print</code></p>
-<pre><code class="language-sh">2020/12/01 Checking balance
+<pre><code class="language-sh">2021/12/01 Checking balance
     Assets:Bank:Checking                                                 1000.00
     Equity:Opening Balances                                             -1000.00
-
-2020/12/05 Withdrawl
-    Assets:Bank:Checking                                                 -100.00
-    Assets:Cash:Wallet                                                    100.00
-
-2020/12/31 Employer
-    Assets:Bank:Checking                                                 2000.00
-    Income:Salary                                                       -2000.00
 
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="register"><a class="header" href="#register">Register</a></h1>
@@ -495,28 +482,31 @@ date range, or account.</p>
 Since we aren't specifying a specific account, we will get all postings for
 all transactions and the running total will sum to zero, as all transactions
 balance.</p>
-<pre><code class="language-sh">2020/12/01 Checking balanc Assets:Bank:Checking               1000.00    1000.00
-2020/12/01 Checking balanc Equity:Opening Balances           -1000.00       0.00
-2020/12/05 Withdrawl       Assets:Bank:Checking               -100.00    -100.00
-2020/12/05 Withdrawl       Assets:Cash:Wallet                  100.00       0.00
-2020/12/31 Employer        Assets:Bank:Checking               2000.00    2000.00
-2020/12/31 Employer        Income:Salary                     -2000.00       0.00
-2021/01/01 Save            Assets:Bank:Checking               -200.00    -200.00
-2021/01/01 Save            Assets:Bank:Savings                 200.00       0.00
-2021/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
-2021/01/02 Dominoes Pizza  Expenses:Food:TakeOut                23.58       0.00
-2021/01/05 Grocery Store   Assets:Bank:Checking               -222.00    -222.00
-2021/01/05 Grocery Store   Expenses:Food:Groceries             222.00       0.00
-2021/01/08 Half Price Book Liabilities:MasterCard              -20.00     -20.00
-2021/01/08 Half Price Book Expenses:Books                       20.00       0.00
-2021/01/11 Panda Express   Liabilities:MasterCard              -17.34     -17.34
-2021/01/11 Panda Express   Expenses:Food:TakeOut                17.34       0.00
-2021/01/19 Grocery Store   Assets:Bank:Checking               -120.00    -120.00
-2021/01/19 Grocery Store   Expenses:Food:Groceries             120.00       0.00
-2021/02/02 Grocery Store   Assets:Bank:Checking               -145.00    -145.00
-2021/02/02 Grocery Store   Expenses:Food:Groceries             145.00       0.00
-2021/02/16 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
-2021/02/16 Grocery Store   Expenses:Food:Groceries             180.00       0.00
+<pre><code class="language-sh">2021/12/01 Checking balanc Assets:Bank:Checking               1000.00    1000.00
+2021/12/01 Checking balanc Equity:Opening Balances           -1000.00       0.00
+2021/12/05 Withdrawl       Assets:Bank:Checking               -100.00    -100.00
+2021/12/05 Withdrawl       Assets:Cash:Wallet                  100.00       0.00
+2021/12/22 Grocery Store   Assets:Bank:Checking               -222.00    -222.00
+2021/12/22 Grocery Store   Expenses:Food:Groceries             222.00       0.00
+2021/12/25 Buy some Crypto Assets:Bank:Checking               -500.00    -500.00
+2021/12/25 Buy some Crypto Assets:Crypto:BTC                   300.00    -200.00
+2021/12/25 Buy some Crypto Assets:Crypto:ETH                   200.00       0.00
+2021/12/31 Employer        Assets:Bank:Checking               2000.00    2000.00
+2021/12/31 Employer        Income:Salary                     -2000.00       0.00
+2022/01/02 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00       0.00
+2022/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
+2022/01/02 Dominoes Pizza  Expenses:Food:TakeOut                23.58       0.00
+2022/01/02 Grocery Store   Assets:Bank:Checking               -145.00    -145.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00       0.00
+2022/01/08 Half Price Book Liabilities:MasterCard              -20.00     -20.00
+2022/01/08 Half Price Book Expenses:Books                       20.00       0.00
+2022/01/09 Grocery Store   Assets:Bank:Checking               -120.00    -120.00
+2022/01/09 Grocery Store   Expenses:Food:Groceries             120.00       0.00
+2022/01/11 Panda Express   Liabilities:MasterCard              -17.34     -17.34
+2022/01/11 Panda Express   Expenses:Food:TakeOut                17.34       0.00
+2022/01/15 Employer        Assets:Bank:Checking               2000.00    2000.00
+2022/01/15 Employer        Income:Salary                     -2000.00       0.00
 </code></pre>
 <h2 id="payee"><a class="header" href="#payee">Payee</a></h2>
 <p>Let's see how much money we've spend at the &quot;Grocery Store&quot; each month. Also,
@@ -524,77 +514,212 @@ to keep from seeing every posting, we are going to specify that we only want to
 see postings in the &quot;Expenses&quot; accounts. This will allow us to easily see a
 running total in the last column.</p>
 <p>Run <code>ledger -f ledger.dat reg --payee &quot;Grocery Store&quot; --period Monthly Expenses</code></p>
-<pre><code class="language-sh">2021/01/01 - 2021/01/31
+<pre><code class="language-sh">2021/12/01 - 2021/12/31
 ================================================================================
-2021/01/05 Grocery Store   Expenses:Food:Groceries             222.00     222.00
-2021/01/19 Grocery Store   Expenses:Food:Groceries             120.00     342.00
+2021/12/22 Grocery Store   Expenses:Food:Groceries             222.00     222.00
 ================================================================================
-2021/02/01 - 2021/02/28
+2022/01/01 - 2022/01/31
 ================================================================================
-2021/02/02 Grocery Store   Expenses:Food:Groceries             145.00     145.00
-2021/02/16 Grocery Store   Expenses:Food:Groceries             180.00     325.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00     180.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00     325.00
+2022/01/09 Grocery Store   Expenses:Food:Groceries             120.00     445.00
 </code></pre>
 <h2 id="accounts"><a class="header" href="#accounts">Accounts</a></h2>
 <p>Let's track down all the times we used our Credit Card.</p>
 <p>Run <code>ledger -f ledger.dat reg MasterCard</code></p>
-<pre><code class="language-sh">2021/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
-2021/01/08 Half Price Book Liabilities:MasterCard              -20.00     -43.58
-2021/01/11 Panda Express   Liabilities:MasterCard              -17.34     -60.92
+<pre><code class="language-sh">2022/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
+2022/01/08 Half Price Book Liabilities:MasterCard              -20.00     -43.58
+2022/01/11 Panda Express   Liabilities:MasterCard              -17.34     -60.92
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stats"><a class="header" href="#stats">Stats</a></h1>
 <p>A nice little summary of various ledger stats is avaible.</p>
 <p>Run <code>ledger -f ledger.dat stats</code></p>
-<pre><code class="language-sh">Time period               : 2020-12-01 to 2021-02-16 (11 weeks)
+<pre><code class="language-sh">Time period               : 2021-12-01 to 2022-01-15 (6 weeks 3 days)
 Unique payees             : 8
-Unique accounts           : 9
-Number of transactions    : 11 (0.1 per day)
-Number of postings        : 22 (0.3 per day)
-Time since last post      : 47 weeks
+Unique accounts           : 10
+Number of transactions    : 12 (0.3 per day)
+Number of postings        : 25 (0.6 per day)
+Time since last post      : 20 hours
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>The web service included in <code>ledger</code> allows for the easy and quick viewing
+of financial data in a graphical format.</p>
+<p>The default pages show the accounts, and a &quot;General Ledger&quot; listing all the
+transactions.</p>
+<p>Start up the web interface with <code>ledger -f ledger.dat web</code></p>
+<p>Open a browser to the default address of <code>http://localhost:8056/</code></p>
+<p>You should see the following.</p>
+<p><img src="webshots/accounts.png" alt="accounts list" /></p>
+<p>This lists all the accounts.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="quickview"><a class="header" href="#quickview">Quickview</a></h1>
+<p>The main page can be configured to show only a
+selected subset of all accounts by specifying a <em>quickview</em> configuration file.</p>
+<p>Take the following example.</p>
+<pre><code class="language-sh">[[account]]
+name = &quot;Assets:Bank:Checking&quot;
+short_name = &quot;Checking&quot;
+
+[[account]]
+name = &quot;Assets:Cash:Wallet&quot;
+short_name = &quot;Wallet&quot;
+
+[[account]]
+name = &quot;Liabilities:MasterCard&quot;
+short_name = &quot;Card&quot;
+</code></pre>
+<p>Run it with <code>ledger -f ledger -q quickview.toml web</code></p>
+<p>The new, more compact start screen should look like the following.</p>
+<p><img src="webshots/quickview.png" alt="quickview list" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="general-ledger"><a class="header" href="#general-ledger">General Ledger</a></h1>
+<p>The general ledger page shows all transactions in a table format.</p>
+<p><img src="webshots/general-ledger.png" alt="general ledger" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="account-page"><a class="header" href="#account-page">Account page</a></h1>
+<p>Click the link to an account shows the register of postings related to that
+account.</p>
+<p><img src="webshots/account.png" alt="account page" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reports"><a class="header" href="#reports">Reports</a></h1>
+<p>The web service included in <code>ledger</code> allows for the configuration of many types
+of different reports, charts, and calculations.</p>
+<p>Lets try an example configuration.</p>
+<pre><code class="language-sh">[[report]]
+name = &quot;PQ Expenses&quot;
+chart = &quot;pie&quot;
+date_range = &quot;Previous Quarter&quot;
+accounts = [ &quot;Expenses:*&quot; ]
+
+[[report]]
+name = &quot;PY Expenses&quot;
+chart = &quot;pie&quot;
+date_range = &quot;Previous Year&quot;
+accounts = [ &quot;Expenses:*&quot; ]
+
+[[report]]
+name = &quot;YTD Expenses&quot;
+chart = &quot;pie&quot;
+date_range = &quot;YTD&quot;
+accounts = [ &quot;Expenses:*&quot; ]
+
+[[report]]
+name = &quot;YTD My Monthly Savings&quot;
+chart = &quot;bar&quot;
+date_range = &quot;YTD&quot;
+date_freq = &quot;Monthly&quot;
+accounts = [ &quot;Income&quot;, &quot;Expenses&quot; ]
+
+    [[report.calculated_account]]
+    name = &quot;Savings&quot;
+
+        [[report.calculated_account.account_operation]]
+        name = &quot;Income&quot;
+        operation = &quot;+&quot;
+        
+        [[report.calculated_account.account_operation]]
+        name = &quot;Expenses&quot;
+        operation = &quot;-&quot;
+
+[[report]]
+name = &quot;AT Net Worth&quot;
+chart = &quot;line&quot;
+date_range = &quot;All Time&quot;
+date_freq = &quot;Quarterly&quot;
+accounts = [ &quot;Assets&quot;, &quot;Liabilities&quot; ]
+
+[[report]]
+name = &quot;AT Yearly Income&quot;
+chart = &quot;bar&quot;
+date_range = &quot;All Time&quot;
+date_freq = &quot;Yearly&quot;
+accounts = [ &quot;Income&quot; ]
+
+</code></pre>
+<h2 id="expenses"><a class="header" href="#expenses">Expenses</a></h2>
+<p>This is a pie chart showing the spending per Expense account.</p>
+<p><img src="webshots/report-expenses.png" alt="expenses pie chart" /></p>
+<h2 id="savings"><a class="header" href="#savings">Savings</a></h2>
+<p>This report calculates a pseudo account &quot;Savings&quot; based on <em>Income - Expenses</em>
+over time and shows how much money has been saved per month.</p>
+<p><img src="webshots/report-savings.png" alt="savings bar chart" /></p>
+<h2 id="net-worth-1"><a class="header" href="#net-worth-1">Net Worth</a></h2>
+<p>Graph Assets against Liabilities.</p>
+<p><img src="webshots/report-networth.png" alt="net worth line chart" /></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="portfolio"><a class="header" href="#portfolio">Portfolio</a></h1>
+<p>The web service included in <code>ledger</code> allows tracking a porfolio of various
+holdings. Currently stocks, mutual funds, and crypto currencies are supported.</p>
+<p>Basically, you just create a portfolio configuration file where you match your
+accounts to comodities and the shares of the commodity the account represents.</p>
+<p>The example configuration shows what crypto currency holding may look like.</p>
+<pre><code class="language-sh">[[portfolio]]
+name = &quot;Crypto Holdings&quot;
+
+    [[portfolio.stock]]
+    name = &quot;Bitcoin&quot;
+    security_type = &quot;Crypto&quot;
+    section = &quot;Crypto&quot;
+    ticker = &quot;BTC-USD&quot;
+    account = &quot;Assets:Crypto:BTC&quot;
+    shares = 0.009
+
+    [[portfolio.stock]]
+    name = &quot;Etherium&quot;
+    security_type = &quot;Crypto&quot;
+    section = &quot;Crypto&quot;
+    ticker = &quot;ETH-USD&quot;
+    account = &quot;Assets:Crypto:ETH&quot;
+    shares = 0.1
+
+</code></pre>
+<h2 id="crypto-holdings"><a class="header" href="#crypto-holdings">Crypto Holdings</a></h2>
+<p>Portfolio view of holdings.</p>
+<p><img src="webshots/portfolio-crypto.png" alt="crypto holdings portfolio" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="example-file"><a class="header" href="#example-file">Example File</a></h1>
 <p>To make following along and running the commands easier, you can use the
 transactions below as your <em>ledger.dat</em> file.</p>
-<pre><code class="language-sh">2020-12-01 Checking balance
+<pre><code class="language-sh">2021-12-01 Checking balance
     Assets:Bank:Checking                   1000.00
     Equity:Opening Balances
 
-2020-12-05 Withdrawl
+2021-12-25 Buy some Crypto
+    Assets:Bank:Checking
+	Assets:Crypto:BTC             300
+	Assets:Crypto:ETH             200
+
+2021-12-05 Withdrawl
     Assets:Bank:Checking                   -100.00
     Assets:Cash:Wallet
 
-2020-12-31 Employer
+2021-12-31 Employer
     Assets:Bank:Checking                   2000
     Income:Salary
 
-2021-01-01 Save
-    Assets:Bank:Checking                   -200
-    Assets:Bank:Savings                     200
+2022-01-15 Employer
+    Assets:Bank:Checking                   2000
+    Income:Salary
 
-2021-01-02 Dominoes Pizza   HOUSTON TX
+2022-01-02 Dominoes Pizza   HOUSTON TX
 	Liabilities:MasterCard
 	Expenses:Food:TakeOut                23.58
 
-2021-01-05 Grocery Store
+2021-12-22 Grocery Store
 	Assets:Bank:Checking
 	Expenses:Food:Groceries               222.0
 
-2021-01-11 Panda Express
+2022-01-11 Panda Express
 	Liabilities:MasterCard
 	Expenses:Food:TakeOut                17.34
 
-2021-01-19 Grocery Store
+2022-01-09 Grocery Store
 	Assets:Bank:Checking
 	Expenses:Food:Groceries                120.0
 
-2021-02-02 Grocery Store
+2022-01-02 Grocery Store
 	Assets:Bank:Checking
 	Expenses:Food:Groceries                145.0
 
-2021-02-16 Grocery Store
+2022-01-02 Grocery Store
 	Assets:Bank:Checking
 	Expenses:Food:Groceries                180.0
 
-2021-01-08 Half Price Books    HOUSTON TX
+2022-01-08 Half Price Books    HOUSTON TX
 	Liabilities:MasterCard
 	Expenses:Books                         20.0
 </code></pre>
