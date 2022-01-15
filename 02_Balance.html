@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_01_Balance.html" class="active"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><div><strong aria-hidden="true">5.</strong> Equity</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">6.</strong> Import</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">7.</strong> Register</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">8.</strong> Stats</div></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><div><strong aria-hidden="true">9.</strong> Overview</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> Reports</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> Stock Portfolio</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html" class="active"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><div><strong aria-hidden="true">10.</strong> Overview</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">11.</strong> Reports</div></li><li class="chapter-item expanded "><div><strong aria-hidden="true">12.</strong> Stock Portfolio</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -136,22 +136,23 @@
                     <main>
                         <h1 id="balance"><a class="header" href="#balance">Balance</a></h1>
 <p>Run <code>ledger -f ledger.dat bal</code> to see a balance report.</p>
-<pre><code>Assets                                                                   2920.00
-Assets:Bank                                                              2820.00
-Assets:Bank:Checking                                                     2620.00
+<pre><code class="language-sh">Assets                                                                   2333.00
+Assets:Bank                                                              2233.00
+Assets:Bank:Checking                                                     2033.00
 Assets:Bank:Savings                                                       200.00
 Assets:Cash                                                               100.00
 Assets:Cash:Wallet                                                        100.00
 Equity                                                                  -1000.00
 Equity:Opening Balances                                                 -1000.00
-Expenses                                                                  100.00
+Expenses                                                                  727.92
 Expenses:Books                                                             20.00
-Expenses:Food                                                              80.00
-Expenses:Food:Groceries                                                    80.00
+Expenses:Food                                                             707.92
+Expenses:Food:Groceries                                                   667.00
+Expenses:Food:TakeOut                                                      40.92
 Income                                                                  -2000.00
 Income:Salary                                                           -2000.00
-Liabilities                                                               -20.00
-Liabilities:MasterCard                                                    -20.00
+Liabilities                                                               -60.92
+Liabilities:MasterCard                                                    -60.92
 --------------------------------------------------------------------------------
                                                                             0.00
 </code></pre>
@@ -159,16 +160,70 @@ Liabilities:MasterCard                                                    -20.00
 <p>You can show specific accounts by applying a filter, which is case senstive.
 For example, let's get our net worth,
 run <code>ledger -f ledger.dat bal Assets Liabilities</code></p>
-<pre><code>Assets                                                                   2920.00
-Assets:Bank                                                              2820.00
-Assets:Bank:Checking                                                     2620.00
+<pre><code class="language-sh">Assets                                                                   2333.00
+Assets:Bank                                                              2233.00
+Assets:Bank:Checking                                                     2033.00
 Assets:Bank:Savings                                                       200.00
 Assets:Cash                                                               100.00
 Assets:Cash:Wallet                                                        100.00
-Liabilities                                                               -20.00
-Liabilities:MasterCard                                                    -20.00
+Liabilities                                                               -60.92
+Liabilities:MasterCard                                                    -60.92
 --------------------------------------------------------------------------------
-                                                                         2900.00
+                                                                         2272.08
+</code></pre>
+<h2 id="by-period"><a class="header" href="#by-period">By Period</a></h2>
+<p>We can see our balances segmented by a time period. For example, let's see all
+our expenses for each month,
+run <code>ledger -f ledger.dat --period Monthly bal Expenses</code></p>
+<pre><code class="language-sh">2020/12/01 - 2020/12/31
+================================================================================
+--------------------------------------------------------------------------------
+                                                                            0.00
+
+================================================================================
+2021/01/01 - 2021/01/31
+================================================================================
+Expenses                                                                  402.92
+Expenses:Books                                                             20.00
+Expenses:Food                                                             382.92
+Expenses:Food:Groceries                                                   342.00
+Expenses:Food:TakeOut                                                      40.92
+--------------------------------------------------------------------------------
+                                                                          402.92
+
+================================================================================
+2021/02/01 - 2021/02/28
+================================================================================
+Expenses                                                                  325.00
+Expenses:Food                                                             325.00
+Expenses:Food:Groceries                                                   325.00
+--------------------------------------------------------------------------------
+                                                                          325.00
+</code></pre>
+<h2 id="account-depth"><a class="header" href="#account-depth">Account Depth</a></h2>
+<p>That's a lot of accounts, let's trim it down to see it summed up to the second
+level. Run <code>ledger -f ledger.dat --period Monthly --depth 2 bal Expenses</code></p>
+<pre><code class="language-sh">2020/12/01 - 2020/12/31
+================================================================================
+--------------------------------------------------------------------------------
+                                                                            0.00
+
+================================================================================
+2021/01/01 - 2021/01/31
+================================================================================
+Expenses                                                                  402.92
+Expenses:Books                                                             20.00
+Expenses:Food                                                             382.92
+--------------------------------------------------------------------------------
+                                                                          402.92
+
+================================================================================
+2021/02/01 - 2021/02/28
+================================================================================
+Expenses                                                                  325.00
+Expenses:Food                                                             325.00
+--------------------------------------------------------------------------------
+                                                                          325.00
 </code></pre>
 
                     </main>
@@ -178,7 +233,7 @@ Liabilities:MasterCard                                                    -20.00
                             <a rel="prev" href="01_03_RunningLedger.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="Example.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="02_Equity.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -190,7 +245,7 @@ Liabilities:MasterCard                                                    -20.00
                     <a rel="prev" href="01_03_RunningLedger.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="Example.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="02_Equity.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
