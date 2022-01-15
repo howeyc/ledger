@@ -121,6 +121,4 @@ func init() {
 	webCmd.Flags().StringVarP(&quickviewConfigFileName, "quickview", "q", "", "Quickview config file name.")
 	webCmd.Flags().IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	webCmd.Flags().BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
-
-	webCmd.MarkFlagRequired("reports")
 }

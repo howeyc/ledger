@@ -79,6 +79,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/accounts">Accounts</a>
         </li>
+        {{if .Reports }}
         <li class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="reports-drowpdown">Reports</a>
           <ul class="dropdown-menu" aria-labelledBy="reports-dropdown">
@@ -89,6 +90,7 @@
             {{end}}
           </ul>
         </li>
+		{{end}}
         {{if .Portfolios }}
         <li class="nav-item dropdown">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="portfolios-dropdown">Portfolios</a>

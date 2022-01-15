@@ -110,23 +110,25 @@ type pageData struct {
 }
 
 func configLoaders(dur time.Duration) {
-	go func() {
-		for {
-			var rLoadData reportConfigStruct
-			ifile, ierr := os.Open(reportConfigFileName)
-			if ierr != nil {
-				log.Println(ierr)
+	if len(reportConfigFileName) > 0 {
+		go func() {
+			for {
+				var rLoadData reportConfigStruct
+				ifile, ierr := os.Open(reportConfigFileName)
+				if ierr != nil {
+					log.Println(ierr)
+				}
+				tdec := toml.NewDecoder(ifile)
+				err := tdec.Decode(&rLoadData)
+				if err != nil {
+					log.Println(err)
+				}
+				ifile.Close()
+				reportConfigData = rLoadData
+				time.Sleep(dur)
 			}
-			tdec := toml.NewDecoder(ifile)
-			err := tdec.Decode(&rLoadData)
-			if err != nil {
-				log.Println(err)
-			}
-			ifile.Close()
-			reportConfigData = rLoadData
-			time.Sleep(dur)
-		}
-	}()
+		}()
+	}
 
 	if len(quickviewConfigFileName) > 0 {
 		go func() {
