@@ -394,9 +394,25 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			rType = ledger.RangePartition
 			lData.ChartType = "StackedBar"
 		}
+		if rConf.RangeBalanceType != "" {
+			rType = rConf.RangeBalanceType
+		}
 
 		rangeBalances := ledger.BalancesByPeriod(rtrans, rPeriod, rType)
 		for _, rb := range rangeBalances {
+			if rConf.RangeBalanceSkipZero {
+				allZero := true
+				for _, acc := range rb.Balances {
+					if acc.Balance.Sign() != 0 {
+						allZero = false
+						break
+					}
+				}
+				if allZero {
+					continue
+				}
+			}
+
 			if lData.RangeStart.IsZero() {
 				lData.RangeStart = rb.Start
 			}

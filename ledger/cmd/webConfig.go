@@ -25,8 +25,10 @@ type calculatedAccount struct {
 type reportConfig struct {
 	Name                   string
 	Chart                  string
-	DateRange              string `toml:"date_range"`
-	DateFreq               string `toml:"date_freq"`
+	RangeBalanceType       ledger.RangeType `toml:"range_balance_type"`
+	RangeBalanceSkipZero   bool             `toml:"range_balance_skip_zero"`
+	DateRange              string           `toml:"date_range"`
+	DateFreq               string           `toml:"date_freq"`
 	Accounts               []string
 	ExcludeAccountTrans    []string            `toml:"exclude_account_trans"`
 	ExcludeAccountsSummary []string            `toml:"exclude_account_summary"`
