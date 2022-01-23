@@ -24,6 +24,7 @@ type Period string
 
 // Periods suppored by ledger
 const (
+	PeriodDay      Period = "Daily"
 	PeriodWeek     Period = "Weekly"
 	Period2Week    Period = "BiWeekly"
 	PeriodMonth    Period = "Monthly"
@@ -38,6 +39,9 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 	var periodStart time.Time
 
 	switch per {
+	case PeriodDay:
+		incDays = 1
+		periodStart = time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, time.UTC)
 	case PeriodWeek:
 		incDays = 7
 		for periodStart = time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, time.UTC); periodStart.Weekday() != time.Sunday; {
