@@ -57,7 +57,7 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 		line := s.Text()
 
 		if strings.HasPrefix(line, "include") {
-			pieces := strings.Split(line, " ")
+			pieces := strings.SplitN(line, " ", 2)
 			if len(pieces) != 2 {
 				return fmt.Errorf("%s:%d: invalid include directive", filename, lineNum)
 			}

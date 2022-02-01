@@ -77,7 +77,7 @@ var importCmd = &cobra.Command{
 		}
 		classifier := bayesian.NewClassifier(classes...)
 		for _, tran := range generalLedger {
-			payeeWords := strings.Split(tran.Payee, " ")
+			payeeWords := strings.Fields(tran.Payee)
 			for _, accChange := range tran.AccountChanges {
 				if strings.Contains(accChange.Name, destAccSearch) {
 					classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
@@ -115,7 +115,7 @@ var importCmd = &cobra.Command{
 		expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: new(big.Rat)}
 		csvAccount := ledger.Account{Name: matchingAccount, Balance: new(big.Rat)}
 		for _, record := range csvRecords[1:] {
-			inputPayeeWords := strings.Split(record[payeeColumn], " ")
+			inputPayeeWords := strings.Fields(record[payeeColumn])
 			csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
 			if allowMatching || !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
 				// Classify into expense account
