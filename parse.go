@@ -7,13 +7,11 @@ import (
 	"math/big"
 	"regexp"
 	"strings"
+	"time"
+	"unicode"
 
 	date "github.com/joyt/godate"
 	"github.com/marcmak/calc/calc"
-)
-
-const (
-	whitespace = " \t"
 )
 
 // ParseLedger parses a ledger file and returns a list of Transactions.
@@ -55,7 +53,8 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 	return c, e
 }
 
-var accountToAmountSpace = regexp.MustCompile(" {2,}|\t+")
+// Calculation expressions are enclosed in parantheses
+var calcExpr = regexp.MustCompile(`(?s) \((.*)\)`)
 
 func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) {
 	scanner := bufio.NewScanner(ledgerReader)
@@ -63,6 +62,9 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 	var filename string
 	var lineCount int
 	var comments []string
+
+	// default date layout
+	dateLayout := "2006/01/02"
 
 	errorMsg := func(msg string) (stop bool) {
 		return callback(nil, fmt.Errorf("%s:%d: %s", filename, lineCount, msg))
@@ -78,7 +80,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 		}
 
 		// remove heading and tailing space from the line
-		trimmedLine := strings.Trim(line, whitespace)
+		trimmedLine := strings.TrimSpace(line)
 		lineCount++
 
 		// handle comments
@@ -108,7 +110,8 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 			_, lines, _ := parseAccount(scanner)
 			lineCount += lines
 		default:
-			trans, lines, transErr := parseTransaction(scanner)
+			trans, lines, layout, transErr := parseTransaction(dateLayout, scanner)
+			dateLayout = layout
 			lineCount += lines
 			if transErr != nil {
 				if errorMsg(fmt.Errorf("Unable to parse transaction: %w", transErr).Error()) {
@@ -126,7 +129,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err error) {
 	line := scanner.Text()
 	// remove heading and tailing space from the line
-	trimmedLine := strings.Trim(line, whitespace)
+	trimmedLine := strings.TrimSpace(line)
 
 	lineSplit := strings.SplitN(trimmedLine, " ", 2)
 	if len(lineSplit) != 2 {
@@ -139,7 +142,7 @@ func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err er
 		// Read until blank line (ignore all sub-directives)
 		line = scanner.Text()
 		// remove heading and tailing space from the line
-		trimmedLine = strings.Trim(line, whitespace)
+		trimmedLine = strings.TrimSpace(line)
 		lines++
 
 		// skip comments
@@ -156,16 +159,16 @@ func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err er
 	return
 }
 
-func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, err error) {
+func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *Transaction, lines int, layout string, err error) {
 	var comments []string
 
 	line := scanner.Text()
-	trimmedLine := strings.Trim(line, whitespace)
+	trimmedLine := strings.TrimSpace(line)
 	// handle comments (comment saved in calling function)
 	if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
 		trimmedLine = trimmedLine[:commentIdx]
 	}
-	trimmedLine = strings.Trim(trimmedLine, whitespace)
+	trimmedLine = strings.TrimSpace(trimmedLine)
 
 	// Parse Date-Payee line
 	lineSplit := strings.SplitN(trimmedLine, " ", 2)
@@ -174,7 +177,14 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 		return
 	}
 	dateString := lineSplit[0]
-	transDate, dateErr := date.Parse(dateString)
+
+	// attempt currentDateLayout, hopefully file is consistent
+	layout = currentDateLayout
+	transDate, dateErr := time.Parse(layout, dateString)
+	if dateErr != nil {
+		// try to find new date layout
+		transDate, layout, dateErr = date.ParseAndGetLayout(dateString)
+	}
 	if dateErr != nil {
 		err = fmt.Errorf("Unable to parse date: %s", dateString)
 		return
@@ -185,7 +195,7 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 	for scanner.Scan() {
 		line = scanner.Text()
 		// remove heading and tailing space from the line
-		trimmedLine = strings.Trim(line, whitespace)
+		trimmedLine = strings.TrimSpace(line)
 		lines++
 
 		// handle comments
@@ -195,6 +205,7 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 			if len(trimmedLine) == 0 {
 				continue
 			}
+			trimmedLine = strings.TrimSpace(trimmedLine)
 		}
 
 		if len(trimmedLine) == 0 {
@@ -208,22 +219,20 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 				return
 			}
 		} else {
+			// Check for expr
+			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
+				return fmt.Sprintf("%f", calc.Solve(s))
+			})
+
 			var accChange Account
-			lineSplit := accountToAmountSpace.Split(trimmedLine, -1)
-			var nonEmptyWords []string
-			for _, word := range lineSplit {
-				if len(word) > 0 {
-					nonEmptyWords = append(nonEmptyWords, word)
+			accChange.Name = trimmedLine
+			if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
+				acc := strings.TrimSpace(trimmedLine[:i])
+				amt := trimmedLine[i+1:]
+				if ratbal, valid := new(big.Rat).SetString(amt); valid {
+					accChange.Name = acc
+					accChange.Balance = ratbal
 				}
-			}
-			lastIndex := len(nonEmptyWords) - 1
-			balErr, rationalNum := getBalance(strings.Trim(nonEmptyWords[lastIndex], whitespace))
-			if !balErr {
-				// Assuming no balance and whole line is account name
-				accChange.Name = strings.Join(nonEmptyWords, " ")
-			} else {
-				accChange.Name = strings.Join(nonEmptyWords[:lastIndex], " ")
-				accChange.Balance = rationalNum
 			}
 			trans.AccountChanges = append(trans.AccountChanges, accChange)
 		}
@@ -239,16 +248,6 @@ func parseTransaction(scanner *bufio.Scanner) (trans *Transaction, lines int, er
 		trans.Comments = comments
 	}
 	return
-}
-
-func getBalance(balance string) (bool, *big.Rat) {
-	rationalNum := new(big.Rat)
-	if strings.Contains(balance, "(") {
-		rationalNum.SetFloat64(calc.Solve(balance))
-		return true, rationalNum
-	}
-	_, isValid := rationalNum.SetString(balance)
-	return isValid, rationalNum
 }
 
 // Takes a transaction and balances it. This is mainly to fill in the empty part
