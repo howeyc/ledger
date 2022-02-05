@@ -10,8 +10,8 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/alfredxing/calc/compute"
 	date "github.com/joyt/godate"
-	"github.com/marcmak/calc/calc"
 )
 
 // ParseLedger parses a ledger file and returns a list of Transactions.
@@ -221,7 +221,8 @@ func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *
 		} else {
 			// Check for expr
 			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
-				return fmt.Sprintf("%f", calc.Solve(s))
+				f, _ := compute.Evaluate(s)
+				return fmt.Sprintf("%f", f)
 			})
 
 			var accChange Account
