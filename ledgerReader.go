@@ -56,14 +56,9 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 	for s.Scan() {
 		line := s.Text()
 
-		if strings.HasPrefix(line, "include") {
-			pieces := strings.SplitN(line, " ", 2)
-			if len(pieces) != 2 {
-				return fmt.Errorf("%s:%d: invalid include directive", filename, lineNum)
-			}
-
+		if prefix, incname, found := strings.Cut(line, " "); found && prefix == "include" {
 			// Resolve filepaths
-			includedPath := filepath.Join(filename, "..", pieces[1])
+			includedPath := filepath.Join(filename, "..", incname)
 			includedPaths, err := filepath.Glob(includedPath)
 
 			// Include all resolved filepaths

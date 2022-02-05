@@ -97,14 +97,13 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 			continue
 		}
 
-		lineSplit := strings.SplitN(trimmedLine, " ", 2)
-		if len(lineSplit) != 2 {
+		commandDirective, _, split := strings.Cut(trimmedLine, " ")
+		if !split {
 			if errorMsg("Unable to parse payee line: " + line) {
 				return
 			}
 			continue
 		}
-		commandDirective := lineSplit[0]
 		switch commandDirective {
 		case "account":
 			_, lines, _ := parseAccount(scanner)
@@ -131,12 +130,11 @@ func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err er
 	// remove heading and tailing space from the line
 	trimmedLine := strings.TrimSpace(line)
 
-	lineSplit := strings.SplitN(trimmedLine, " ", 2)
-	if len(lineSplit) != 2 {
+	_, accountName, split := strings.Cut(trimmedLine, " ")
+	if !split {
 		err = fmt.Errorf("Unable to parse account line: %s", line)
 		return
 	}
-	accountName = lineSplit[1]
 
 	for scanner.Scan() {
 		// Read until blank line (ignore all sub-directives)
@@ -171,12 +169,11 @@ func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *
 	trimmedLine = strings.TrimSpace(trimmedLine)
 
 	// Parse Date-Payee line
-	lineSplit := strings.SplitN(trimmedLine, " ", 2)
-	if len(lineSplit) != 2 {
+	dateString, payeeString, split := strings.Cut(trimmedLine, " ")
+	if !split {
 		err = fmt.Errorf("Unable to parse payee line: %s", line)
 		return
 	}
-	dateString := lineSplit[0]
 
 	// attempt currentDateLayout, hopefully file is consistent
 	layout = currentDateLayout
@@ -189,7 +186,6 @@ func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *
 		err = fmt.Errorf("Unable to parse date: %s", dateString)
 		return
 	}
-	payeeString := lineSplit[1]
 	trans = &Transaction{Payee: payeeString, Date: transDate}
 
 	for scanner.Scan() {
