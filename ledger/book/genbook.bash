@@ -13,3 +13,4 @@ popd
 
 mdbook build
 rsync -a src/webshots html-book/
+rsync -a src/consoleshots html-book/

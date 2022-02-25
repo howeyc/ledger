@@ -9,6 +9,7 @@
 - [First Run](./01_03_RunningLedger.md)
 
 # CLI Commands
+- [Accounts](./02_Accounts.md)
 - [Balance](./02_Balance.md)
 - [Equity](./02_Equity.md)
 - [Import](./02_Import.md)
@@ -27,4 +28,5 @@
 -----
 
 [Example File](./Example.md)
+[Editing in Vim](./Editing_VimPlugin.md)
 [License](./LICENSE.md)
