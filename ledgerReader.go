@@ -13,6 +13,7 @@ import (
 
 const (
 	markerPrefix = ";__ledger_file"
+	markerSep    = "*-*"
 )
 
 var includedFiles = make(map[string]bool)
@@ -83,11 +84,11 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 }
 
 func marker(filename string, lineNum int) string {
-	return fmt.Sprintf("%s*-*%s*-*%d", markerPrefix, filename, lineNum)
+	return strings.Join([]string{markerPrefix, filename, strconv.Itoa(lineNum)}, markerSep)
 }
 
 func parseMarker(s string) (string, int) {
-	v := strings.Split(s, "*-*")
+	v := strings.Split(s, markerSep)
 	lineNum, _ := strconv.Atoi(v[2])
 	return v[1], lineNum
 }

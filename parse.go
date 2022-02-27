@@ -15,8 +15,6 @@ import (
 )
 
 // ParseLedger parses a ledger file and returns a list of Transactions.
-//
-// Transactions are sorted by date.
 func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
 	parseLedger(ledgerReader, func(t *Transaction, e error) (stop bool) {
 		if e != nil {
@@ -33,7 +31,6 @@ func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err erro
 }
 
 // ParseLedgerAsync parses a ledger file and returns a Transaction and error channels .
-//
 func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error) {
 	c = make(chan *Transaction)
 	e = make(chan error)
@@ -56,40 +53,37 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 // Calculation expressions are enclosed in parantheses
 var calcExpr = regexp.MustCompile(`(?s) \((.*)\)`)
 
+type parser struct {
+	scanner    *bufio.Scanner
+	filename   string
+	lineCount  int
+	comments   []string
+	dateLayout string
+}
+
 func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) {
-	scanner := bufio.NewScanner(ledgerReader)
+	var lp parser
+	lp.scanner = bufio.NewScanner(ledgerReader)
+
 	var line string
-	var filename string
-	var lineCount int
-	var comments []string
-
-	// default date layout
-	dateLayout := "2006/01/02"
-
-	errorMsg := func(msg string) (stop bool) {
-		return callback(nil, fmt.Errorf("%s:%d: %s", filename, lineCount, msg))
-	}
-
-	for scanner.Scan() {
-		line = scanner.Text()
+	for lp.scanner.Scan() {
+		line = lp.scanner.Text()
 
 		// update filename/line if sentinel comment is found
 		if strings.HasPrefix(line, markerPrefix) {
-			filename, lineCount = parseMarker(line)
+			lp.filename, lp.lineCount = parseMarker(line)
 			continue
 		}
 
 		// remove heading and tailing space from the line
 		trimmedLine := strings.TrimSpace(line)
-		lineCount++
+		lp.lineCount++
 
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			comments = append(comments, trimmedLine[commentIdx:])
+			lp.comments = append(lp.comments, trimmedLine[commentIdx:])
 			trimmedLine = trimmedLine[:commentIdx]
-			if len(trimmedLine) == 0 {
-				continue
-			}
+			trimmedLine = strings.TrimSpace(trimmedLine)
 		}
 
 		// Skip empty lines
@@ -97,58 +91,47 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 			continue
 		}
 
-		commandDirective, _, split := strings.Cut(trimmedLine, " ")
+		before, after, split := strings.Cut(trimmedLine, " ")
 		if !split {
-			if errorMsg("Unable to parse payee line: " + line) {
+			if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount,
+				fmt.Errorf("Unable to parse payee line: %s", line))) {
 				return
 			}
 			continue
 		}
-		switch commandDirective {
+		switch before {
 		case "account":
-			_, lines, _ := parseAccount(scanner)
-			lineCount += lines
+			lp.parseAccount(after)
 		default:
-			trans, lines, layout, transErr := parseTransaction(dateLayout, scanner)
-			dateLayout = layout
-			lineCount += lines
+			trans, transErr := lp.parseTransaction(before, after)
 			if transErr != nil {
-				if errorMsg(fmt.Errorf("Unable to parse transaction: %w", transErr).Error()) {
+				if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount, transErr)) {
 					return
 				}
 				continue
 			}
-			trans.Comments = append(comments, trans.Comments...)
 			callback(trans, nil)
-			comments = nil
 		}
 	}
 }
 
-func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err error) {
-	line := scanner.Text()
-	// remove heading and tailing space from the line
-	trimmedLine := strings.TrimSpace(line)
+func (lp *parser) parseAccount(accName string) (accountName string, err error) {
+	accountName = accName
 
-	_, accountName, split := strings.Cut(trimmedLine, " ")
-	if !split {
-		err = fmt.Errorf("Unable to parse account line: %s", line)
-		return
-	}
-
-	for scanner.Scan() {
+	var line string
+	for lp.scanner.Scan() {
 		// Read until blank line (ignore all sub-directives)
-		line = scanner.Text()
+		line = lp.scanner.Text()
 		// remove heading and tailing space from the line
-		trimmedLine = strings.TrimSpace(line)
-		lines++
+		trimmedLine := strings.TrimSpace(line)
+		lp.lineCount++
 
 		// skip comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
 			trimmedLine = trimmedLine[:commentIdx]
 		}
 
-		// continue slurping up sub-directives until empty line
+		// stop slurping up sub-directives on empty line
 		if len(trimmedLine) == 0 {
 			return
 		}
@@ -157,63 +140,52 @@ func parseAccount(scanner *bufio.Scanner) (accountName string, lines int, err er
 	return
 }
 
-func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *Transaction, lines int, layout string, err error) {
-	var comments []string
-
-	line := scanner.Text()
-	trimmedLine := strings.TrimSpace(line)
-	// handle comments (comment saved in calling function)
-	if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-		trimmedLine = trimmedLine[:commentIdx]
-	}
-	trimmedLine = strings.TrimSpace(trimmedLine)
-
-	// Parse Date-Payee line
-	dateString, payeeString, split := strings.Cut(trimmedLine, " ")
-	if !split {
-		err = fmt.Errorf("Unable to parse payee line: %s", line)
-		return
-	}
-
-	// attempt currentDateLayout, hopefully file is consistent
-	layout = currentDateLayout
-	transDate, dateErr := time.Parse(layout, dateString)
-	if dateErr != nil {
+func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) {
+	// try curent date layout
+	transDate, err = time.Parse(lp.dateLayout, dateString)
+	if err != nil {
 		// try to find new date layout
-		transDate, layout, dateErr = date.ParseAndGetLayout(dateString)
+		transDate, lp.dateLayout, err = date.ParseAndGetLayout(dateString)
+		if err != nil {
+			err = fmt.Errorf("Unable to parse date(%s): %w", dateString, err)
+		}
 	}
-	if dateErr != nil {
-		err = fmt.Errorf("Unable to parse date: %s", dateString)
-		return
+	return
+}
+
+func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Transaction, err error) {
+	transDate, derr := lp.parseDate(dateString)
+	if derr != nil {
+		return nil, derr
 	}
 	trans = &Transaction{Payee: payeeString, Date: transDate}
 
-	for scanner.Scan() {
-		line = scanner.Text()
+	var line string
+	for lp.scanner.Scan() {
+		line = lp.scanner.Text()
 		// remove heading and tailing space from the line
-		trimmedLine = strings.TrimSpace(line)
-		lines++
+		trimmedLine := strings.TrimSpace(line)
+		lp.lineCount++
 
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			comments = append(comments, trimmedLine[commentIdx:])
+			lp.comments = append(lp.comments, trimmedLine[commentIdx:])
 			trimmedLine = trimmedLine[:commentIdx]
+			trimmedLine = strings.TrimSpace(trimmedLine)
 			if len(trimmedLine) == 0 {
 				continue
 			}
-			trimmedLine = strings.TrimSpace(trimmedLine)
 		}
 
 		if len(trimmedLine) == 0 {
-			if trans != nil {
-				transErr := balanceTransaction(trans)
-				if transErr != nil {
-					err = fmt.Errorf("Unable to balance transaction: %w", transErr)
-					return
-				}
-				trans.Comments = comments
+			transErr := balanceTransaction(trans)
+			if transErr != nil {
+				err = fmt.Errorf("Unable to balance transaction: %w", transErr)
 				return
 			}
+			trans.Comments = lp.comments
+			lp.comments = nil
+			return
 		} else {
 			// Check for expr
 			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
@@ -236,14 +208,13 @@ func parseTransaction(currentDateLayout string, scanner *bufio.Scanner) (trans *
 	}
 	// If the file does not end on empty line, we must attempt to balance last
 	// transaction of the file.
-	if trans != nil {
-		transErr := balanceTransaction(trans)
-		if transErr != nil {
-			err = fmt.Errorf("Unable to balance transaction: %w", transErr)
-			return
-		}
-		trans.Comments = comments
+	transErr := balanceTransaction(trans)
+	if transErr != nil {
+		err = fmt.Errorf("Unable to balance transaction: %w", transErr)
+		return
 	}
+	trans.Comments = lp.comments
+	lp.comments = nil
 	return
 }
 
