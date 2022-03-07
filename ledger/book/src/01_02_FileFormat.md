@@ -35,11 +35,14 @@ The basic format of a `ledger` transaction, shown below.
 ```
 
 In the example, line 1 shows the _transaction date_ and _payee_.
-Lines 2 and 3 shows a _posting_ comprised of an _account_ and an _amount_.
+Lines 2 and 3 are two _postings_ comprised of an _account_ and an _amount_.
 
 All transactions must balance. That is, the amount credited must
 equal the amount debited: credits minus debits must equal zero.
 In other words, the sum of all _postings_ must equal zero.
+
+A transaction must have at least two _postings_. There is not limit on the
+number of _postings_ per transaction.
 
 Note the _accounts_ used in this example.
 One begins with `Expenses` and the other begins with `Assets`.
