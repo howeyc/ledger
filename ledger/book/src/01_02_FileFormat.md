@@ -70,9 +70,10 @@ Postings can only have one comment line but transactions can have as many as
 you want.
 
 ```ledger
+; cold brew
+; morning
 2017-06-26 Commonplace Coffee
-  ; cold brew
-  Expenses:Restaurants:Coffee   3.00
+  Expenses:Restaurants:Coffee   3.00   ; Grande
   Assets:Cash:Wallet           -3.00
 
 ```
@@ -105,3 +106,43 @@ is a guiding principle of ledger.
 
 Reporting functions available in ledger are very powerful, and will be introduced
 in later chapters.
+
+## Differences from Other Ledger
+
+The file format supported by this version of ledger is heavily inspired by the
+format defined by the other [ledger](https://www.ledger-cli.org/). However,
+this version supports only the most basic of features in the ledger file itself.
+
+### No Currencies or Commodities
+
+There is no support for prepending a currency token (such as $) to a number. Nor
+is there support for appending a token or string to signify a commodity (such
+as "APPL", "BTC", or "USD").
+
+All amounts must be numbers. Ledger balances and moves amounts (numbers)
+between accounts in transactions. The significance of what a number means or
+represents is entirely up to the user.
+
+**Note:** Even though there is no support for commodities in the ledger file
+format, support for commidities exists in the web reporting features.
+
+### Minimal Command Directive Support
+
+The other ledger supports many [Command Directives](https://www.ledger-cli.org/3.0/doc/ledger3.html#Command-Directives).
+
+The only supported directives are:
+
+* include - to import/include transactions of another ledger file.
+* account - parsed but ignored.
+
+All other directives will cause errors in this application as they will be
+assumed to be a line starting a transaction.
+
+### Transactions are basic
+
+* No metadata support
+* No "state" (pending, cleared, ...)
+* No virtual postings
+* No balance assertions
+
+Postings are account and an optional amount.
