@@ -51,6 +51,20 @@ var testCases = []testCase{
 		errors.New(":3: Unable to parse transaction: Unable to balance transaction: no empty account to place extra balance"),
 	},
 	{
+		"single posting",
+		`1970/01/01 Payee
+	Assets:Account    5`,
+		nil,
+		errors.New(":2: Unable to parse transaction: Unable to balance transaction: need at least two postings"),
+	},
+	{
+		"no posting",
+		`1970/01/01 Payee
+`,
+		nil,
+		errors.New(":1: Unable to parse transaction: Unable to balance transaction: need at least two postings"),
+	},
+	{
 		"multiple empty",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)

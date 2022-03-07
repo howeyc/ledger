@@ -224,6 +224,9 @@ func balanceTransaction(input *Transaction) error {
 	balance := new(big.Rat)
 	var emptyFound bool
 	var emptyAccIndex int
+	if len(input.AccountChanges) < 2 {
+		return fmt.Errorf("need at least two postings")
+	}
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance == nil {
 			if emptyFound {
