@@ -124,8 +124,12 @@ var importCmd = &cobra.Command{
 					expenseAccount.Name = string(classifier.Classes[likely])
 				}
 
+				// Parse error, set to zero
+				if _, bset := expenseAccount.Balance.SetString(record[amountColumn]); !bset {
+					expenseAccount.Balance.SetFloat64(0)
+				}
+
 				// Negate amount if required
-				expenseAccount.Balance.SetString(record[amountColumn])
 				if negateAmount {
 					expenseAccount.Balance.Neg(expenseAccount.Balance)
 				}
