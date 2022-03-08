@@ -178,36 +178,28 @@ func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Trans
 		}
 
 		if len(trimmedLine) == 0 {
-			transErr := balanceTransaction(trans)
-			if transErr != nil {
-				err = fmt.Errorf("Unable to balance transaction: %w", transErr)
-				return
-			}
-			trans.Comments = lp.comments
-			lp.comments = nil
-			return
-		} else {
-			// Check for expr
-			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
-				f, _ := compute.Evaluate(s)
-				return fmt.Sprintf("%f", f)
-			})
-
-			var accChange Account
-			accChange.Name = trimmedLine
-			if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
-				acc := strings.TrimSpace(trimmedLine[:i])
-				amt := trimmedLine[i+1:]
-				if ratbal, valid := new(big.Rat).SetString(amt); valid {
-					accChange.Name = acc
-					accChange.Balance = ratbal
-				}
-			}
-			trans.AccountChanges = append(trans.AccountChanges, accChange)
+			break
 		}
+
+		// Check for expr
+		trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
+			f, _ := compute.Evaluate(s)
+			return fmt.Sprintf("%f", f)
+		})
+
+		var accChange Account
+		accChange.Name = trimmedLine
+		if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
+			acc := strings.TrimSpace(trimmedLine[:i])
+			amt := trimmedLine[i+1:]
+			if ratbal, valid := new(big.Rat).SetString(amt); valid {
+				accChange.Name = acc
+				accChange.Balance = ratbal
+			}
+		}
+		trans.AccountChanges = append(trans.AccountChanges, accChange)
 	}
-	// If the file does not end on empty line, we must attempt to balance last
-	// transaction of the file.
+
 	transErr := balanceTransaction(trans)
 	if transErr != nil {
 		err = fmt.Errorf("Unable to balance transaction: %w", transErr)
