@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html" class="active"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">4.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">5.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">6.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">7.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">8.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">9.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">10.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">10.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">10.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">10.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">11.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">12.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html" class="active"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Accounts.html"><strong aria-hidden="true">4.</strong> Accounts</a></li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">5.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">6.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">7.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">8.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">9.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">10.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">11.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">11.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">11.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">11.3.</strong> Accounts</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">12.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">13.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="Editing_VimPlugin.html">Editing in Vim</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,10 +163,12 @@ of business or person the transaction occured at/with.</li>
 
 </code></pre>
 <p>In the example, line 1 shows the <em>transaction date</em> and <em>payee</em>.
-Lines 2 and 3 shows a <em>posting</em> comprised of an <em>account</em> and an <em>amount</em>.</p>
+Lines 2 and 3 are two <em>postings</em> comprised of an <em>account</em> and an <em>amount</em>.</p>
 <p>All transactions must balance. That is, the amount credited must
 equal the amount debited: credits minus debits must equal zero.
 In other words, the sum of all <em>postings</em> must equal zero.</p>
+<p>A transaction must have at least two <em>postings</em>. There is not limit on the
+number of <em>postings</em> per transaction.</p>
 <p>Note the <em>accounts</em> used in this example.
 One begins with <code>Expenses</code> and the other begins with <code>Assets</code>.
 Expenses are <em>credited</em> because the money flows <em>toward</em> them.
@@ -187,9 +189,10 @@ to balance the transaction.</p>
 <p>You can also supply comments for a transaction or posting.
 Postings can only have one comment line but transactions can have as many as
 you want.</p>
-<pre><code class="language-ledger">2017-06-26 Commonplace Coffee
-  ; cold brew
-  Expenses:Restaurants:Coffee   3.00
+<pre><code class="language-ledger">; cold brew
+; morning
+2017-06-26 Commonplace Coffee
+  Expenses:Restaurants:Coffee   3.00   ; Grande
   Assets:Cash:Wallet           -3.00
 
 </code></pre>
@@ -216,6 +219,36 @@ in a ledger file. Simplicity of file formats for possible use with other tools
 is a guiding principle of ledger.</p>
 <p>Reporting functions available in ledger are very powerful, and will be introduced
 in later chapters.</p>
+<h2 id="differences-from-other-ledger"><a class="header" href="#differences-from-other-ledger">Differences from Other Ledger</a></h2>
+<p>The file format supported by this version of ledger is heavily inspired by the
+format defined by the other <a href="https://www.ledger-cli.org/">ledger</a>. However,
+this version supports only the most basic of features in the ledger file itself.</p>
+<h3 id="no-currencies-or-commodities"><a class="header" href="#no-currencies-or-commodities">No Currencies or Commodities</a></h3>
+<p>There is no support for prepending a currency token (such as $) to a number. Nor
+is there support for appending a token or string to signify a commodity (such
+as &quot;APPL&quot;, &quot;BTC&quot;, or &quot;USD&quot;).</p>
+<p>All amounts must be numbers. Ledger balances and moves amounts (numbers)
+between accounts in transactions. The significance of what a number means or
+represents is entirely up to the user.</p>
+<p><strong>Note:</strong> Even though there is no support for commodities in the ledger file
+format, support for commidities exists in the web reporting features.</p>
+<h3 id="minimal-command-directive-support"><a class="header" href="#minimal-command-directive-support">Minimal Command Directive Support</a></h3>
+<p>The other ledger supports many <a href="https://www.ledger-cli.org/3.0/doc/ledger3.html#Command-Directives">Command Directives</a>.</p>
+<p>The only supported directives are:</p>
+<ul>
+<li>include - to import/include transactions of another ledger file.</li>
+<li>account - parsed but ignored.</li>
+</ul>
+<p>All other directives will cause errors in this application as they will be
+assumed to be a line starting a transaction.</p>
+<h3 id="transactions-are-basic"><a class="header" href="#transactions-are-basic">Transactions are basic</a></h3>
+<ul>
+<li>No metadata support</li>
+<li>No &quot;state&quot; (pending, cleared, ...)</li>
+<li>No virtual postings</li>
+<li>No balance assertions</li>
+</ul>
+<p>Postings are account and an optional amount.</p>
 
                     </main>
 
