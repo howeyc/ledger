@@ -57,7 +57,7 @@ func includeFile(filename string, buf *bytes.Buffer) error {
 	for s.Scan() {
 		line := s.Text()
 
-		if prefix, incname, found := strings.Cut(line, " "); found && prefix == "include" {
+		if prefix, incname, found := stringsCut(line, " "); found && prefix == "include" {
 			// Resolve filepaths
 			includedPath := filepath.Join(filename, "..", incname)
 			includedPaths, err := filepath.Glob(includedPath)
