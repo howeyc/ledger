@@ -81,6 +81,8 @@ func getDateBoundaries(per Period, start, end time.Time) []time.Time {
 	case PeriodYear:
 		incYear = 1
 		periodStart = time.Date(start.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+	default:
+		return []time.Time{start, end}
 	}
 
 	boundaries := []time.Time{periodStart}
