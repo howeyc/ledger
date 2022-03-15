@@ -91,7 +91,7 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 			continue
 		}
 
-		before, after, split := stringsCut(trimmedLine, " ")
+		before, after, split := strings.Cut(trimmedLine, " ")
 		if !split {
 			if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount,
 				fmt.Errorf("Unable to parse payee line: %s", line))) {
