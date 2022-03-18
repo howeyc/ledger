@@ -72,7 +72,7 @@ type iexDividend struct {
 	Key          string  `json:"key"`
 	Subkey       string  `json:"subkey"`
 	Date         int64   `json:"date"`
-	Updated      int64   `json:"updated"`
+	Updated      float64 `json:"updated"`
 }
 
 // https://iexcloud.io/docs/api/
@@ -88,6 +88,25 @@ func stockAnnualDividends(symbol string) (amount float64, err error) {
 	if derr != nil {
 		return 0, derr
 	}
+
+	// possible exDate issues, may get an extra
+	if len(dividends) > 0 {
+		switch dividends[0].Frequency {
+		case "quarterly":
+			if len(dividends) > 4 {
+				dividends = dividends[:4]
+			}
+		case "monthly":
+			if len(dividends) > 12 {
+				dividends = dividends[:12]
+			}
+		case "semi-annual":
+			if len(dividends) > 2 {
+				dividends = dividends[:2]
+			}
+		}
+	}
+
 	for _, div := range dividends {
 		amount += div.Amount
 	}
