@@ -1,5 +1,7 @@
 {{define "common-css"}}
-    <link href="/static/bootstrap-5.0.0.min.css" rel="stylesheet">
+    <meta name="color-scheme" content="light dark">
+    <link id="css-light" href="/static/bootstrap-5.0.0.min.css" rel="stylesheet">
+    <link id="css-dark" href="/static/bootstrap-nightfall.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
     <link href="/static/dropdown.css" rel="stylesheet">
 {{end}}
 {{define "common-scripts"}}
@@ -10,6 +12,61 @@
     $(document).ready(function () {
 	  $('#transactions-section').show();
 	  $('#tableprogress').hide();
+
+    // Update the toggle button based on current color scheme
+    function updateDarkToggleButton() {
+      if (typeof $("body").attr("data-color-scheme") === 'undefined') {
+        $dark = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        $("#css-toggle-btn").prop( "checked", $dark );
+      } else {
+        $mode = $("body").attr("data-color-scheme");
+        $dark = ($mode == 'dark') ? true : false;
+        $("#css-toggle-btn").prop( "checked", $dark );
+      }
+    }
+
+    // and every time it changes
+    if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addListener( updateDarkToggleButton );
+
+    // function to toggle the css
+    function toggle_color_scheme_css($id, $mode) {
+      $dark = ($mode == 'dark') ? true : false;
+      $("#"+$id+"-dark").attr( "disabled", !$dark );
+      $("body").attr( "data-color-scheme", ($dark ? "dark" : "light" ) );
+      localStorage.colorMode = $mode;
+    }
+
+    // function to initialise the css
+    function init_color_scheme_css($id, $mode) {
+      $dark = ($mode == 'dark') ? true : false;
+      toggle_color_scheme_css($id, $mode);
+      setTimeout(function(){  // let the browser catch up
+        $("#"+$id+"-dark").removeAttr("media");
+      }, 100);
+    }
+
+    // toggle button click code
+    $("#css-toggle-btn").bind("click", function() {
+      // get current mode
+      // don't use `.data("color-scheme")`, it doesn't refresh
+      $mode = $("body").attr("data-color-scheme");
+      // test if this is a first time click event, if so initialise the code
+      if (typeof $mode === 'undefined') {
+        // not defined yet - set pref. & ask the browser if alt. is active
+        $mode = 'light';
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) $mode = 'dark';
+        init_color_scheme_css("css", $mode);
+      }
+      // by here we have the current mode, so swap it
+      $mode = ($mode == 'dark') ? 'light' : 'dark';
+      toggle_color_scheme_css("css", $mode);
+    });
+
+    // Check localStorage for initial value
+    $("body").attr("data-color-scheme", localStorage.colorMode);
+    updateDarkToggleButton();
+    init_color_scheme_css("css", localStorage.colorMode);
+
     });
 	</script>
 {{end}}
@@ -62,26 +119,26 @@
 {{end}}
 {{define "nav"}}
 <!-- Fixed navbar -->
-<div class="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
+<div class="navbar navbar-expand-lg navbar-light bg-success" role="navigation">
   <div class="container">
     <a class="navbar-brand" href="/">Ledger</a>
     <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navtopbar">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="navbar-collapse collapse" id="navtopbar">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav" style="margin-right: auto!important;">
         <li class="nav-item">
-          <a class="nav-link" href="/ledger">General Ledger</a>
+          <a class="nav-link text-dark" href="/ledger">General Ledger</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/addtrans">Add Transaction</a>
+          <a class="nav-link text-dark" href="/addtrans">Add Transaction</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/accounts">Accounts</a>
+          <a class="nav-link text-dark" href="/accounts">Accounts</a>
         </li>
         {{if .Reports }}
         <li class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="reports-drowpdown">Reports</a>
+          <a href="#" class="nav-link text-dark dropdown-toggle" data-bs-toggle="dropdown" role="button" id="reports-drowpdown">Reports</a>
           <ul class="dropdown-menu" aria-labelledBy="reports-dropdown">
             {{range .Reports}}
             <li>
@@ -93,7 +150,7 @@
 		{{end}}
         {{if .Portfolios }}
         <li class="nav-item dropdown">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" id="portfolios-dropdown">Portfolios</a>
+          <a href="#" class="nav-link text-dark dropdown-toggle" data-bs-toggle="dropdown" role="button" id="portfolios-dropdown">Portfolios</a>
           <ul class="dropdown-menu" aria-labelledBy="portfolios-dropdown">
             {{range .Portfolios}}
             <li>
@@ -104,6 +161,12 @@
         </li>
         {{end}}
       </ul>
+      <form class="form-inline">
+		  <div class="form-check form-switch">
+		  <input type="checkbox" class="form-check-input" role="switch" id="css-toggle-btn">
+		  <label class="form-check-label text-dark" for="css-toggle-btn">Toggle Dark Mode</label>
+		  </div>
+      </form>
     </div>
     <!--/.nav-collapse -->
   </div>
