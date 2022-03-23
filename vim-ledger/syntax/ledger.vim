@@ -7,13 +7,13 @@ syn match ledgerComment /;.*/
 syn match ledgerFloatAmount /\<-\?\d\+\.\d\+\>/
 syn match ledgerIntAmount /\<-\?\d\+\>/
 
-syn match ledgerAccount /\<\(\(\w\|\s\)\+:\)\+\(\w\|\s\)\+\D\>/
-syn match ledgerAccountEOL /\<\(\(\w\|\s\)\+:\)\+\w\+\>$/
+syn match ledgerAccount /\<\%(\%(\w\|\s\)\+:\)\+\%(\w\|\s\)\+\D\>/
+syn match ledgerAccountEOL /\<\%(\%(\w\|\s\)\+:\)\+\w\+\>$/
 
 syn match ledgerPayeeComment /;.*/ contained
-syn match ledgerDate /^\d\{4}\(\/\|-\)\d\{2}\(\/\|-\)\d\{2}\>/ contained
+syn match ledgerDate /^\d\{4}\%(\/\|-\)\d\{2}\%(\/\|-\)\d\{2}\>/ contained
 
-syn match ledgerTopline /^\S.*/ contains=ledgerDate,ledgerPayeeComment
+syn match ledgerTopline /^\S.*$/ contains=ledgerDate,ledgerPayeeComment
 
 syn region ledgerFold start="^\S" end="^$" transparent fold
 
