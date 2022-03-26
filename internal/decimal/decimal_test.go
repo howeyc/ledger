@@ -71,6 +71,16 @@ var testCases = []testCase{
 		NewFromFloat(234.554).StringTruncate(),
 	},
 	{
+		"2digits-1",
+		"1.00",
+		One.StringFixedBank(),
+	},
+	{
+		"2digits-4.5",
+		"4.50",
+		NewFromFloat(4.5).StringFixedBank(),
+	},
+	{
 		"roundintuppos",
 		"6",
 		NewFromFloat(5.6).StringRound(),

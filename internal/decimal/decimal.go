@@ -151,7 +151,7 @@ func (d Decimal) StringFixedBank() string {
 		frac++
 	}
 
-	return fmt.Sprintf("%d.%d", whole, frac)
+	return fmt.Sprintf("%d.%02d", whole, frac)
 }
 
 // StringTruncate returns the whole-number (Int) part of d.
