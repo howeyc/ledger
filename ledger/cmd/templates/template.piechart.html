@@ -59,7 +59,7 @@
         datasets: [
     {
         label: "Dataset 1",
-		data: [{{range .ChartAccounts}}{{.Balance.FloatString 2}},{{end}}],
+		data: [{{range .ChartAccounts}}{{.Balance.StringFixedBank}},{{end}}],
 		backgroundColor: [{{range .ChartAccounts}}"{{.Color}}",{{end}}],
     }]
 	};

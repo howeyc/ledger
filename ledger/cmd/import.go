@@ -3,13 +3,13 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
-	"math/big"
 	"os"
 	"strings"
 	"time"
 	"unicode/utf8"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/internal/decimal"
 	"github.com/jbrukh/bayesian"
 	"github.com/spf13/cobra"
 )
@@ -31,8 +31,7 @@ var importCmd = &cobra.Command{
 		accountSubstring = args[0]
 		csvFileName = args[1]
 
-		ratScale := big.NewRat(1, 1)
-		ratScale.SetFloat64(scaleFactor)
+		decScale := decimal.NewFromFloat(scaleFactor)
 
 		csvFileReader, err := os.Open(csvFileName)
 		if err != nil {
@@ -112,8 +111,8 @@ var importCmd = &cobra.Command{
 			return
 		}
 
-		expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: new(big.Rat)}
-		csvAccount := ledger.Account{Name: matchingAccount, Balance: new(big.Rat)}
+		expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: decimal.Zero}
+		csvAccount := ledger.Account{Name: matchingAccount, Balance: decimal.Zero}
 		for _, record := range csvRecords[1:] {
 			inputPayeeWords := strings.Fields(record[payeeColumn])
 			csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
@@ -125,20 +124,22 @@ var importCmd = &cobra.Command{
 				}
 
 				// Parse error, set to zero
-				if _, bset := expenseAccount.Balance.SetString(record[amountColumn]); !bset {
-					expenseAccount.Balance.SetFloat64(0)
+				if dec, derr := decimal.NewFromString(record[amountColumn]); derr != nil {
+					expenseAccount.Balance = decimal.Zero
+				} else {
+					expenseAccount.Balance = dec
 				}
 
 				// Negate amount if required
 				if negateAmount {
-					expenseAccount.Balance.Neg(expenseAccount.Balance)
+					expenseAccount.Balance = expenseAccount.Balance.Neg()
 				}
 
 				// Apply scale
-				expenseAccount.Balance = expenseAccount.Balance.Mul(expenseAccount.Balance, ratScale)
+				expenseAccount.Balance = expenseAccount.Balance.Mul(decScale)
 
 				// Csv amount is the negative of the expense amount
-				csvAccount.Balance.Neg(expenseAccount.Balance)
+				csvAccount.Balance = csvAccount.Balance.Neg()
 
 				// Create valid transaction for print in ledger format
 				trans := &ledger.Transaction{Date: csvDate, Payee: record[payeeColumn]}

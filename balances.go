@@ -1,9 +1,10 @@
 package ledger
 
 import (
-	"math/big"
 	"sort"
 	"strings"
+
+	"github.com/howeyc/ledger/internal/decimal"
 )
 
 // GetBalances provided a list of transactions and filter strings, returns account balances of
@@ -12,7 +13,7 @@ import (
 //
 // Accounts are sorted by name.
 func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
-	balances := make(map[string]*big.Rat)
+	balances := make(map[string]decimal.Decimal)
 	filters := len(filterArr) > 0
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
@@ -32,9 +33,9 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 				for currDepth := accDepth; currDepth > 0; currDepth-- {
 					currAccName := strings.Join(accHier[:currDepth], ":")
 					if ratNum, ok := balances[currAccName]; !ok {
-						balances[currAccName] = new(big.Rat).Set(accChange.Balance)
+						balances[currAccName] = accChange.Balance
 					} else {
-						ratNum.Add(ratNum, accChange.Balance)
+						balances[currAccName] = ratNum.Add(accChange.Balance)
 					}
 				}
 			}

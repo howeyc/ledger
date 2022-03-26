@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"math/big"
 	"os"
 	"sort"
 	"strings"
@@ -13,12 +12,12 @@ import (
 	"unicode/utf8"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/internal/decimal"
 	"github.com/spf13/cobra"
 )
 
 const (
 	transactionDateFormat = "2006/01/02"
-	displayPrecision      = 2
 )
 
 var startString, endString string
@@ -117,20 +116,20 @@ func init() {
 // PrintBalances prints out account balances formatted to a window set to a width of columns.
 // Only shows accounts with names less than or equal to the given depth.
 func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth, columns int) {
-	overallBalance := new(big.Rat)
+	overallBalance := decimal.Zero
 	for _, account := range accountList {
 		accDepth := len(strings.Split(account.Name, ":"))
 		if accDepth == 1 {
-			overallBalance.Add(overallBalance, account.Balance)
+			overallBalance = overallBalance.Add(account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.FloatString(displayPrecision)
+			outBalanceString := account.Balance.StringFixedBank()
 			spaceCount := columns - utf8.RuneCountInString(account.Name) - utf8.RuneCountInString(outBalanceString)
 			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
 		}
 	}
 	fmt.Println(strings.Repeat("-", columns))
-	outBalanceString := overallBalance.FloatString(displayPrecision)
+	outBalanceString := overallBalance.StringFixedBank()
 	spaceCount := columns - utf8.RuneCountInString(outBalanceString)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
 }
@@ -153,7 +152,7 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 
 	fmt.Fprintf(w, "%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
 	for _, accChange := range trans.AccountChanges {
-		outBalanceString := accChange.Balance.FloatString(displayPrecision)
+		outBalanceString := accChange.Balance.StringFixedBank()
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
@@ -198,7 +197,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 
 	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", col1width, col2width)
 
-	runningBalance := new(big.Rat)
+	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
@@ -208,9 +207,9 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				}
 			}
 			if inFilter {
-				runningBalance.Add(runningBalance, accChange.Balance)
-				outBalanceString := accChange.Balance.FloatString(displayPrecision)
-				outRunningBalanceString := runningBalance.FloatString(displayPrecision)
+				runningBalance = runningBalance.Add(accChange.Balance)
+				outBalanceString := accChange.Balance.StringFixedBank()
+				outRunningBalanceString := runningBalance.StringFixedBank()
 				fmt.Printf(formatString,
 					trans.Date.Format(transactionDateFormat),
 					trans.Payee,

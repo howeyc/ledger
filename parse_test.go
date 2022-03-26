@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"math/big"
 	"testing"
 	"time"
+
+	"github.com/howeyc/ledger/internal/decimal"
 )
 
 type testCase struct {
@@ -30,11 +31,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(369.0, 1),
+						decimal.NewFromFloat(369.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-369.0, 1),
+						decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -94,11 +95,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(369.0, 1),
+						decimal.NewFromFloat(369.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-369.0, 1),
+						decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -108,11 +109,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -141,11 +142,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense:test",
-						big.NewRat(369.0, 1),
+						decimal.NewFromFloat(369.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-369.0, 1),
+						decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -155,23 +156,23 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense:Cars R Us",
-						big.NewRat(-388.0, 1),
+						decimal.NewFromFloat(-388.0),
 					},
 					{
 						"Expense:Cars",
-						big.NewRat(358.0, 1),
+						decimal.NewFromFloat(358.0),
 					},
 					{
 						"Expense:Cranks",
-						big.NewRat(10.0, 1),
+						decimal.NewFromFloat(10.0),
 					},
 					{
 						"Expense:Cranks Unlimited",
-						big.NewRat(10.0, 1),
+						decimal.NewFromFloat(10.0),
 					},
 					{
 						"Expense:Cranks United",
-						big.NewRat(10.0, 1),
+						decimal.NewFromFloat(10.0),
 					},
 				},
 				Comments: []string{
@@ -196,15 +197,15 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/another",
-						big.NewRat(5.0, 1),
+						decimal.NewFromFloat(5.0),
 					},
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-128.0, 1),
+						decimal.NewFromFloat(-128.0),
 					},
 				},
 			},
@@ -224,11 +225,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						decimal.NewFromFloat(-123.0),
 					},
 				},
 				Comments: []string{
@@ -252,11 +253,11 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						decimal.NewFromFloat(-123.0),
 					},
 				},
 				Comments: []string{
@@ -281,15 +282,15 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(58, 1),
+						decimal.NewFromFloat(58),
 					},
 					{
 						"Assets",
-						big.NewRat(-58, 1),
+						decimal.NewFromFloat(-58),
 					},
 					{
 						"Expense/unbalanced",
-						big.NewRat(0, 1),
+						decimal.NewFromFloat(0),
 					},
 				},
 				Comments: []string{
@@ -316,19 +317,19 @@ var testCases = []testCase{
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(58, 1),
+						decimal.NewFromFloat(58),
 					},
 					{
 						"Assets",
-						big.NewRat(-58, 1),
+						decimal.NewFromFloat(-58),
 					},
 					{
 						"Expense/test",
-						big.NewRat(158, 1),
+						decimal.NewFromFloat(158),
 					},
 					{
 						"Assets",
-						big.NewRat(-158, 1),
+						decimal.NewFromFloat(-158),
 					},
 				},
 				Comments: []string{
@@ -361,11 +362,11 @@ account Assets
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -375,11 +376,11 @@ account Assets
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(246.0, 1),
+						decimal.NewFromFloat(246.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-246.0, 1),
+						decimal.NewFromFloat(-246.0),
 					},
 				},
 			},
@@ -407,11 +408,11 @@ account Assets
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(123.0, 1),
+						decimal.NewFromFloat(123.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-123.0, 1),
+						decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -421,11 +422,11 @@ account Assets
 				AccountChanges: []Account{
 					{
 						"Expense/test",
-						big.NewRat(246.0, 1),
+						decimal.NewFromFloat(246.0),
 					},
 					{
 						"Assets",
-						big.NewRat(-246.0, 1),
+						decimal.NewFromFloat(-246.0),
 					},
 				},
 			},

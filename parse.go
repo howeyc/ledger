@@ -4,13 +4,13 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"math/big"
 	"regexp"
 	"strings"
 	"time"
 	"unicode"
 
 	"github.com/alfredxing/calc/compute"
+	"github.com/howeyc/ledger/internal/decimal"
 	date "github.com/joyt/godate"
 )
 
@@ -192,9 +192,9 @@ func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Trans
 		if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
 			acc := strings.TrimSpace(trimmedLine[:i])
 			amt := trimmedLine[i+1:]
-			if ratbal, valid := new(big.Rat).SetString(amt); valid {
+			if decbal, derr := decimal.NewFromString(amt); derr == nil {
 				accChange.Name = acc
-				accChange.Balance = ratbal
+				accChange.Balance = decbal
 			}
 		}
 		trans.AccountChanges = append(trans.AccountChanges, accChange)
@@ -213,21 +213,21 @@ func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Trans
 // Takes a transaction and balances it. This is mainly to fill in the empty part
 // with the remaining balance.
 func balanceTransaction(input *Transaction) error {
-	balance := new(big.Rat)
+	balance := decimal.Zero
 	var emptyFound bool
 	var emptyAccIndex int
 	if len(input.AccountChanges) < 2 {
 		return fmt.Errorf("need at least two postings")
 	}
 	for accIndex, accChange := range input.AccountChanges {
-		if accChange.Balance == nil {
+		if accChange.Balance.IsZero() {
 			if emptyFound {
 				return fmt.Errorf("more than one account empty")
 			}
 			emptyAccIndex = accIndex
 			emptyFound = true
 		} else {
-			balance = balance.Add(balance, accChange.Balance)
+			balance = balance.Add(accChange.Balance)
 		}
 	}
 	if balance.Sign() != 0 {
@@ -236,7 +236,7 @@ func balanceTransaction(input *Transaction) error {
 		}
 	}
 	if emptyFound {
-		input.AccountChanges[emptyAccIndex].Balance = balance.Neg(balance)
+		input.AccountChanges[emptyAccIndex].Balance = balance.Neg()
 	}
 
 	return nil

@@ -43,7 +43,7 @@
           <tr>
             <td class="d-block d-sm-none"><a href="/account/{{.Name}}">{{abbrev .Name}}</a></td>
             <td class="d-none d-sm-block"><a href="/account/{{.Name}}">{{.Name}}</a></td>
-            <td align="right">{{.Balance.FloatString 2}}</td>
+            <td align="right">{{.Balance.StringFixedBank}}</td>
           </tr>
           {{end}}
         </tbody>

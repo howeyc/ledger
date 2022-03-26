@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"math/big"
 	"net/http"
 	"os"
 	"strings"
@@ -143,7 +142,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params h
 	var abals []*ledger.Account
 	for _, bal := range balances {
 		accDepth := len(strings.Split(bal.Name, ":"))
-		if bal.Balance.Cmp(big.NewRat(0, 1)) != 0 && accDepth > 2 {
+		if !bal.Balance.IsZero() && accDepth > 2 {
 			abals = append(abals, bal)
 		}
 	}

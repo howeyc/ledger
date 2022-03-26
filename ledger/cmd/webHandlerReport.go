@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"math/big"
 	"net/http"
 	"sort"
 	"strings"
 	"time"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/internal/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/pdr"
 	"github.com/julienschmidt/httprouter"
 	colorful "github.com/lucasb-eyer/go-colorful"
@@ -68,37 +68,37 @@ func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (resu
 }
 
 func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (results []*ledger.Account) {
-	accVals := make(map[string]*big.Rat)
+	accVals := make(map[string]decimal.Decimal)
 	for _, calcAccount := range calcAccts {
 		for _, bal := range balances {
 			for _, acctOp := range calcAccount.AccountOperations {
 				if acctOp.Name == bal.Name {
-					fval := big.NewRat(1, 1).Abs(bal.Balance)
+					fval := bal.Balance.Abs()
 					aval, found := accVals[calcAccount.Name]
 					if !found {
-						aval = big.NewRat(0, 1)
+						aval = decimal.Zero
 					}
 					if acctOp.MultiplicationFactor != 0 {
-						factor := big.NewRat(1, 1).SetFloat64(acctOp.MultiplicationFactor)
-						fval = fval.Mul(factor, fval)
+						factor := decimal.NewFromFloat(acctOp.MultiplicationFactor)
+						fval = fval.Mul(factor)
 					}
-					oval := big.NewRat(1, 1)
+					oval := decimal.One
 					if acctOp.SubAccount != "" {
 						for _, obal := range balances {
 							if acctOp.SubAccount == obal.Name {
-								oval = oval.Abs(obal.Balance)
+								oval = obal.Balance.Abs()
 							}
 						}
 					}
 					switch acctOp.Operation {
 					case "+":
-						aval.Add(aval, fval)
+						aval = aval.Add(fval)
 					case "-":
-						aval.Sub(aval, fval)
+						aval = aval.Sub(fval)
 					case "*":
-						aval.Mul(fval, oval)
+						aval = fval.Mul(oval)
 					case "/":
-						aval.Quo(fval, oval)
+						aval = fval.Div(oval)
 					}
 					accVals[calcAccount.Name] = aval
 				}
@@ -106,9 +106,9 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 		}
 		if calcAccount.UseAbs {
 			if aval, found := accVals[calcAccount.Name]; !found {
-				accVals[calcAccount.Name] = big.NewRat(0, 1)
+				accVals[calcAccount.Name] = decimal.Zero
 			} else {
-				accVals[calcAccount.Name] = aval.Abs(aval)
+				accVals[calcAccount.Name] = aval.Abs()
 			}
 		}
 	}
@@ -122,10 +122,10 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 
 // Merge multiple account changes for each distinct account
 func mergeAccounts(input *ledger.Transaction) {
-	balmap := make(map[string]*big.Rat)
+	balmap := make(map[string]decimal.Decimal)
 	for _, accChange := range input.AccountChanges {
 		if bal, found := balmap[accChange.Name]; found {
-			bal = bal.Add(bal, accChange.Balance)
+			bal = bal.Add(accChange.Balance)
 			balmap[accChange.Name] = bal
 		} else {
 			balmap[accChange.Name] = accChange.Balance
@@ -228,16 +228,16 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 	case "leaderboard":
 		type lbAccount struct {
 			Name       string
-			Balance    *big.Rat
+			Balance    decimal.Decimal
 			Percentage int
 		}
 
 		var values []lbAccount
-		maxValue := big.NewRat(1, 1)
+		maxValue := decimal.Zero
 
 		for _, account := range reportSummaryAccounts {
 			accName := account.Name
-			value := big.NewRat(1, 1).Set(account.Balance)
+			value := account.Balance
 			values = append(values, lbAccount{Name: accName, Balance: value})
 
 			if maxValue.Cmp(value) < 0 {
@@ -264,7 +264,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			RangeStart, RangeEnd time.Time
 			ChartType            string
 			ChartAccounts        []lbAccount
-			MaxValue             *big.Rat
+			MaxValue             decimal.Decimal
 		}
 
 		var pData lbPageData
@@ -297,7 +297,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 	case "pie", "polar", "doughnut":
 		type pieAccount struct {
 			Name      string
-			Balance   *big.Rat
+			Balance   decimal.Decimal
 			Color     string
 			Highlight string
 		}
@@ -306,7 +306,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 
 		for colorIdx, account := range reportSummaryAccounts {
 			accName := account.Name
-			value := big.NewRat(1, 1).Set(account.Balance)
+			value := account.Balance
 			values = append(values, pieAccount{Name: accName, Balance: value,
 				Color:     colorPalette[colorIdx].Hex(),
 				Highlight: colorPalette[colorIdx].BlendRgb(colorBlack, 0.1).Hex()})
@@ -357,7 +357,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		type lineData struct {
 			AccountName string
 			RGBColor    string
-			Values      []*big.Rat
+			Values      []decimal.Decimal
 		}
 		type linePageData struct {
 			pageData
@@ -419,10 +419,10 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			lData.RangeEnd = rb.End
 			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
 
-			accVals := make(map[string]*big.Rat)
+			accVals := make(map[string]decimal.Decimal)
 			for _, confAccount := range rConf.Accounts {
 				for _, freqAccount := range getAccounts(confAccount, rb.Balances) {
-					accVals[freqAccount.Name] = big.NewRat(1, 1).Abs(freqAccount.Balance)
+					accVals[freqAccount.Name] = freqAccount.Balance.Abs()
 				}
 			}
 
@@ -432,8 +432,8 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 
 			for dIdx := range lData.DataSets {
 				aval, afound := accVals[lData.DataSets[dIdx].AccountName]
-				if !afound || aval == nil {
-					aval = big.NewRat(0, 1)
+				if !afound {
+					aval = decimal.Zero
 				}
 				lData.DataSets[dIdx].Values = append(lData.DataSets[dIdx].Values, aval)
 			}
@@ -447,7 +447,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		// Radar chart flips everything. Dates are each dataset and the accounts become the labels
 		if rConf.Chart == "radar" {
 			dates := lData.Labels
-			dateAccountMap := make(map[string]*big.Rat)
+			dateAccountMap := make(map[string]decimal.Decimal)
 			var accNames []string
 			for dsIdx := range lData.DataSets {
 				for dIdx := range dates {
@@ -461,7 +461,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			radarcolorPalette := colorful.FastHappyPalette(len(dates))
 			for colorIdx, date := range dates {
 				r, g, b := radarcolorPalette[colorIdx].RGB255()
-				var vals []*big.Rat
+				var vals []decimal.Decimal
 				for _, repAccount := range reportSummaryAccounts {
 					vals = append(vals, dateAccountMap[date+","+repAccount.Name])
 				}

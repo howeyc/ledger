@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"log"
-	"math/big"
 	"sort"
 	"time"
 
 	"github.com/howeyc/ledger"
+	"github.com/howeyc/ledger/internal/decimal"
 	"github.com/spf13/cobra"
 )
 
@@ -27,20 +27,19 @@ var equityCmd = &cobra.Command{
 			trans.Date = generalLedger[len(generalLedger)-1].Date
 		}
 
-		balances := make(map[string]*big.Rat)
+		balances := make(map[string]decimal.Decimal)
 		for _, trans := range generalLedger {
 			for _, accChange := range trans.AccountChanges {
-				if ratNum, ok := balances[accChange.Name]; !ok {
-					balances[accChange.Name] = new(big.Rat).Set(accChange.Balance)
+				if decNum, ok := balances[accChange.Name]; !ok {
+					balances[accChange.Name] = accChange.Balance
 				} else {
-					ratNum.Add(ratNum, accChange.Balance)
+					balances[accChange.Name] = decNum.Add(accChange.Balance)
 				}
 			}
 		}
 
-		ratZero := big.NewRat(0, 1)
 		for name, bal := range balances {
-			if bal.Cmp(ratZero) != 0 {
+			if !bal.IsZero() {
 				trans.AccountChanges = append(trans.AccountChanges, ledger.Account{
 					Name:    name,
 					Balance: bal,

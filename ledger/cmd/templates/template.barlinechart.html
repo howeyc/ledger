@@ -81,7 +81,7 @@
 		fill: true,
         data: [
         {{range .Values}}
-        {{.FloatString 2}},
+        {{.StringFixedBank}},
         {{end}}
         ]
     },
@@ -101,7 +101,7 @@
         color: "rgba({{.RGBColor}},1)",
         data: [
         {{range .Values}}
-        {{.FloatString 2}},
+        {{.StringFixedBank}},
         {{end}}
         ]
     },

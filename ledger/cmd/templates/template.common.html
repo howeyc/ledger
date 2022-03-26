@@ -105,7 +105,7 @@
 						<td>{{$trans.Date.Format "2006-01-02"}}</td>
 						<td class="d-none d-sm-block">{{$trans.Payee}}</td>
 						<td class="d-block d-sm-none">{{printf "%.16s" $trans.Payee}}</td>
-						<td>{{$trAcc.Balance.FloatString 2}}</td>
+						<td>{{$trAcc.Balance.StringFixedBank}}</td>
 					</tr>
 					{{end}}
 					{{end}}

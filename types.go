@@ -1,14 +1,15 @@
 package ledger
 
 import (
-	"math/big"
 	"time"
+
+	"github.com/howeyc/ledger/internal/decimal"
 )
 
 // Account holds the name and balance
 type Account struct {
 	Name    string
-	Balance *big.Rat
+	Balance decimal.Decimal
 }
 
 // Transaction is the basis of a ledger. The ledger holds a list of transactions.

@@ -4,8 +4,9 @@ package ledger
 
 import (
 	"bytes"
-	"math/big"
 	"testing"
+
+	"github.com/howeyc/ledger/internal/decimal"
 )
 
 func FuzzParseLedger(f *testing.F) {
@@ -17,13 +18,13 @@ func FuzzParseLedger(f *testing.F) {
 	f.Fuzz(func(t *testing.T, s string) {
 		b := bytes.NewBufferString(s)
 		trans, _ := ParseLedger(b)
-		overall := new(big.Rat)
+		overall := decimal.Zero
 		for _, t := range trans {
 			for _, p := range t.AccountChanges {
-				overall.Add(overall, p.Balance)
+				overall = overall.Add(p.Balance)
 			}
 		}
-		if overall.Cmp(new(big.Rat)) != 0 {
+		if !overall.IsZero() {
 			t.Error("Bad balance")
 		}
 	})
