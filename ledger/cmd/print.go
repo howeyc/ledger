@@ -39,19 +39,13 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return nil, errors.New("unable to parse start or end date string argument")
 	}
 
-	var lreader io.Reader
-
+	var generalLedger []*ledger.Transaction
+	var parseError error
 	if ledgerFilePath == "-" {
-		lreader = os.Stdin
+		generalLedger, parseError = ledger.ParseLedger(os.Stdin)
 	} else {
-		ledgerFileReader, err := ledger.NewLedgerReader(ledgerFilePath)
-		if err != nil {
-			return nil, err
-		}
-		lreader = ledgerFileReader
+		generalLedger, parseError = ledger.ParseLedgerFile(ledgerFilePath)
 	}
-
-	generalLedger, parseError := ledger.ParseLedger(lreader)
 	if parseError != nil {
 		return nil, parseError
 	}

@@ -40,13 +40,7 @@ var importCmd = &cobra.Command{
 		}
 		defer csvFileReader.Close()
 
-		ledgerFileReader, err := ledger.NewLedgerReader(ledgerFilePath)
-		if err != nil {
-			fmt.Println("Ledger: ", err)
-			return
-		}
-
-		generalLedger, parseError := ledger.ParseLedger(ledgerFileReader)
+		generalLedger, parseError := ledger.ParseLedgerFile(ledgerFilePath)
 		if parseError != nil {
 			fmt.Printf("%s:%s\n", ledgerFilePath, parseError.Error())
 			return

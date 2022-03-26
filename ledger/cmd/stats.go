@@ -18,11 +18,7 @@ var statsCmd = &cobra.Command{
 	Use:   "stats",
 	Short: "A small report of transaction stats",
 	Run: func(cmd *cobra.Command, args []string) {
-		lreader, err := ledger.NewLedgerReader(ledgerFilePath)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		transactions, terr := ledger.ParseLedger(lreader)
+		transactions, terr := ledger.ParseLedgerFile(ledgerFilePath)
 		if terr != nil {
 			log.Fatalln(terr)
 		}

@@ -1,14 +1,10 @@
 package cmd
 
 import (
-	"bytes"
-	"crypto/sha256"
 	"embed"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/howeyc/ledger/ledger/cmd/internal/httpcompress"
@@ -21,9 +17,6 @@ import (
 var reportConfigFileName string
 var stockConfigFileName string
 var quickviewConfigFileName string
-var ledgerLock sync.Mutex
-var currentSum []byte
-var currentTrans []*ledger.Transaction
 
 var serverPort int
 var localhost bool
@@ -35,34 +28,10 @@ var contentStatic embed.FS
 var contentTemplates embed.FS
 
 func getTransactions() ([]*ledger.Transaction, error) {
-	ledgerLock.Lock()
-	defer ledgerLock.Unlock()
-
-	var buf bytes.Buffer
-	h := sha256.New()
-
-	ledgerFileReader, err := ledger.NewLedgerReader(ledgerFilePath)
-	if err != nil {
-		return nil, err
-	}
-	tr := io.TeeReader(ledgerFileReader, h)
-	_, err = io.Copy(&buf, tr)
-	if err != nil {
-		return nil, err
-	}
-
-	sum := h.Sum(nil)
-	if bytes.Equal(currentSum, sum) {
-		return currentTrans, nil
-	}
-
-	trans, terr := ledger.ParseLedger(&buf)
+	trans, terr := ledger.ParseLedgerFile(ledgerFilePath)
 	if terr != nil {
 		return nil, fmt.Errorf("%s", terr.Error())
 	}
-	currentSum = sum
-	currentTrans = trans
-
 	return trans, nil
 }
 

@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -14,9 +16,30 @@ import (
 	date "github.com/joyt/godate"
 )
 
+// ParseLedgerFile parses a ledger file and returns a list of Transactions.
+func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) {
+	ifile, ierr := os.Open(filename)
+	if ierr != nil {
+		return nil, ierr
+	}
+	defer ifile.Close()
+	parseLedger(filename, ifile, func(t *Transaction, e error) (stop bool) {
+		if e != nil {
+			err = e
+			stop = true
+			return
+		}
+
+		generalLedger = append(generalLedger, t)
+		return
+	})
+
+	return
+}
+
 // ParseLedger parses a ledger file and returns a list of Transactions.
 func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
-	parseLedger(ledgerReader, func(t *Transaction, e error) (stop bool) {
+	parseLedger("", ledgerReader, func(t *Transaction, e error) (stop bool) {
 		if e != nil {
 			err = e
 			stop = true
@@ -36,7 +59,7 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 	e = make(chan error)
 
 	go func() {
-		parseLedger(ledgerReader, func(t *Transaction, err error) (stop bool) {
+		parseLedger("", ledgerReader, func(t *Transaction, err error) (stop bool) {
 			if err != nil {
 				e <- err
 			} else {
@@ -61,19 +84,14 @@ type parser struct {
 	dateLayout string
 }
 
-func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) {
+func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) (stop bool) {
 	var lp parser
 	lp.scanner = bufio.NewScanner(ledgerReader)
+	lp.filename = filename
 
 	var line string
 	for lp.scanner.Scan() {
 		line = lp.scanner.Text()
-
-		// update filename/line if sentinel comment is found
-		if strings.HasPrefix(line, markerPrefix) {
-			lp.filename, lp.lineCount = parseMarker(line)
-			continue
-		}
 
 		// remove heading and tailing space from the line
 		trimmedLine := strings.TrimSpace(line)
@@ -95,24 +113,42 @@ func parseLedger(ledgerReader io.Reader, callback func(t *Transaction, err error
 		if !split {
 			if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount,
 				fmt.Errorf("Unable to parse payee line: %s", line))) {
-				return
+				return true
 			}
 			continue
 		}
 		switch before {
 		case "account":
 			lp.parseAccount(after)
+		case "include":
+			paths, perr := filepath.Glob(filepath.Join(filepath.Dir(lp.filename), after))
+			if perr != nil {
+				callback(nil, fmt.Errorf("%s:%d: Unable to parse include directive: %w", lp.filename, lp.lineCount, perr))
+				return
+			}
+			for _, incpath := range paths {
+				ifile, ierr := os.Open(incpath)
+				if ierr != nil {
+					callback(nil, fmt.Errorf("%s:%d: Unable to include file(%s): %w", lp.filename, lp.lineCount, incpath, ierr))
+					return true
+				}
+				defer ifile.Close()
+				if parseLedger(incpath, ifile, callback) {
+					return true
+				}
+			}
 		default:
 			trans, transErr := lp.parseTransaction(before, after)
 			if transErr != nil {
 				if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount, transErr)) {
-					return
+					return true
 				}
 				continue
 			}
 			callback(trans, nil)
 		}
 	}
+	return false
 }
 
 func (lp *parser) parseAccount(accName string) (accountName string, err error) {
