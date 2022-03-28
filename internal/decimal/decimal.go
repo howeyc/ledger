@@ -15,6 +15,7 @@ package decimal
 import (
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Decimal represents a fixed-point decimal.
@@ -42,13 +43,43 @@ func NewFromInt(i int64) Decimal {
 }
 
 // NewFromString returns a Decimal from a string representation. Throws an
-// erorr if parsing a float64 from string fails.
+// error if integer parsing fails.
 func NewFromString(s string) (Decimal, error) {
-	f, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return Zero, err
+	neg := false
+	if whole, frac, split := strings.Cut(s, "."); split {
+		if strings.HasPrefix(whole, "-") {
+			neg = true
+		}
+		w, err := strconv.ParseInt(whole, 10, 64)
+		w = w * int64(scaleFactor)
+		if err != nil {
+			return Zero, err
+		}
+
+		// Parse up to 3 digits and scale up
+		var f int64
+		var seen int
+		for _, b := range frac {
+			f *= 10
+			f += int64(b - '0')
+			seen++
+			if seen == 3 {
+				break
+			}
+		}
+		for seen < 3 {
+			f *= 10
+			seen++
+		}
+
+		if neg {
+			f = -f
+		}
+		return Decimal(w + f), err
+	} else {
+		i, err := strconv.ParseInt(s, 10, 64)
+		return NewFromInt(i), err
 	}
-	return NewFromFloat(f), nil
 }
 
 // IsZero returns true if d == 0
@@ -138,8 +169,11 @@ func (d Decimal) StringFixedBank() string {
 	frac := (d % scaleFactor) / 10
 	rem := d % 10
 
+	sign := ""
 	if frac < 0 {
 		frac = -frac
+		whole = -whole
+		sign = "-"
 	}
 	if rem < 0 {
 		rem = -rem
@@ -151,7 +185,7 @@ func (d Decimal) StringFixedBank() string {
 		frac++
 	}
 
-	return fmt.Sprintf("%d.%02d", whole, frac)
+	return fmt.Sprintf("%s%d.%02d", sign, whole, frac)
 }
 
 // StringTruncate returns the whole-number (Int) part of d.
