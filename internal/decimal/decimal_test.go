@@ -1,7 +1,10 @@
 package decimal
 
 import (
+	"strings"
 	"testing"
+
+	sdec "github.com/shopspring/decimal"
 )
 
 type testCase struct {
@@ -141,18 +144,92 @@ var testParseCases = []testCase{
 		"16.24",
 		"16.24",
 	},
+	{
+		"fuzz-1",
+		"0.00",
+		"0.0051",
+	},
+	{
+		"fuzz-2",
+		"8.00",
+		"8.005",
+	},
+	{
+		"fuzz-3",
+		"0.00",
+		"0.005",
+	},
+	{
+		"fuzz-4",
+		"1.00",
+		"0.997",
+	},
+	{
+		"fuzz-5",
+		"2200000000000021.00",
+		"2200000000000021",
+	},
+	{
+		"fuzz-6",
+		"0.01",
+		"0.010e1",
+	},
+	{
+		"error-1",
+		"number too big",
+		"100000000000000000",
+	},
+	{
+		"error-2",
+		"number too big",
+		"10000000000000000",
+	},
+	{
+		"error-3",
+		"invalid syntax",
+		"0.e0",
+	},
 }
 
 func TestStringParse(t *testing.T) {
 	for _, tc := range testParseCases {
 		d, err := NewFromString(tc.Input)
-		if err != nil {
-			t.Fatal(err)
+		if strings.HasPrefix(tc.name, "error") {
+			if err == nil {
+				t.Fatalf("Error(%s): expected error `%s`", tc.name, tc.Result)
+			}
+			if err.Error() != tc.Result {
+				t.Fatalf("Error(%s): expected `%s`, got `%s`", tc.name, tc.Result, err)
+			}
 		}
-		if tc.Result != d.StringFixedBank() {
+		if !strings.HasPrefix(tc.name, "error") && tc.Result != d.StringFixedBank() {
 			t.Errorf("Error(%s): expected \n`%s`, \ngot \n`%s`", tc.name, tc.Result, d.StringFixedBank())
 		}
 	}
+}
+
+func FuzzStringParse(f *testing.F) {
+	f.Fuzz(func(t *testing.T, s string) {
+		if _, after, split := strings.Cut(s, "."); split {
+			if len(after) > 3 {
+				return
+			}
+		}
+		sd, serr := sdec.NewFromString(s)
+		if serr != nil {
+			return
+		}
+		d, err := NewFromString(s)
+		if err != nil {
+			return
+		}
+		ss := strings.TrimPrefix(sd.StringFixedBank(2), "-")
+		ds := strings.TrimPrefix(d.StringFixedBank(), "-")
+
+		if ds != ss {
+			t.Fatalf("no match: decimal \n`%s`, \nsdec \n `%s`", ds, ss)
+		}
+	})
 }
 
 func BenchmarkNewFromString(b *testing.B) {

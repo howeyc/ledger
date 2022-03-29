@@ -13,6 +13,7 @@
 package decimal
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -51,9 +52,15 @@ func NewFromString(s string) (Decimal, error) {
 			neg = true
 		}
 		w, err := strconv.ParseInt(whole, 10, 64)
-		w = w * int64(scaleFactor)
 		if err != nil {
 			return Zero, err
+		}
+		b := w
+		w = w * int64(scaleFactor)
+
+		// overflow
+		if w/int64(scaleFactor) != b {
+			return Zero, errors.New("number too big")
 		}
 
 		// Parse up to 3 digits and scale up
@@ -61,6 +68,9 @@ func NewFromString(s string) (Decimal, error) {
 		var seen int
 		for _, b := range frac {
 			f *= 10
+			if b < '0' || b > '9' {
+				return Zero, errors.New("invalid syntax")
+			}
 			f += int64(b - '0')
 			seen++
 			if seen == 3 {
@@ -78,7 +88,12 @@ func NewFromString(s string) (Decimal, error) {
 		return Decimal(w + f), err
 	} else {
 		i, err := strconv.ParseInt(s, 10, 64)
-		return NewFromInt(i), err
+		b := i
+		d := NewFromInt(i)
+		if int64(d/scaleFactor) != b {
+			return Zero, errors.New("number too big")
+		}
+		return d, err
 	}
 }
 
@@ -183,6 +198,15 @@ func (d Decimal) StringFixedBank() string {
 		frac++
 	} else if rem == 5 && frac%2 != 0 {
 		frac++
+	}
+
+	if frac >= 100 {
+		if sign == "" {
+			whole++
+		} else {
+			whole--
+		}
+		frac -= 100
 	}
 
 	return fmt.Sprintf("%s%d.%02d", sign, whole, frac)

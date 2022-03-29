@@ -12,6 +12,7 @@ require (
 	github.com/juztin/numeronym v0.0.0-20160223091026-859fcc2918e2
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/pelletier/go-toml v1.9.4
+	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/cobra v1.3.0
 )
 
