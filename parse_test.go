@@ -451,22 +451,7 @@ func TestParseLedger(t *testing.T) {
 }
 
 func BenchmarkParseLedger(b *testing.B) {
-	tc := testCase{
-		"benchmark",
-		`1970/01/01 Payee
-	Expense/test  (123 * 3)
-	Assets
-
-1970/01/01 Payee
-	Expense/test  (123 * 3)
-	Assets
-`,
-		nil,
-		nil,
-	}
-
-	data := bytes.NewBufferString(tc.data)
 	for n := 0; n < b.N; n++ {
-		_, _ = ParseLedger(data)
+		_, _ = ParseLedgerFile("testdata/ledgerBench.dat")
 	}
 }
