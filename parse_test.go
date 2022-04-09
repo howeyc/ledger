@@ -30,12 +30,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(369.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(369.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-369.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -94,12 +94,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(369.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(369.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-369.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -108,12 +108,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-123.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -141,12 +141,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC().AddDate(0, 0, 1),
 				AccountChanges: []Account{
 					{
-						"Expense:test",
-						decimal.NewFromFloat(369.0),
+						Name:    "Expense:test",
+						Balance: decimal.NewFromFloat(369.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-369.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-369.0),
 					},
 				},
 			},
@@ -155,24 +155,24 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense:Cars R Us",
-						decimal.NewFromFloat(-388.0),
+						Name:    "Expense:Cars R Us",
+						Balance: decimal.NewFromFloat(-388.0),
 					},
 					{
-						"Expense:Cars",
-						decimal.NewFromFloat(358.0),
+						Name:    "Expense:Cars",
+						Balance: decimal.NewFromFloat(358.0),
 					},
 					{
-						"Expense:Cranks",
-						decimal.NewFromFloat(10.0),
+						Name:    "Expense:Cranks",
+						Balance: decimal.NewFromFloat(10.0),
 					},
 					{
-						"Expense:Cranks Unlimited",
-						decimal.NewFromFloat(10.0),
+						Name:    "Expense:Cranks Unlimited",
+						Balance: decimal.NewFromFloat(10.0),
 					},
 					{
-						"Expense:Cranks United",
-						decimal.NewFromFloat(10.0),
+						Name:    "Expense:Cranks United",
+						Balance: decimal.NewFromFloat(10.0),
 					},
 				},
 				Comments: []string{
@@ -196,16 +196,16 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/another",
-						decimal.NewFromFloat(5.0),
+						Name:    "Expense/another",
+						Balance: decimal.NewFromFloat(5.0),
 					},
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-128.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-128.0),
 					},
 				},
 			},
@@ -224,12 +224,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-123.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-123.0),
 					},
 				},
 				Comments: []string{
@@ -252,12 +252,12 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-123.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-123.0),
 					},
 				},
 				Comments: []string{
@@ -281,16 +281,16 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(58),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(58),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-58),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-58),
 					},
 					{
-						"Expense/unbalanced",
-						decimal.NewFromFloat(0),
+						Name:    "Expense/unbalanced",
+						Balance: decimal.NewFromFloat(0),
 					},
 				},
 				Comments: []string{
@@ -316,20 +316,20 @@ var testCases = []testCase{
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(58),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(58),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-58),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-58),
 					},
 					{
-						"Expense/test",
-						decimal.NewFromFloat(158),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(158),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-158),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-158),
 					},
 				},
 				Comments: []string{
@@ -361,12 +361,12 @@ account Assets
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-123.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -375,12 +375,12 @@ account Assets
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(246.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(246.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-246.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-246.0),
 					},
 				},
 			},
@@ -407,12 +407,12 @@ account Assets
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(123.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(123.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-123.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-123.0),
 					},
 				},
 			},
@@ -421,12 +421,12 @@ account Assets
 				Date:  time.Unix(0, 0).UTC(),
 				AccountChanges: []Account{
 					{
-						"Expense/test",
-						decimal.NewFromFloat(246.0),
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(246.0),
 					},
 					{
-						"Assets",
-						decimal.NewFromFloat(-246.0),
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-246.0),
 					},
 				},
 			},
