@@ -97,15 +97,19 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 		trimmedLine := strings.TrimSpace(line)
 		lp.lineCount++
 
+		var currentComment string
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			lp.comments = append(lp.comments, trimmedLine[commentIdx:])
+			currentComment = trimmedLine[commentIdx:]
 			trimmedLine = trimmedLine[:commentIdx]
 			trimmedLine = strings.TrimSpace(trimmedLine)
 		}
 
 		// Skip empty lines
 		if len(trimmedLine) == 0 {
+			if len(currentComment) > 0 {
+				lp.comments = append(lp.comments, currentComment)
+			}
 			continue
 		}
 
@@ -114,6 +118,9 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 			if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount,
 				fmt.Errorf("Unable to parse payee line: %s", line))) {
 				return true
+			}
+			if len(currentComment) > 0 {
+				lp.comments = append(lp.comments, currentComment)
 			}
 			continue
 		}
@@ -138,7 +145,7 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 				}
 			}
 		default:
-			trans, transErr := lp.parseTransaction(before, after)
+			trans, transErr := lp.parseTransaction(before, after, currentComment)
 			if transErr != nil {
 				if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.filename, lp.lineCount, transErr)) {
 					return true
@@ -189,12 +196,12 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 	return
 }
 
-func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Transaction, err error) {
+func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string) (trans *Transaction, err error) {
 	transDate, derr := lp.parseDate(dateString)
 	if derr != nil {
 		return nil, derr
 	}
-	trans = &Transaction{Payee: payeeString, Date: transDate}
+	trans = &Transaction{Payee: payeeString, Date: transDate, PayeeComment: payeeComment}
 
 	var line string
 	for lp.scanner.Scan() {
@@ -203,12 +210,14 @@ func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Trans
 		trimmedLine := strings.TrimSpace(line)
 		lp.lineCount++
 
+		var currentComment string
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			lp.comments = append(lp.comments, trimmedLine[commentIdx:])
+			currentComment = trimmedLine[commentIdx:]
 			trimmedLine = trimmedLine[:commentIdx]
 			trimmedLine = strings.TrimSpace(trimmedLine)
 			if len(trimmedLine) == 0 {
+				lp.comments = append(lp.comments, currentComment)
 				continue
 			}
 		}
@@ -225,6 +234,7 @@ func (lp *parser) parseTransaction(dateString, payeeString string) (trans *Trans
 
 		var accChange Account
 		accChange.Name = trimmedLine
+		accChange.Comment = currentComment
 		if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
 			acc := strings.TrimSpace(trimmedLine[:i])
 			amt := trimmedLine[i+1:]

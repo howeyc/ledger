@@ -144,14 +144,26 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 		return trans.AccountChanges[i].Name < trans.AccountChanges[j].Name
 	})
 
-	fmt.Fprintf(w, "%s %s\n", trans.Date.Format(transactionDateFormat), trans.Payee)
+	fmt.Fprintf(w, "%s %s", trans.Date.Format(transactionDateFormat), trans.Payee)
+	if len(trans.PayeeComment) > 0 {
+		spaceCount := columns - 10 - utf8.RuneCountInString(trans.Payee)
+		if spaceCount < 1 {
+			spaceCount = 1
+		}
+		fmt.Fprintf(w, "%s%s", strings.Repeat(" ", spaceCount), trans.PayeeComment)
+	}
+	fmt.Fprintln(w, "")
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.StringFixedBank()
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
 		}
-		fmt.Fprintf(w, "    %s%s%s\n", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+		fmt.Fprintf(w, "    %s%s%s", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+		if len(accChange.Comment) > 0 {
+			fmt.Fprintf(w, " %s", accChange.Comment)
+		}
+		fmt.Fprintln(w, "")
 	}
 	fmt.Fprintln(w, "")
 }

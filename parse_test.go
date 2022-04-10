@@ -214,14 +214,16 @@ var testCases = []testCase{
 	},
 	{
 		"comment after payee",
-		`1970-01-01 Payee      ; payee comment
+		`; before trans
+1970-01-01 Payee      ; payee comment
 	Expense/test  123
 	Assets
 `,
 		[]*Transaction{
 			{
-				Payee: "Payee",
-				Date:  time.Unix(0, 0).UTC(),
+				Payee:        "Payee",
+				Date:         time.Unix(0, 0).UTC(),
+				PayeeComment: "; payee comment",
 				AccountChanges: []Account{
 					{
 						Name:    "Expense/test",
@@ -233,7 +235,7 @@ var testCases = []testCase{
 					},
 				},
 				Comments: []string{
-					"; payee comment",
+					"; before trans",
 				},
 			},
 		},
@@ -287,6 +289,7 @@ var testCases = []testCase{
 					{
 						Name:    "Assets",
 						Balance: decimal.NewFromFloat(-58),
+						Comment: "; comment in trans",
 					},
 					{
 						Name:    "Expense/unbalanced",
@@ -295,7 +298,6 @@ var testCases = []testCase{
 				},
 				Comments: []string{
 					"; comment",
-					"; comment in trans",
 				},
 			},
 		},
