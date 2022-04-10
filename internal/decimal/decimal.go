@@ -201,11 +201,7 @@ func (d Decimal) StringFixedBank() string {
 	}
 
 	if frac >= 100 {
-		if sign == "" {
-			whole++
-		} else {
-			whole--
-		}
+		whole++
 		frac -= 100
 	}
 
