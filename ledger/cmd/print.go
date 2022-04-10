@@ -50,7 +50,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return nil, parseError
 	}
 
-	sort.Slice(generalLedger, func(i, j int) bool {
+	sort.SliceStable(generalLedger, func(i, j int) bool {
 		return generalLedger[i].Date.Before(generalLedger[j].Date)
 	})
 
@@ -172,7 +172,7 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
 	// Print transactions by date
 	if len(generalLedger) > 1 {
-		sort.Slice(generalLedger, func(i, j int) bool {
+		sort.SliceStable(generalLedger, func(i, j int) bool {
 			return generalLedger[i].Date.Before(generalLedger[j].Date)
 		})
 	}
