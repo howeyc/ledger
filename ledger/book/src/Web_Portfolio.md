@@ -16,3 +16,8 @@ Portfolio view of holdings.
 
 ![crypto holdings portfolio](webshots/portfolio-crypto.png)
 
+## Stocks and Mutual Funds
+
+Stock or Mutual Fund Quotes require API keys to services.
+
+`$ cat portfolio-stocks.toml`

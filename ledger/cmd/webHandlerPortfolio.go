@@ -79,17 +79,13 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 					si.AnnualDividends = div * shares
 				}
 			case "Fund":
-				quote, qerr := stockQuote(symbol)
+				quote, qerr := fundQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last
-					if quote.Close > 0 {
-						sclose = quote.Close
-					} else {
-						sclose = quote.PreviousClose
-					}
+					sclose = quote.PreviousClose
 				}
 				if portfolio.ShowDividends {
-					div, _ := stockAnnualDividends(symbol)
+					div, _ := fundAnnualDividends(symbol)
 					si.AnnualDividends = div * shares
 				}
 			case "Crypto":

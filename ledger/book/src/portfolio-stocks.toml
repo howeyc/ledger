@@ -1,0 +1,26 @@
+# Used for "Stock" security_type -- see https://iexcloud.io/docs/api/
+iex_token = "pk_tokenstring"
+
+# Used for "Fund" security_type -- see https://www.alphavantage.co/documentation
+av_token = "apikey"
+
+[[portfolio]]
+name = "Stock Holdings"
+show_dividends = true
+
+    [[portfolio.stock]]
+    name = "S&P 500"
+    security_type = "Stock"
+    section = "Holdings"
+    ticker = "SPY"
+    account = "Assets:Holdings:SPY"
+    shares = 200.0
+
+    [[portfolio.stock]]
+    name = "Vanguard Growth"
+    security_type = "Fund"
+    section = "Holdings"
+    ticker = "VASGX"
+    account = "Assets:Holdings:VASGX"
+    shares = 23.5
+

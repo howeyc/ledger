@@ -1,7 +1,12 @@
+# Used for "Stock" security_type -- see https://iexcloud.io/docs/api/
 iex_token = "pk_tokenstring"
+
+# Used for "Fund" security_type -- see https://www.alphavantage.co/documentation
+av_token = "apikey"
 
 [[porfolio]]
 name = "Stocks"
+show_dividends = true
 
     [[portfolio.stock]]
     name = "Vanguard"
