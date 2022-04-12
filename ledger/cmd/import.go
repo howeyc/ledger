@@ -133,7 +133,7 @@ var importCmd = &cobra.Command{
 				expenseAccount.Balance = expenseAccount.Balance.Mul(decScale)
 
 				// Csv amount is the negative of the expense amount
-				csvAccount.Balance = csvAccount.Balance.Neg()
+				csvAccount.Balance = expenseAccount.Balance.Neg()
 
 				// Create valid transaction for print in ledger format
 				trans := &ledger.Transaction{Date: csvDate, Payee: record[payeeColumn]}
