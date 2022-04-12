@@ -163,6 +163,35 @@ name = &quot;Crypto Holdings&quot;
 <h2 id="crypto-holdings"><a class="header" href="#crypto-holdings">Crypto Holdings</a></h2>
 <p>Portfolio view of holdings.</p>
 <p><img src="webshots/portfolio-crypto.png" alt="crypto holdings portfolio" /></p>
+<h2 id="stocks-and-mutual-funds"><a class="header" href="#stocks-and-mutual-funds">Stocks and Mutual Funds</a></h2>
+<p>Stock or Mutual Fund Quotes require API keys to services.</p>
+<pre><code class="language-sh"># Used for &quot;Stock&quot; security_type -- see https://iexcloud.io/docs/api/
+iex_token = &quot;pk_tokenstring&quot;
+
+# Used for &quot;Fund&quot; security_type -- see https://www.alphavantage.co/documentation
+av_token = &quot;apikey&quot;
+
+[[portfolio]]
+name = &quot;Stock Holdings&quot;
+show_dividends = true
+
+    [[portfolio.stock]]
+    name = &quot;S&amp;P 500&quot;
+    security_type = &quot;Stock&quot;
+    section = &quot;Holdings&quot;
+    ticker = &quot;SPY&quot;
+    account = &quot;Assets:Holdings:SPY&quot;
+    shares = 200.0
+
+    [[portfolio.stock]]
+    name = &quot;Vanguard Growth&quot;
+    security_type = &quot;Fund&quot;
+    section = &quot;Holdings&quot;
+    ticker = &quot;VASGX&quot;
+    account = &quot;Assets:Holdings:VASGX&quot;
+    shares = 23.5
+
+</code></pre>
 
                     </main>
 

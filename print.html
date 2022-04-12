@@ -519,10 +519,6 @@ date.</p>
     Assets:Bank:Checking                                                 2000.00
     Income:Salary                                                       -2000.00
 
-2022/01/02 Grocery Store
-    Assets:Bank:Checking                                                 -180.00
-    Expenses:Food:Groceries                                               180.00
-
 2022/01/02 Dominoes Pizza   HOUSTON TX
     Expenses:Food:TakeOut                                                  23.58
     Liabilities:MasterCard                                                -23.58
@@ -530,6 +526,10 @@ date.</p>
 2022/01/02 Grocery Store
     Assets:Bank:Checking                                                 -145.00
     Expenses:Food:Groceries                                               145.00
+
+2022/01/02 Grocery Store
+    Assets:Bank:Checking                                                 -180.00
+    Expenses:Food:Groceries                                               180.00
 
 2022/01/08 Half Price Books    HOUSTON TX
     Expenses:Books                                                         20.00
@@ -572,12 +572,12 @@ balance.</p>
 2021/12/25 Buy some Crypto Assets:Crypto:ETH                   200.00       0.00
 2021/12/31 Employer        Assets:Bank:Checking               2000.00    2000.00
 2021/12/31 Employer        Income:Salary                     -2000.00       0.00
-2022/01/02 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
-2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00       0.00
 2022/01/02 Dominoes Pizza  Liabilities:MasterCard              -23.58     -23.58
 2022/01/02 Dominoes Pizza  Expenses:Food:TakeOut                23.58       0.00
 2022/01/02 Grocery Store   Assets:Bank:Checking               -145.00    -145.00
 2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00       0.00
+2022/01/02 Grocery Store   Assets:Bank:Checking               -180.00    -180.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00       0.00
 2022/01/08 Half Price Book Liabilities:MasterCard              -20.00     -20.00
 2022/01/08 Half Price Book Expenses:Books                       20.00       0.00
 2022/01/09 Grocery Store   Assets:Bank:Checking               -120.00    -120.00
@@ -599,8 +599,8 @@ running total in the last column.</p>
 ================================================================================
 2022/01/01 - 2022/01/31
 ================================================================================
-2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00     180.00
-2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00     325.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             145.00     145.00
+2022/01/02 Grocery Store   Expenses:Food:Groceries             180.00     325.00
 2022/01/09 Grocery Store   Expenses:Food:Groceries             120.00     445.00
 </code></pre>
 <h2 id="accounts-1"><a class="header" href="#accounts-1">Accounts</a></h2>
@@ -618,7 +618,7 @@ Unique payees             : 8
 Unique accounts           : 10
 Number of transactions    : 12 (0.3 per day)
 Number of postings        : 25 (0.6 per day)
-Time since last post      : 7 weeks
+Time since last post      : 12 weeks
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
 <p>The web service included in <code>ledger</code> allows for the easy and quick viewing
@@ -750,6 +750,35 @@ name = &quot;Crypto Holdings&quot;
 <h2 id="crypto-holdings"><a class="header" href="#crypto-holdings">Crypto Holdings</a></h2>
 <p>Portfolio view of holdings.</p>
 <p><img src="webshots/portfolio-crypto.png" alt="crypto holdings portfolio" /></p>
+<h2 id="stocks-and-mutual-funds"><a class="header" href="#stocks-and-mutual-funds">Stocks and Mutual Funds</a></h2>
+<p>Stock or Mutual Fund Quotes require API keys to services.</p>
+<pre><code class="language-sh"># Used for &quot;Stock&quot; security_type -- see https://iexcloud.io/docs/api/
+iex_token = &quot;pk_tokenstring&quot;
+
+# Used for &quot;Fund&quot; security_type -- see https://www.alphavantage.co/documentation
+av_token = &quot;apikey&quot;
+
+[[portfolio]]
+name = &quot;Stock Holdings&quot;
+show_dividends = true
+
+    [[portfolio.stock]]
+    name = &quot;S&amp;P 500&quot;
+    security_type = &quot;Stock&quot;
+    section = &quot;Holdings&quot;
+    ticker = &quot;SPY&quot;
+    account = &quot;Assets:Holdings:SPY&quot;
+    shares = 200.0
+
+    [[portfolio.stock]]
+    name = &quot;Vanguard Growth&quot;
+    security_type = &quot;Fund&quot;
+    section = &quot;Holdings&quot;
+    ticker = &quot;VASGX&quot;
+    account = &quot;Assets:Holdings:VASGX&quot;
+    shares = 23.5
+
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="example-file"><a class="header" href="#example-file">Example File</a></h1>
 <p>To make following along and running the commands easier, you can use the
 transactions below as your <em>ledger.dat</em> file.</p>
