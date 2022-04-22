@@ -42,3 +42,24 @@ function! LedgerComplete(findstart, base)
 	    return res
 	endif
 endfun
+
+function! _LedgerFormatFile()
+	if exists('g:ledger_bin') && exists('g:ledger_autofmt_bufwritepre') && g:ledger_autofmt_bufwritepre
+		let substitution = system(g:ledger_bin . ' print -f -', join(getline(1, line('$')), "\n"))
+		if v:shell_error != 0
+			echoerr "While formatting the buffer via fmt, the following error occurred:"
+			echoerr printf("ERROR(%d): %s", v:shell_error, substitution)
+		else
+			let [_, lnum, colnum, _] = getpos('.')
+			%delete
+			call setline(1, split(substitution, "\n"))
+			call cursor(lnum, colnum)
+		endif
+	endif
+endfunction
+
+if has('autocmd')
+	augroup ledger_fmt
+		autocmd BufWritePre * call _LedgerFormatFile()
+	augroup END
+endif

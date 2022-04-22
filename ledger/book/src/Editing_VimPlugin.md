@@ -10,3 +10,11 @@ Below is the result of `:set filetype=ledger` in vim.
 The plugin can also do folding, try `:set foldmethod=syntax`
 
 ![vim folding screenshot](consoleshots/vimfold.png)
+
+## Format on Save
+
+In order to format on save, set your vim config to the following:
+
+```vim
+let g:ledger_autofmt_bufwritepre = 1
+```

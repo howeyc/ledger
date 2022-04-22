@@ -1,6 +1,5 @@
 #!/usr/bin/bash
 
-rm -rf src-book
 mkdir src-book
 
 pushd src
@@ -14,3 +13,5 @@ popd
 mdbook build
 rsync -a src/webshots html-book/
 rsync -a src/consoleshots html-book/
+
+rm -rf src-book
