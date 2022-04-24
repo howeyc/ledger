@@ -3,6 +3,7 @@
 [![Chat on Libera](https://img.shields.io/badge/chat-libera-blue.svg)](https://matrix.to/#/#plaintextaccounting:libera.chat)
 [![Go Report Card](https://goreportcard.com/badge/github.com/howeyc/ledger)](https://goreportcard.com/report/github.com/howeyc/ledger)
 [![Go Reference](https://pkg.go.dev/badge/github.com/howeyc/ledger.svg)](https://pkg.go.dev/github.com/howeyc/ledger)
+[![Coverage Status](https://coveralls.io/repos/github/howeyc/ledger/badge.svg?branch=master)](https://coveralls.io/github/howeyc/ledger?branch=master)
 
 <div align="center">
  <img src="logo.png" width="50%" height="50%" alt="ledger-logo">
