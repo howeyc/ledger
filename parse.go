@@ -2,6 +2,7 @@ package ledger
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -69,6 +70,8 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 		})
 
 		e <- nil
+		close(c)
+		close(e)
 	}()
 	return c, e
 }
@@ -128,17 +131,13 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 		case "account":
 			lp.parseAccount(after)
 		case "include":
-			paths, perr := filepath.Glob(filepath.Join(filepath.Dir(lp.filename), after))
-			if perr != nil {
-				callback(nil, fmt.Errorf("%s:%d: Unable to parse include directive: %w", lp.filename, lp.lineCount, perr))
-				return
+			paths, _ := filepath.Glob(filepath.Join(filepath.Dir(lp.filename), after))
+			if len(paths) < 1 {
+				callback(nil, fmt.Errorf("%s:%d: Unable to include file(%s): %w", lp.filename, lp.lineCount, after, errors.New("not found")))
+				return true
 			}
 			for _, incpath := range paths {
-				ifile, ierr := os.Open(incpath)
-				if ierr != nil {
-					callback(nil, fmt.Errorf("%s:%d: Unable to include file(%s): %w", lp.filename, lp.lineCount, incpath, ierr))
-					return true
-				}
+				ifile, _ := os.Open(incpath)
 				defer ifile.Close()
 				if parseLedger(incpath, ifile, callback) {
 					return true

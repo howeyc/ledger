@@ -33,3 +33,17 @@ func TestIncludeUnbalanced(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestIncludeNonExistant(t *testing.T) {
+	_, err := ParseLedgerFile("testdata/ledgerRootNonExist.dat")
+	if err.Error() != "testdata/ledgerRootNonExist.dat:3: Unable to include file(ledger-xxxxx.dat): not found" {
+		t.Fatal(err)
+	}
+}
+
+func TestNonExistant(t *testing.T) {
+	_, err := ParseLedgerFile("testdata/ledger-xxxxx.dat")
+	if err.Error() != "open testdata/ledger-xxxxx.dat: no such file or directory" {
+		t.Fatal(err)
+	}
+}
