@@ -135,9 +135,6 @@ func startEndTime(trans []*Transaction) (start, end time.Time) {
 // TransactionsByPeriod will return the transactions for each period.
 func TransactionsByPeriod(trans []*Transaction, per Period) []*RangeTransactions {
 	var results []*RangeTransactions
-	if len(trans) < 1 {
-		return results
-	}
 
 	tStart, tEnd := startEndTime(trans)
 
@@ -166,9 +163,6 @@ type RangeBalance struct {
 // BalancesByPeriod will return the account balances for each period.
 func BalancesByPeriod(trans []*Transaction, per Period, rType RangeType) []*RangeBalance {
 	var results []*RangeBalance
-	if len(trans) < 1 {
-		return results
-	}
 
 	tStart, tEnd := startEndTime(trans)
 

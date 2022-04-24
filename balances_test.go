@@ -55,3 +55,51 @@ func TestBalanceLedger(t *testing.T) {
 		}
 	}
 }
+
+func TestBalancesByPeriod(t *testing.T) {
+	b := bytes.NewBufferString(`
+2022/02/02 Payee
+	Assets     50
+	Income
+
+2022/01/02 Payee
+	Assets     50
+	Income
+
+2022/03/02 Payee
+	Assets     50
+	Income
+
+2022/04/02 Payee
+	Assets     50
+	Income
+
+2022/05/02 Payee
+	Assets     50
+	Income
+
+`)
+
+	trans, _ := ParseLedger(b)
+	partitionRb := BalancesByPeriod(trans, PeriodQuarter, RangePartition)
+	snapshotRb := BalancesByPeriod(trans, PeriodQuarter, RangeSnapshot)
+
+	if partitionRb[len(partitionRb)-1].Balances[0].Balance.Abs().Cmp(decimal.NewFromInt(100)) != 0 {
+		t.Error("range balance by partition not accurate")
+	}
+	if snapshotRb[len(snapshotRb)-1].Balances[0].Balance.Abs().Cmp(decimal.NewFromInt(250)) != 0 {
+		t.Error("range balance by snapshot not accurate")
+	}
+
+	transPeriod := TransactionsByPeriod(trans, PeriodQuarter)
+	lastBals := GetBalances(transPeriod[len(transPeriod)-1].Transactions, []string{})
+	if partitionRb[len(partitionRb)-1].Balances[0].Balance.Abs().Cmp(lastBals[0].Balance.Abs()) != 0 {
+		t.Error("range balance by partition not equal to trans by period balance")
+	}
+
+	var blanktrans []*Transaction
+	rb := BalancesByPeriod(blanktrans, PeriodDay, RangeSnapshot)
+	if len(rb) > 1 {
+		t.Error("range balances for non-existent transactions")
+	}
+}
