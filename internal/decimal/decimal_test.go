@@ -108,6 +108,26 @@ var testCases = []testCase{
 		"-0.43",
 		NewFromFloat(-0.43).StringFixedBank(),
 	},
+	{
+		"sub",
+		"5.12",
+		NewFromFloat(5.56).Sub(NewFromFloat(0.44)).StringFixedBank(),
+	},
+	{
+		"neg",
+		"-5.12",
+		NewFromFloat(5.12).Neg().StringFixedBank(),
+	},
+	{
+		"abs-1",
+		"5.12",
+		NewFromFloat(-5.12).Abs().StringFixedBank(),
+	},
+	{
+		"abs-1",
+		"5.12",
+		NewFromFloat(5.12).Abs().StringFixedBank(),
+	},
 }
 
 func TestDecimal(t *testing.T) {
@@ -115,6 +135,42 @@ func TestDecimal(t *testing.T) {
 		if tc.Result != tc.Input {
 			t.Errorf("Error(%s): expected \n`%s`, \ngot \n`%s`", tc.name, tc.Result, tc.Input)
 		}
+	}
+}
+
+func TestFloat(t *testing.T) {
+	d := NewFromFloat(5.56)
+	f := float64(5.56)
+	if df, _ := d.Float64(); df != f {
+		t.Error("Float64 not exact")
+	}
+}
+
+func TestCompare(t *testing.T) {
+	l := NewFromInt(5)
+	h := NewFromInt(10)
+	z := NewFromInt(0)
+
+	if !z.IsZero() {
+		t.Error("zero failed")
+	}
+
+	if h.Cmp(l) != 1 || l.Cmp(h) != -1 || z.Cmp(Zero) != 0 {
+		t.Error("compare fail")
+	}
+}
+
+func TestSign(t *testing.T) {
+	n := NewFromInt(-5)
+	p := NewFromInt(5)
+	z := NewFromInt(0)
+
+	if z.Sign() != 0 {
+		t.Error("zero failed")
+	}
+
+	if n.Sign() != -1 || p.Sign() != 1 {
+		t.Error("sign fail")
 	}
 }
 
@@ -246,8 +302,18 @@ var testParseCases = []testCase{
 	},
 	{
 		"error-3",
+		"number too big",
+		"10000000000000000.56",
+	},
+	{
+		"error-4",
 		"invalid syntax",
 		"0.e0",
+	},
+	{
+		"error-badint-1",
+		`strconv.ParseInt: parsing "1QZ": invalid syntax`,
+		"1QZ.56",
 	},
 }
 
