@@ -112,9 +112,27 @@ var importCmd = &cobra.Command{
 			csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
 			if allowMatching || !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
 				// Classify into expense account
-				_, likely, _ := classifier.LogScores(inputPayeeWords)
+				scores, likely, _ := classifier.LogScores(inputPayeeWords)
 				if likely >= 0 {
-					expenseAccount.Name = string(classifier.Classes[likely])
+					matchScore := 0.0
+					matchIdx := -1
+					for j, score := range scores {
+						if j == 0 {
+							matchScore = score
+						}
+						if string(classifier.Classes[j]) == csvAccount.Name {
+							continue
+						}
+						if score > matchScore {
+							matchScore = score
+							matchIdx = j
+						}
+					}
+					if matchIdx >= 0 {
+						expenseAccount.Name = string(classifier.Classes[matchIdx])
+					} else {
+						expenseAccount.Name = string(classifier.Classes[likely])
+					}
 				}
 
 				// Parse error, set to zero
