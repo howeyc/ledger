@@ -22,6 +22,7 @@
 	- [Quickview](./Web_Quickview.md)
 	- [General Ledger](./Web_GeneralLedger.md)
 	- [Accounts](./Web_Accounts.md)
+	- [Add Transaction](./Web_AddTransaction.md)
 - [Reports](./Web_Reports.md)
 - [Stock Portfolio](./Web_Portfolio.md)
 
