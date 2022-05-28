@@ -129,6 +129,9 @@ func startEndTime(trans []*Transaction) (start, end time.Time) {
 		}
 	}
 
+	// to include last days' transactions in date period splits
+	end = end.Add(time.Second)
+
 	return
 }
 

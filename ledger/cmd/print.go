@@ -39,6 +39,9 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return nil, errors.New("unable to parse start or end date string argument")
 	}
 
+	// include end dates' transactions too
+	parsedEndDate = parsedEndDate.Add(time.Second)
+
 	var generalLedger []*ledger.Transaction
 	var parseError error
 	if ledgerFilePath == "-" {
@@ -54,20 +57,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return generalLedger[i].Date.Before(generalLedger[j].Date)
 	})
 
-	timeStartIndex, timeEndIndex := 0, 0
-	for idx := 0; idx < len(generalLedger); idx++ {
-		if generalLedger[idx].Date.After(parsedStartDate) {
-			timeStartIndex = idx
-			break
-		}
-	}
-	for idx := len(generalLedger) - 1; idx >= 0; idx-- {
-		if generalLedger[idx].Date.Before(parsedEndDate) {
-			timeEndIndex = idx
-			break
-		}
-	}
-	generalLedger = generalLedger[timeStartIndex : timeEndIndex+1]
+	generalLedger = ledger.TransactionsInDateRange(generalLedger, parsedStartDate, parsedEndDate)
 
 	origLedger := generalLedger
 	generalLedger = make([]*ledger.Transaction, 0)
