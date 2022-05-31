@@ -110,7 +110,7 @@ var importCmd = &cobra.Command{
 		for _, record := range csvRecords[1:] {
 			inputPayeeWords := strings.Fields(record[payeeColumn])
 			csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
-			if allowMatching || !existingTransaction(generalLedger, csvDate, inputPayeeWords[0]) {
+			if allowMatching || !existingTransaction(generalLedger, csvDate, record[payeeColumn]) {
 				// Classify into expense account
 				scores, likely, _ := classifier.LogScores(inputPayeeWords)
 				if likely >= 0 {
@@ -181,7 +181,7 @@ func init() {
 
 func existingTransaction(generalLedger []*ledger.Transaction, transDate time.Time, payee string) bool {
 	for _, trans := range generalLedger {
-		if trans.Date == transDate && strings.HasPrefix(trans.Payee, payee) {
+		if trans.Date == transDate && trans.Payee == payee {
 			return true
 		}
 	}
