@@ -139,7 +139,7 @@ func (d Decimal) Mul(d1 Decimal) Decimal {
 
 // Div returns d / d1
 func (d Decimal) Div(d1 Decimal) Decimal {
-	return (d / d1) * scaleFactor
+	return (d * scaleFactor) / d1
 }
 
 // Abs returns the absolute value of the decimal

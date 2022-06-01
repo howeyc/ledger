@@ -24,6 +24,11 @@ var testCases = []testCase{
 		NewFromInt(48).Div(NewFromInt(8)).StringFixedBank(),
 	},
 	{
+		"divide-1",
+		NewFromFloat(11.111).StringFixedBank(),
+		NewFromInt(100).Div(NewFromInt(9)).StringFixedBank(),
+	},
+	{
 		"sum",
 		NewFromFloat(234.56).StringFixedBank(),
 		NewFromFloat(123.12).Add(NewFromInt(111)).Add(NewFromFloat(0.44)).StringFixedBank(),
