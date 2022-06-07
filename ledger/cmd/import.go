@@ -15,7 +15,6 @@ import (
 )
 
 var csvDateFormat string
-var destAccSearch string
 var negateAmount bool
 var allowMatching bool
 var fieldDelimiter string
@@ -72,9 +71,7 @@ var importCmd = &cobra.Command{
 		for _, tran := range generalLedger {
 			payeeWords := strings.Fields(tran.Payee)
 			for _, accChange := range tran.AccountChanges {
-				if strings.Contains(accChange.Name, destAccSearch) {
-					classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
-				}
+				classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
 			}
 		}
 
@@ -174,7 +171,6 @@ func init() {
 	importCmd.Flags().BoolVar(&negateAmount, "neg", false, "Negate amount column value.")
 	importCmd.Flags().BoolVar(&allowMatching, "allow-matching", false, "Have output include imported transactions that\nmatch existing ledger transactions.")
 	importCmd.Flags().Float64Var(&scaleFactor, "scale", 1.0, "Scale factor to multiply against every imported amount.")
-	importCmd.Flags().StringVar(&destAccSearch, "set-search", "Expense", "Search string used to find set of accounts for classification.")
 	importCmd.Flags().StringVar(&csvDateFormat, "date-format", "01/02/2006", "Date format.")
 	importCmd.Flags().StringVar(&fieldDelimiter, "delimiter", ",", "Field delimiter.")
 }
