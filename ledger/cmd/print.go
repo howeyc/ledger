@@ -100,6 +100,14 @@ func init() {
 // PrintBalances prints out account balances formatted to a window set to a width of columns.
 // Only shows accounts with names less than or equal to the given depth.
 func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth, columns int) {
+	// Calculate widths: 10 columns for balance, rest for accountname
+	if columns < 12 {
+		columns = 12
+		fmt.Fprintf(os.Stderr, "warning: `columns` too small, setting to %d\n", columns)
+	}
+	accWidth := columns - 11
+	formatString := fmt.Sprintf("%%-%[1]d.%[1]ds %%10.10s\n", accWidth)
+
 	overallBalance := decimal.Zero
 	for _, account := range accountList {
 		accDepth := len(strings.Split(account.Name, ":"))
@@ -108,14 +116,12 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
 			outBalanceString := account.Balance.StringFixedBank()
-			spaceCount := columns - utf8.RuneCountInString(account.Name) - utf8.RuneCountInString(outBalanceString)
-			fmt.Printf("%s%s%s\n", account.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+			fmt.Printf(formatString, account.Name, outBalanceString)
 		}
 	}
 	fmt.Println(strings.Repeat("-", columns))
 	outBalanceString := overallBalance.StringFixedBank()
-	spaceCount := columns - utf8.RuneCountInString(outBalanceString)
-	fmt.Printf("%s%s\n", strings.Repeat(" ", spaceCount), outBalanceString)
+	fmt.Printf(formatString, "", outBalanceString)
 }
 
 // PrintTransaction prints a transaction formatted to fit in specified column width.
@@ -187,10 +193,13 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	// Calculate widths for variable-length part of output
 	// 3 10-width columns (date, account-change, running-total)
 	// 4 spaces
+	if columns < 35 {
+		columns = 35
+		fmt.Fprintf(os.Stderr, "warning: `columns` too small, setting to %d\n", columns)
+	}
 	remainingWidth := columns - (10 * 3) - (4 * 1)
 	col1width := remainingWidth / 3
 	col2width := remainingWidth - col1width
-
 	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", col1width, col2width)
 
 	runningBalance := decimal.Zero
