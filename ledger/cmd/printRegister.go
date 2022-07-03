@@ -26,6 +26,10 @@ var registerCmd = &cobra.Command{
 			lperiod := ledger.Period(period)
 			rtrans := ledger.TransactionsByPeriod(generalLedger, lperiod)
 			for rIdx, rt := range rtrans {
+				if len(rt.Transactions) < 1 {
+					continue
+				}
+
 				if rIdx > 0 {
 					fmt.Println(strings.Repeat("=", columnWidth))
 				}
