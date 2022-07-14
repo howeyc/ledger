@@ -70,15 +70,19 @@ var importCmd = &cobra.Command{
 		classifier := bayesian.NewClassifier(classes...)
 		for _, tran := range generalLedger {
 			payeeWords := strings.Fields(tran.Payee)
+			// learn accounts names (except matchingAccount) for transactions where matchingAccount is present
 			learnName := false
 			for _, accChange := range tran.AccountChanges {
-				// learn accounts names (except matchingAccount) for transactions where matchingAccount is present
 				if accChange.Name == matchingAccount {
 					learnName = true
-					continue
+					break
 				}
-				if learnName {
-					classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
+			}
+			if learnName {
+				for _, accChange := range tran.AccountChanges {
+					if accChange.Name != matchingAccount {
+						classifier.Learn(payeeWords, bayesian.Class(accChange.Name))
+					}
 				}
 			}
 		}
