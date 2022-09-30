@@ -66,6 +66,8 @@ var addCmd = &cobra.Command{
 		sort.Strings(accountList)
 
 		sp := selection.New("Payee:", selection.Choices(payeeList))
+		sp.PageSize = 10
+		sp.Filter = selection.FilterContainsCaseSensitive
 		payee, err := sp.RunPrompt()
 		if err != nil {
 			log.Fatalf("Error: %v\n", err)
@@ -77,6 +79,8 @@ var addCmd = &cobra.Command{
 			p := posting{}
 
 			sa := selection.New("Account:", selection.Choices(accountList))
+			sa.PageSize = 10
+			sa.Filter = selection.FilterContainsCaseSensitive
 			accSel, serr := sa.RunPrompt()
 			if serr != nil {
 				log.Fatalf("Error: %v\n", serr)
