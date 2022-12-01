@@ -16,13 +16,13 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
-        go-version: 1.18
+        go-version: 1.19
 
     - name: Build
       run: go build -v ./...
 
     - name: Test
-      run: go test -v -coverprofile=profile.cov . ./internal/...
+      run: go test -v -coverprofile=profile.cov . ./decimal
       
     - uses: shogo82148/actions-goveralls@v1
       with: 
