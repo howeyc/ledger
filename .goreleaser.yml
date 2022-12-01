@@ -1,8 +1,10 @@
 # .goreleaser.yml
 before:
     hooks:
-    - man -Tpdf -l ledger/man/ledger.1 > ledger/man/ledger.1.pdf
-    - man -Tpdf -l ledger/man/ledger.5 > ledger/man/ledger.5.pdf
+    - mkdir docs
+    - man -Tpdf -l ledger/man/ledger.1 > docs/ledger.1.pdf
+    - man -Tpdf -l ledger/man/ledger.5 > docs/ledger.5.pdf
+    - cp ledger/man/* docs/
 builds:
   -
     env:
@@ -26,7 +28,7 @@ archives:
     builds:
     - ledger
     files:
-    - man/*
+    - docs/*
     - LICENSE.txt
     wrap_in_directory: true
     replacements:
