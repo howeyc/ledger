@@ -1,8 +1,8 @@
 # .goreleaser.yml
 before:
-	hooks:
-	- man -Tpdf -l ledger/man/ledger.1 > ledger/man/ledger.1.pdf
-	- man -Tpdf -l ledger/man/ledger.5 > ledger/man/ledger.5.pdf
+    hooks:
+    - man -Tpdf -l ledger/man/ledger.1 > ledger/man/ledger.1.pdf
+    - man -Tpdf -l ledger/man/ledger.5 > ledger/man/ledger.5.pdf
 builds:
   -
     env:
@@ -25,9 +25,9 @@ archives:
   -
     builds:
     - ledger
-	files:
-	- man/*
-	- LICENSE.txt
+    files:
+    - man/*
+    - LICENSE.txt
     wrap_in_directory: true
     replacements:
       darwin: Darwin
