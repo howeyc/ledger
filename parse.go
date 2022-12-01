@@ -13,7 +13,7 @@ import (
 	"unicode"
 
 	"github.com/alfredxing/calc/compute"
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 	date "github.com/joyt/godate"
 )
 

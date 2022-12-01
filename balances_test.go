@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 )
 
 type testBalCase struct {

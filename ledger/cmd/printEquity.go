@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 	"github.com/spf13/cobra"
 )
 

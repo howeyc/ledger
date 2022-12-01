@@ -3,7 +3,7 @@ package ledger
 import (
 	"time"
 
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 )
 
 // Account holds the name and balance

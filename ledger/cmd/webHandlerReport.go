@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/pdr"
 	"github.com/julienschmidt/httprouter"
 	colorful "github.com/lucasb-eyer/go-colorful"
@@ -25,9 +25,9 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 // getAccounts will return the accounts that match accountNeedle.
 // If accountNeedle contains no wildcards (*), only case-sensitive matchs are returned.
 // In the case of wildcards:
-//	* matches any account that shares the prefix, and has the same depth as the *.
-//	** matches any account that shares the prefix, at furthest depth possible,
-//	ignoring parent accounts to avoid duplicates
+//
+//	"*" -  matches any account that shares the prefix, and has the same depth as the *.
+//	"**" - matches any account that shares the prefix, at furthest depth possible, ignoring parent accounts to avoid duplicates.
 func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (results []*ledger.Account) {
 	needleDepth := len(strings.Split(accountNeedle, ":"))
 

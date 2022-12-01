@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 )
 
 // GetBalances provided a list of transactions and filter strings, returns account balances of

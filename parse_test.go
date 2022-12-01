@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/howeyc/ledger/internal/decimal"
+	"github.com/howeyc/ledger/decimal"
 )
 
 type testCase struct {
