@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"time"
@@ -121,24 +122,25 @@ var importCmd = &cobra.Command{
 			csvDate, _ := time.Parse(csvDateFormat, record[dateColumn])
 			if allowMatching || !existingTransaction(generalLedger, csvDate, record[payeeColumn]) {
 				// Classify into expense account
-				scores, likely, _ := classifier.LogScores(inputPayeeWords)
-				if likely >= 0 {
-					matchScore := 0.0
-					matchIdx := -1
-					for j, score := range scores {
-						if j == 0 {
-							matchScore = score
-						}
-						if score > matchScore {
-							matchScore = score
-							matchIdx = j
-						}
+
+				// Find the highest and second highest scores
+				highScore1 := math.Inf(-1)
+				highScore2 := math.Inf(-1)
+				matchIdx := 0
+				scores, _, _ := classifier.LogScores(inputPayeeWords)
+				for j, score := range scores {
+					if score > highScore1 {
+						highScore2 = highScore1
+						highScore1 = score
+						matchIdx = j
 					}
-					if matchIdx >= 0 {
-						expenseAccount.Name = string(classifier.Classes[matchIdx])
-					} else {
-						expenseAccount.Name = string(classifier.Classes[likely])
-					}
+				}
+				// If the difference between the highest and second highest scores is greater than 10
+				// then it indicates that highscore is a high confidence match
+				if highScore1-highScore2 > 10 {
+					expenseAccount.Name = string(classifier.Classes[matchIdx])
+				} else {
+					expenseAccount.Name = "unknown:unknown"
 				}
 
 				// Parse error, set to zero
