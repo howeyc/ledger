@@ -86,7 +86,7 @@ func init() {
 	rootCmd.AddCommand(webCmd)
 
 	webCmd.Flags().StringVarP(&reportConfigFileName, "reports", "r", "", "Report config file name.")
-	webCmd.Flags().StringVarP(&stockConfigFileName, "porfolio", "s", "", "Stock config file name.")
+	webCmd.Flags().StringVarP(&stockConfigFileName, "portfolio", "s", "", "Stock config file name.")
 	webCmd.Flags().StringVarP(&quickviewConfigFileName, "quickview", "q", "", "Quickview config file name.")
 	webCmd.Flags().IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	webCmd.Flags().BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
