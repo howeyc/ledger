@@ -1,10 +1,7 @@
 # .goreleaser.yml
 before:
     hooks:
-    - mkdir docs
-    - man -Tpdf -l ledger/man/ledger.1 > docs/ledger.1.pdf
-    - man -Tpdf -l ledger/man/ledger.5 > docs/ledger.5.pdf
-    - cp ledger/man/* docs/
+    - make docs
 builds:
   -
     env:
@@ -13,7 +10,7 @@ builds:
     main: ./ledger/.
     binary: ledger
     ldflags:
-      - -s -w -X github.com/howeyc/ledger/ledger/cmd.version={{.Version}} -X github.com/howeyc/ledger/ledger/cmd.commit={{.Commit}} -X github.com/howeyc/ledger/ledger/cmd.date={{.Date}} -X github.com/howeyc/ledger/ledger/cmd.builtBy=goreleaser
+      - -s -w -X github.com/howeyc/ledger/ledger/cmd.version={{.Version}}
     goos:
       - windows
       - darwin
