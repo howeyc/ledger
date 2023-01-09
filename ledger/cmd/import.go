@@ -52,7 +52,15 @@ var importCmd = &cobra.Command{
 			fmt.Println("Unable to find matching account.")
 			return
 		}
-		matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
+		for _, m := range matchingAccounts {
+			if strings.EqualFold(m.Name, accountSubstring) {
+				matchingAccount = m.Name
+				break
+			}
+		}
+		if matchingAccount == "" {
+			matchingAccount = matchingAccounts[len(matchingAccounts)-1].Name
+		}
 
 		allAccounts := ledger.GetBalances(generalLedger, []string{})
 
@@ -188,7 +196,7 @@ func init() {
 
 func existingTransaction(generalLedger []*ledger.Transaction, transDate time.Time, payee string) bool {
 	for _, trans := range generalLedger {
-		if trans.Date == transDate && trans.Payee == payee {
+		if trans.Date == transDate && strings.TrimSpace(trans.Payee) == strings.TrimSpace(payee) {
 			return true
 		}
 	}
