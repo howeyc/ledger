@@ -53,7 +53,7 @@ var importCmd = &cobra.Command{
 			return
 		}
 		for _, m := range matchingAccounts {
-			if m.Name == accountSubstring {
+			if strings.EqualFold(m.Name, accountSubstring) {
 				matchingAccount = m.Name
 				break
 			}
