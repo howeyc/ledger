@@ -11,6 +11,6 @@ Run `ledger -f ledger.dat print`
 You can also use this if your splitting off transactions into separate files by
 date range, or account.
 
-All 2020 transactions for example `ledger -f ledger.dat -b "2020/01/01" -e "2021/01/01" print`
+All 2021 transactions for example `ledger -f ledger.dat -b "2021/01/01" -e "2022/01/01" print`
 
-`$ ledger -f ledger.dat -b "2020/01/01" -e "2021/01/01" print`
+`$ ledger -f ledger.dat -b "2021/01/01" -e "2022/01/01" print`
