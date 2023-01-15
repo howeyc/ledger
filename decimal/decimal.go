@@ -2,7 +2,7 @@
 // precision after the decimal point.
 //
 // int64 is the underlying data type for speed of computation. However, using
-// an int64 casted to Decimal will not work, one of the "New" functions must
+// an int64 cast to Decimal will not work, one of the "New" functions must
 // be used to get accurate results.
 //
 // The package multiplies every source value by 1000, and then does integer
@@ -110,9 +110,10 @@ func (d Decimal) Neg() Decimal {
 // Sign returns:
 //
 // -1 if d <  0
-//  0 if d == 0
-// +1 if d >  0
 //
+//	0 if d == 0
+//
+// +1 if d >  0
 func (d Decimal) Sign() int {
 	if d < 0 {
 		return -1
@@ -158,10 +159,9 @@ func (d Decimal) Float64() (f float64, exact bool) {
 
 // Cmp compares the numbers represented by d and d1 and returns:
 //
-//     -1 if d <  d1
-//      0 if d == d1
-//     +1 if d >  d1
-//
+//	-1 if d <  d1
+//	 0 if d == d1
+//	+1 if d >  d1
 func (d Decimal) Cmp(d1 Decimal) int {
 	if d < d1 {
 		return -1
@@ -178,7 +178,6 @@ func (d Decimal) Cmp(d1 Decimal) int {
 //
 // NewFromFloat(5.455).StringFixedBank() == "5.46"
 // NewFromFloat(5.445).StringFixedBank() == "5.44"
-//
 func (d Decimal) StringFixedBank() string {
 	whole := d / scaleFactor
 	frac := (d % scaleFactor) / 10
@@ -213,7 +212,6 @@ func (d Decimal) StringFixedBank() string {
 // Example:
 //
 // NewFromFloat(5.44).StringTruncate() == "5"
-//
 func (d Decimal) StringTruncate() string {
 	whole := d / scaleFactor
 	return fmt.Sprintf("%d", whole)
@@ -226,7 +224,6 @@ func (d Decimal) StringTruncate() string {
 // NewFromFloat(5.4).StringRound() == "5"
 // NewFromFloat(-5.4).StringRound() == "5"
 // NewFromFloat(-5.5).StringRound() == "6"
-//
 func (d Decimal) StringRound() string {
 	whole := d / scaleFactor
 	frac := (d % scaleFactor) / 100

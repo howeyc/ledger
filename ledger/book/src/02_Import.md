@@ -2,7 +2,7 @@
 
 We can import transactions in CSV format, and product ledger transactions.
 Transactions are classified using best-likely match based on payee descriptions.
-Matches do not need to be exact matches, it's based on probablility determined
+Matches do not need to be exact matches, it's based on probability determined
 by learning from existing transactions. The more existing transactions in your
 ledger file, the better the matches will be.
 

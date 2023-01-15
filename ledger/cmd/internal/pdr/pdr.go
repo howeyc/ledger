@@ -1,4 +1,4 @@
-//go:generate peg -inline -switch grammer.peg
+//go:generate peg -inline -switch grammar.peg
 
 // Package pdr parses date range as string
 // Uses pointlander/peg

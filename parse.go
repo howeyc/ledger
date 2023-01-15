@@ -183,7 +183,7 @@ func (lp *parser) parseAccount(accName string) (accountName string, err error) {
 }
 
 func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) {
-	// try curent date layout
+	// try current date layout
 	transDate, err = time.Parse(lp.dateLayout, dateString)
 	if err != nil {
 		// try to find new date layout

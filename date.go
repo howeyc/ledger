@@ -22,7 +22,7 @@ func TransactionsInDateRange(trans []*Transaction, start, end time.Time) []*Tran
 // Period is used to specify the length of a date range or frequency
 type Period string
 
-// Periods suppored by ledger
+// Periods supported by ledger
 const (
 	PeriodDay      Period = "Daily"
 	PeriodWeek     Period = "Weekly"
