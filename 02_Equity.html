@@ -138,12 +138,17 @@
 <p>Some users like to keep ledger files for each year. To aid in creating a new
 starting balance for the next file, we can use the <code>ledger equity</code> command to
 generate the required transaction to have the correct starting balances.</p>
-<p>Let's start 2021, using all transactions upto the end of 2020. As the end date
-on the command line is not included, we can use 2021/01/01 as the end date.</p>
-<p>Run <code>ledger -f ledger.dat equity -e &quot;2021/01/01&quot;</code></p>
-<pre><code class="language-sh">2021/12/01 Opening Balances
-    Assets:Bank:Checking                                                 1000.00
+<p>Let's start 2022, using all transactions upto the end of 2021. As the end date
+on the command line is not included, we can use 2022/01/01 as the end date.</p>
+<p>Run <code>ledger -f ledger.dat equity -e &quot;2022/01/01&quot;</code></p>
+<pre><code class="language-sh">2021/12/31 Opening Balances
+    Assets:Bank:Checking                                                 2178.00
+    Assets:Cash:Wallet                                                    100.00
+    Assets:Crypto:BTC                                                     300.00
+    Assets:Crypto:ETH                                                     200.00
     Equity:Opening Balances                                             -1000.00
+    Expenses:Food:Groceries                                               222.00
+    Income:Salary                                                       -2000.00
 
 </code></pre>
 

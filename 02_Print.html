@@ -191,10 +191,27 @@ date.</p>
 </code></pre>
 <p>You can also use this if your splitting off transactions into separate files by
 date range, or account.</p>
-<p>All 2020 transactions for example <code>ledger -f ledger.dat -b &quot;2020/01/01&quot; -e &quot;2021/01/01&quot; print</code></p>
+<p>All 2021 transactions for example <code>ledger -f ledger.dat -b &quot;2021/01/01&quot; -e &quot;2022/01/01&quot; print</code></p>
 <pre><code class="language-sh">2021/12/01 Checking balance
     Assets:Bank:Checking                                                 1000.00
     Equity:Opening Balances                                             -1000.00
+
+2021/12/05 Withdrawl
+    Assets:Bank:Checking                                                 -100.00
+    Assets:Cash:Wallet                                                    100.00
+
+2021/12/22 Grocery Store
+    Assets:Bank:Checking                                                 -222.00
+    Expenses:Food:Groceries                                               222.00
+
+2021/12/25 Buy some Crypto
+    Assets:Bank:Checking                                                 -500.00
+    Assets:Crypto:BTC                                                     300.00
+    Assets:Crypto:ETH                                                     200.00
+
+2021/12/31 Employer
+    Assets:Bank:Checking                                                 2000.00
+    Income:Salary                                                       -2000.00
 
 </code></pre>
 
