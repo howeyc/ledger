@@ -2,10 +2,10 @@ include ledger-2021-05.dat
 
 2022/03/01 Payee
 	Assets:Wallet     5
-	Epenses:Food
+	Expenses:Food
 
 2022/03/01 Payee
 	Assets:Wallet     5
-	Epenses:Food
+	Expenses:Food
 
 include ledger-2021-05.dat
