@@ -152,7 +152,7 @@ func stockAnnualDividends(symbol string) (amount float64, err error) {
 
 // https://www.alphavantage.co/documentation/#weeklyadj
 func fundAnnualDividends(symbol string) (amount float64, err error) {
-	yearAgo := time.Now().AddDate(-1, 0, 0).Format("2006-01-02")
+	yearAgo := time.Now().AddDate(-1, 0, 0).Format(time.DateOnly)
 	resp, herr := http.Get("https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&datatype=csv&symbol=" + symbol + "&apikey=" + portfolioConfigData.AVToken)
 	if herr != nil {
 		return 0, herr

@@ -52,7 +52,7 @@ func printStats(generalLedger []*ledger.Transaction) {
 
 	days := math.Floor(endDate.Sub(startDate).Hours() / 24)
 
-	fmt.Printf("%-25s : %s to %s (%s)\n", "Time period", startDate.Format("2006-01-02"), endDate.Format("2006-01-02"), durafmt.Parse(endDate.Sub(startDate)).String())
+	fmt.Printf("%-25s : %s to %s (%s)\n", "Time period", startDate.Format(time.DateOnly), endDate.Format(time.DateOnly), durafmt.Parse(endDate.Sub(startDate)).String())
 	fmt.Printf("%-25s : %d\n", "Unique payees", len(payees))
 	fmt.Printf("%-25s : %d\n", "Unique accounts", len(accounts))
 	fmt.Printf("%-25s : %d (%.1f per day)\n", "Number of transactions", len(generalLedger), float64(len(generalLedger))/days)

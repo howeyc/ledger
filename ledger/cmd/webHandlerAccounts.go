@@ -64,7 +64,7 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 		accountLines = append(accountLines, strings.Trim(fmt.Sprintf("%s          %s", strAcc, strAmt), " \t"))
 	}
 
-	date, _ := time.Parse("2006-01-02", strDate)
+	date, _ := time.Parse(time.DateOnly, strDate)
 
 	var tbuf bytes.Buffer
 	fmt.Fprintln(&tbuf, date.Format("2006/01/02"), strPayee)

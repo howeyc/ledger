@@ -417,7 +417,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 				lData.RangeStart = rb.Start
 			}
 			lData.RangeEnd = rb.End
-			lData.Labels = append(lData.Labels, rb.End.Format("2006-01-02"))
+			lData.Labels = append(lData.Labels, rb.End.Format(time.DateOnly))
 
 			accVals := make(map[string]decimal.Decimal)
 			for _, confAccount := range rConf.Accounts {

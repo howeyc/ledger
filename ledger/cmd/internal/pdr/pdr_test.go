@@ -8,8 +8,6 @@ import (
 // 2019-11-25
 var baseTime = time.Unix(1574687238, 0).UTC()
 
-const testFormat = "2006-01-02"
-
 var testCases = []struct {
 	Input      string
 	Start, End string
@@ -51,8 +49,8 @@ var testCases = []struct {
 func TestParse(t *testing.T) {
 	for _, c := range testCases {
 		s, e, err := ParseRange(c.Input, baseTime)
-		gotStart := s.Format(testFormat)
-		gotEnd := e.Format(testFormat)
+		gotStart := s.Format(time.DateOnly)
+		gotEnd := e.Format(time.DateOnly)
 		if gotStart != c.Start {
 			t.Fatalf("input %v, expected start: %v, got: %v", c.Input, c.Start, gotStart)
 		}
