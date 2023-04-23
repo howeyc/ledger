@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 
@@ -24,6 +25,7 @@ func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) 
 		return nil, ierr
 	}
 	defer ifile.Close()
+	var mu sync.Mutex
 	parseLedger(filename, ifile, func(t *Transaction, e error) (stop bool) {
 		if e != nil {
 			err = e
@@ -31,7 +33,9 @@ func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) 
 			return
 		}
 
+		mu.Lock()
 		generalLedger = append(generalLedger, t)
+		mu.Unlock()
 		return
 	})
 
@@ -136,12 +140,21 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 				callback(nil, fmt.Errorf("%s:%d: Unable to include file(%s): %w", lp.filename, lp.lineCount, after, errors.New("not found")))
 				return true
 			}
+			var wg sync.WaitGroup
 			for _, incpath := range paths {
-				ifile, _ := os.Open(incpath)
-				defer ifile.Close()
-				if parseLedger(incpath, ifile, callback) {
-					return true
-				}
+				wg.Add(1)
+				go func(ipath string) {
+					ifile, _ := os.Open(ipath)
+					defer ifile.Close()
+					if parseLedger(ipath, ifile, callback) {
+						stop = true
+					}
+					wg.Done()
+				}(incpath)
+			}
+			wg.Wait()
+			if stop {
+				return stop
 			}
 		default:
 			trans, transErr := lp.parseTransaction(before, after, currentComment)
