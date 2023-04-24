@@ -110,6 +110,13 @@ type pageData struct {
 	Stocks       []stockInfo
 	Portfolios   []portfolioStruct
 	AccountNames []string
+	ReadOnly     bool
+}
+
+func (p *pageData) Init() {
+	p.ReadOnly = webReadOnly
+	p.Reports = reportConfigData.Reports
+	p.Portfolios = portfolioConfigData.Portfolios
 }
 
 func configLoaders(dur time.Duration) {

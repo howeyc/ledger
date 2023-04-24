@@ -20,6 +20,7 @@ var quickviewConfigFileName string
 
 var serverPort int
 var localhost bool
+var webReadOnly bool
 
 //go:embed static/*
 var contentStatic embed.FS
@@ -57,11 +58,14 @@ var webCmd = &cobra.Command{
 			fileServer.ServeHTTP(w, req)
 		})
 
+		if !webReadOnly {
+			m.GET("/addtrans", httpcompress.Middleware(addTransactionHandler, false))
+			m.GET("/addtrans/:accountName", httpcompress.Middleware(addQuickTransactionHandler, false))
+			m.POST("/addtrans", httpcompress.Middleware(addTransactionPostHandler, false))
+		}
+
 		m.GET("/ledger", httpcompress.Middleware(ledgerHandler, false))
 		m.GET("/accounts", httpcompress.Middleware(accountsHandler, false))
-		m.GET("/addtrans", httpcompress.Middleware(addTransactionHandler, false))
-		m.GET("/addtrans/:accountName", httpcompress.Middleware(addQuickTransactionHandler, false))
-		m.POST("/addtrans", httpcompress.Middleware(addTransactionPostHandler, false))
 		m.GET("/portfolio/:portfolioName", httpcompress.Middleware(portfolioHandler, false))
 		m.GET("/account/:accountName", httpcompress.Middleware(accountHandler, false))
 		m.GET("/report/:reportName", httpcompress.Middleware(reportHandler, false))
@@ -90,4 +94,5 @@ func init() {
 	webCmd.Flags().StringVarP(&quickviewConfigFileName, "quickview", "q", "", "Quickview config file name.")
 	webCmd.Flags().IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	webCmd.Flags().BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
+	webCmd.Flags().BoolVar(&webReadOnly, "read-only", false, "Disable adding transactions through web.")
 }

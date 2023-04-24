@@ -42,11 +42,15 @@
           <tr>
             <td class="d-block d-sm-none">
               <a href="/account/{{.Name}}">{{qvshortname .Name}}</a>
+			  {{if not $.ReadOnly}}
               <div style="float:right"><a class="link-success" href="/addtrans/{{.Name}}">+</a></div>
+			  {{end}}
             </td>
             <td class="d-none d-sm-block">
               <a href="/account/{{.Name}}">{{.Name}}</a>
+			  {{if not $.ReadOnly}}
               <div style="float:right"><a class="link-success" href="/addtrans/{{.Name}}">+</a></div>
+			  {{end}}
             </td>
             <td class="text-end">{{.Balance.StringFixedBank}}</td>
           </tr>

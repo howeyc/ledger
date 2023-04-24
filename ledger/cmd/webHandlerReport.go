@@ -268,8 +268,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		}
 
 		var pData lbPageData
-		pData.Reports = reportConfigData.Reports
-		pData.Portfolios = portfolioConfigData.Portfolios
+		pData.Init()
 		pData.Transactions = vtrans
 		pData.ChartType = "Leaderboard"
 		pData.ChartAccounts = values
@@ -321,8 +320,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 		}
 
 		var pData piePageData
-		pData.Reports = reportConfigData.Reports
-		pData.Portfolios = portfolioConfigData.Portfolios
+		pData.Init()
 		pData.Transactions = vtrans
 		pData.ChartAccounts = values
 		pData.RangeStart = rStart
@@ -368,8 +366,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			DataSets             []lineData
 		}
 		var lData linePageData
-		lData.Reports = reportConfigData.Reports
-		lData.Portfolios = portfolioConfigData.Portfolios
+		lData.Init()
 		lData.ReportName = reportName
 
 		for colorIdx, repAccount := range reportSummaryAccounts {

@@ -39,8 +39,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	}
 
 	var pData portPageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Transactions = trans
 	pData.PortfolioName = portfolioName
 	pData.ShowDividends = portfolio.ShowDividends

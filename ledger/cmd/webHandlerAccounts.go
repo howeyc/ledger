@@ -31,8 +31,7 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	}
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Transactions = trans
 
 	includeNames := make(map[string]bool)
@@ -148,8 +147,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params h
 	}
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Accounts = abals
 	pData.Transactions = atrans
 	pData.AccountNames = []string{accountName}
@@ -175,8 +173,7 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.
 	balances := ledger.GetBalances(trans, []string{})
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Accounts = balances
 	pData.Transactions = trans
 
@@ -202,8 +199,7 @@ func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 	balances := ledger.GetBalances(trans, []string{})
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Accounts = balances
 	pData.Transactions = trans
 
@@ -242,8 +238,7 @@ func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Pa
 	}
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Transactions = pageTrans
 	pData.AccountNames = []string{accountName}
 

@@ -20,8 +20,7 @@ func ledgerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	}
 
 	var pData pageData
-	pData.Reports = reportConfigData.Reports
-	pData.Portfolios = portfolioConfigData.Portfolios
+	pData.Init()
 	pData.Transactions = trans
 
 	err = t.Execute(w, pData)

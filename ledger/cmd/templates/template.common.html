@@ -130,9 +130,11 @@
         <li class="nav-item">
           <a class="nav-link text-dark" href="/ledger">General Ledger</a>
         </li>
+		{{if not .ReadOnly}}
         <li class="nav-item">
           <a class="nav-link text-dark" href="/addtrans">Add Transaction</a>
         </li>
+		{{end}}
         <li class="nav-item">
           <a class="nav-link text-dark" href="/accounts">Accounts</a>
         </li>
