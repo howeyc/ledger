@@ -94,5 +94,5 @@ func init() {
 	webCmd.Flags().StringVarP(&quickviewConfigFileName, "quickview", "q", "", "Quickview config file name.")
 	webCmd.Flags().IntVar(&serverPort, "port", 8056, "Port to listen on.")
 	webCmd.Flags().BoolVar(&localhost, "localhost", false, "Listen on localhost only.")
-	webCmd.Flags().BoolVar(&webReadOnly, "read-only", false, "Disable adding transactions through web.")
+	webCmd.Flags().BoolVar(&webReadOnly, "view-only", false, "Disable adding transactions through web.")
 }
