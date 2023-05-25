@@ -12,7 +12,7 @@
 ## Purpose
 
 Ledger is a command line application for plain text accounting. Providing
-commands to view balances, register of transactions, importing of CSV files,
+commands to view balances, register of transactions, importing of CSV files, exporting of CSV files,
 and a web interface to view reports, and track investments.
 
 ## Documentation

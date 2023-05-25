@@ -20,6 +20,7 @@ Available Commands:
   equity      Print account equity as transaction
   help        Help about any command
   import      Import transactions from csv to ledger format
+  export      Export transactions from ledger format to CSV format
   lint        Check ledger for errors
   print       Print transactions in ledger file format
   register    Print register of transactions

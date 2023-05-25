@@ -191,7 +191,7 @@ Alias for --columns=132
 .El
 .Sh IMPORT TRANSACTIONS
 .Nm
-has a top-level command to convert csv formatted postings to tranaction format.
+has a top-level command to convert csv formatted postings to transaction format.
 .Pp
 Headers in the csv file are used to attempt automatic creation of transactions
 for each line in the csv file. The import process looks for (not case sensitive)
@@ -231,6 +231,35 @@ negative, or vice versa.
 .It Fl \-scale Ar factor
 Multiplication factor to apply to values as they are transformed to
 transactions.
+.El
+.El
+.Sh EXPORT TRANSACTIONS
+.Nm
+has a top-level command to convert transaction format to CSV.
+.Pp
+Output columns:
+.Bl -tag -width "description, payee"
+.It date
+Date string.
+.It payee
+Payee
+.It account
+The account on which the transaction was made.
+.It amount/expense
+Amount used in transaction.
+.El
+.Bl -tag -width balance
+.It Ic export <account-filter>
+Options available for this command are:
+.Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
+.It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
+Begin date of transactions to include in processing.
+.It Fl \-delimeter Ar STR
+Character delimeter between fields. Defaults is ","
+.It Fl \-end-date ( Fl e ) Ar YYYY-mm-dd
+End date of transactions to include in processing.
+.It Fl \-payee Ar STR
+Filter transactions used in processing to payees that contain this string.
 .El
 .El
 .Sh WEB SERVICE
