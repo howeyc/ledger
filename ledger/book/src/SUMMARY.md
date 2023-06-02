@@ -13,6 +13,7 @@
 - [Balance](./02_Balance.md)
 - [Equity](./02_Equity.md)
 - [Import](./02_Import.md)
+- [Export](./02_Export.md)
 - [Print](./02_Print.md)
 - [Register](./02_Register.md)
 - [Stats](./02_Stats.md)

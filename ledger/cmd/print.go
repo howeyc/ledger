@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"encoding/csv"
 	"errors"
 	"fmt"
 	"io"
@@ -223,5 +224,43 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 					outRunningBalanceString)
 			}
 		}
+	}
+}
+
+// PrintCSV prints each transaction that matches the given filters in CSV format
+func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
+	csvWriter := csv.NewWriter(os.Stdout)
+	csvWriter.Comma, _ = utf8.DecodeRuneInString(fieldDelimiter)
+
+	runningBalance := decimal.Zero
+	for _, trans := range generalLedger {
+		for _, accChange := range trans.AccountChanges {
+			inFilter := len(filterArr) == 0
+			for _, filter := range filterArr {
+				if strings.Contains(accChange.Name, filter) {
+					inFilter = true
+				}
+			}
+			if inFilter {
+				runningBalance = runningBalance.Add(accChange.Balance)
+				outBalanceString := accChange.Balance.StringFixedBank()
+				record := []string{trans.Date.Format(transactionDateFormat),
+					trans.Payee,
+					accChange.Name,
+					outBalanceString,
+				}
+				if err := csvWriter.Write(record); err != nil {
+					fmt.Fprintf(os.Stderr, "error writing record to CSV:", err)
+					return
+				}
+			}
+		}
+	}
+
+	// Write any buffered data to the underlying writer (standard output).
+	csvWriter.Flush()
+	if err := csvWriter.Error(); err != nil {
+		fmt.Fprintf(os.Stderr, "error flushing CSV buffer:", err)
+		return
 	}
 }
