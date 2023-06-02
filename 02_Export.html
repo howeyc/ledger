@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Introduction - Guide to Ledger</title>
+        <title>Export - Guide to Ledger</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="Plain Text Accounting">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Accounts.html"><strong aria-hidden="true">4.</strong> Accounts</a></li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">5.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">6.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">7.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Export.html"><strong aria-hidden="true">8.</strong> Export</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">9.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">10.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">11.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">12.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">12.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">12.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">12.3.</strong> Accounts</a></li><li class="chapter-item expanded "><a href="Web_AddTransaction.html"><strong aria-hidden="true">12.4.</strong> Add Transaction</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">13.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">14.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="Editing_VimPlugin.html">Editing in Vim</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded affix "><li class="part-title">Setup</li><li class="chapter-item expanded "><a href="01_01_Installation.html"><strong aria-hidden="true">1.</strong> Installation</a></li><li class="chapter-item expanded "><a href="01_02_FileFormat.html"><strong aria-hidden="true">2.</strong> File Format</a></li><li class="chapter-item expanded "><a href="01_03_RunningLedger.html"><strong aria-hidden="true">3.</strong> First Run</a></li><li class="chapter-item expanded affix "><li class="part-title">CLI Commands</li><li class="chapter-item expanded "><a href="02_Accounts.html"><strong aria-hidden="true">4.</strong> Accounts</a></li><li class="chapter-item expanded "><a href="02_Balance.html"><strong aria-hidden="true">5.</strong> Balance</a></li><li class="chapter-item expanded "><a href="02_Equity.html"><strong aria-hidden="true">6.</strong> Equity</a></li><li class="chapter-item expanded "><a href="02_Import.html"><strong aria-hidden="true">7.</strong> Import</a></li><li class="chapter-item expanded "><a href="02_Export.html" class="active"><strong aria-hidden="true">8.</strong> Export</a></li><li class="chapter-item expanded "><a href="02_Print.html"><strong aria-hidden="true">9.</strong> Print</a></li><li class="chapter-item expanded "><a href="02_Register.html"><strong aria-hidden="true">10.</strong> Register</a></li><li class="chapter-item expanded "><a href="02_Stats.html"><strong aria-hidden="true">11.</strong> Stats</a></li><li class="chapter-item expanded affix "><li class="part-title">Web Interface</li><li class="chapter-item expanded "><a href="Web_Overview.html"><strong aria-hidden="true">12.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="Web_Quickview.html"><strong aria-hidden="true">12.1.</strong> Quickview</a></li><li class="chapter-item expanded "><a href="Web_GeneralLedger.html"><strong aria-hidden="true">12.2.</strong> General Ledger</a></li><li class="chapter-item expanded "><a href="Web_Accounts.html"><strong aria-hidden="true">12.3.</strong> Accounts</a></li><li class="chapter-item expanded "><a href="Web_AddTransaction.html"><strong aria-hidden="true">12.4.</strong> Add Transaction</a></li></ol></li><li class="chapter-item expanded "><a href="Web_Reports.html"><strong aria-hidden="true">13.</strong> Reports</a></li><li class="chapter-item expanded "><a href="Web_Portfolio.html"><strong aria-hidden="true">14.</strong> Stock Portfolio</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><a href="Example.html">Example File</a></li><li class="chapter-item expanded affix "><a href="Editing_VimPlugin.html">Editing in Vim</a></li><li class="chapter-item expanded affix "><a href="LICENSE.html">License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,23 +134,74 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
-<p>Plain Text Accounting is the practice of maintaining an accounting ledger in a
-format that values human readability, accountant auditability, and future file
-accessibility. The ecosystem of PTA tools includes programs
-which enable recording of purchases and transfers and investments,
-and performing analysis to produce registers, balance sheets, profit and loss
-statements, and lots of other reports.</p>
-<p>The core tools of the Plain Text Accounting ecosystem is a workflow familiar
-to software developers who prefer command line tools, and text based file
-formats.</p>
-<p>This is a guide to plain text accounting in Ledger.</p>
+                        <h1 id="export"><a class="header" href="#export">Export</a></h1>
+<p>We can export transactions in CSV format.</p>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<p>Run <code>ledger -f ledger.dat export</code></p>
+<pre><code class="language-sh">2021/12/01,Checking balance,Assets:Bank:Checking,1000.00
+2021/12/01,Checking balance,Equity:Opening Balances,-1000.00
+2021/12/05,Withdrawl,Assets:Bank:Checking,-100.00
+2021/12/05,Withdrawl,Assets:Cash:Wallet,100.00
+2021/12/22,Grocery Store,Assets:Bank:Checking,-222.00
+2021/12/22,Grocery Store,Expenses:Food:Groceries,222.00
+2021/12/25,Buy some Crypto,Assets:Bank:Checking,-500.00
+2021/12/25,Buy some Crypto,Assets:Crypto:BTC,300.00
+2021/12/25,Buy some Crypto,Assets:Crypto:ETH,200.00
+2021/12/31,Employer,Assets:Bank:Checking,2000.00
+2021/12/31,Employer,Income:Salary,-2000.00
+2022/01/02,Dominoes Pizza   HOUSTON TX,Liabilities:MasterCard,-23.58
+2022/01/02,Dominoes Pizza   HOUSTON TX,Expenses:Food:TakeOut,23.58
+2022/01/02,Grocery Store,Assets:Bank:Checking,-145.00
+2022/01/02,Grocery Store,Expenses:Food:Groceries,145.00
+2022/01/02,Grocery Store,Assets:Bank:Checking,-180.00
+2022/01/02,Grocery Store,Expenses:Food:Groceries,180.00
+2022/01/08,Half Price Books    HOUSTON TX,Liabilities:MasterCard,-20.00
+2022/01/08,Half Price Books    HOUSTON TX,Expenses:Books,20.00
+2022/01/09,Grocery Store,Assets:Bank:Checking,-120.00
+2022/01/09,Grocery Store,Expenses:Food:Groceries,120.00
+2022/01/11,Panda Express,Liabilities:MasterCard,-17.34
+2022/01/11,Panda Express,Expenses:Food:TakeOut,17.34
+2022/01/15,Employer,Assets:Bank:Checking,2000.00
+2022/01/15,Employer,Income:Salary,-2000.00
+</code></pre>
+<p>By default columns are comma separated. To use another delimiter use the <code>--delimiter</code> flag e.g.</p>
+<p><code>ledger -f ledger.dat --delimiter $'\t' export</code></p>
+<p><code>$'\t'</code> will produce a literal tab character in Bash shell environment.</p>
+<pre><code class="language-sh">2021/12/01	Checking balance	Assets:Bank:Checking	1000.00
+2021/12/01	Checking balance	Equity:Opening Balances	-1000.00
+2021/12/05	Withdrawl	Assets:Bank:Checking	-100.00
+2021/12/05	Withdrawl	Assets:Cash:Wallet	100.00
+2021/12/22	Grocery Store	Assets:Bank:Checking	-222.00
+2021/12/22	Grocery Store	Expenses:Food:Groceries	222.00
+2021/12/25	Buy some Crypto	Assets:Bank:Checking	-500.00
+2021/12/25	Buy some Crypto	Assets:Crypto:BTC	300.00
+2021/12/25	Buy some Crypto	Assets:Crypto:ETH	200.00
+2021/12/31	Employer	Assets:Bank:Checking	2000.00
+2021/12/31	Employer	Income:Salary	-2000.00
+2022/01/02	Dominoes Pizza   HOUSTON TX	Liabilities:MasterCard	-23.58
+2022/01/02	Dominoes Pizza   HOUSTON TX	Expenses:Food:TakeOut	23.58
+2022/01/02	Grocery Store	Assets:Bank:Checking	-145.00
+2022/01/02	Grocery Store	Expenses:Food:Groceries	145.00
+2022/01/02	Grocery Store	Assets:Bank:Checking	-180.00
+2022/01/02	Grocery Store	Expenses:Food:Groceries	180.00
+2022/01/08	Half Price Books    HOUSTON TX	Liabilities:MasterCard	-20.00
+2022/01/08	Half Price Books    HOUSTON TX	Expenses:Books	20.00
+2022/01/09	Grocery Store	Assets:Bank:Checking	-120.00
+2022/01/09	Grocery Store	Expenses:Food:Groceries	120.00
+2022/01/11	Panda Express	Liabilities:MasterCard	-17.34
+2022/01/11	Panda Express	Expenses:Food:TakeOut	17.34
+2022/01/15	Employer	Assets:Bank:Checking	2000.00
+2022/01/15	Employer	Income:Salary	-2000.00
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="next" href="01_01_Installation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="prev" href="02_Import.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="02_Print.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -159,7 +210,10 @@ formats.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="next" href="01_01_Installation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="prev" href="02_Import.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="02_Print.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
