@@ -63,21 +63,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 			cprice := si.Cost / si.Shares
 			var sprice, sclose float64
 			switch securityType {
-			case "Stock":
-				quote, qerr := stockQuote(symbol)
-				if qerr == nil {
-					sprice = quote.Last
-					if quote.Close > 0 {
-						sclose = quote.Close
-					} else {
-						sclose = quote.PreviousClose
-					}
-				}
-				if portfolio.ShowDividends {
-					div, _ := stockAnnualDividends(symbol)
-					si.AnnualDividends = div * shares
-				}
-			case "Fund":
+			case "Stock", "Fund":
 				quote, qerr := fundQuote(symbol)
 				if qerr == nil {
 					sprice = quote.Last

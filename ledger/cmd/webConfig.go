@@ -97,7 +97,6 @@ type portfolioStruct struct {
 
 type portfolioConfigStruct struct {
 	Portfolios []portfolioStruct `toml:"portfolio"`
-	IEXToken   string            `toml:"iex_token"`
 	AVToken    string            `toml:"av_token"`
 }
 
