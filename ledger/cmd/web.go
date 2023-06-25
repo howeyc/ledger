@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/howeyc/ledger/ledger/cmd/internal/httpcompress"
@@ -33,6 +34,9 @@ func getTransactions() ([]*ledger.Transaction, error) {
 	if terr != nil {
 		return nil, fmt.Errorf("%s", terr.Error())
 	}
+	sort.SliceStable(trans, func(i, j int) bool {
+		return trans[i].Date.Before(trans[j].Date)
+	})
 	return trans, nil
 }
 
