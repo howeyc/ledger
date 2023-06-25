@@ -4,17 +4,54 @@
     <link id="css-dark" href="/static/bootstrap-nightfall.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
     <link href="/static/dropdown.css" rel="stylesheet">
     <link href="/static/datatables-1.13.4.min.css" rel="stylesheet">
+    <link href="/static/daterangepicker.css" rel="stylesheet">
 {{end}}
 {{define "common-scripts"}}
     <script src="/static/jquery-3.6.0.min.js"></script>
     <script src="/static/bootstrap-5.0.0.bundle.min.js"></script>
     <script src="/static/chart-3.1.1.min.js"></script>
     <script src="/static/datatables-1.13.4.min.js"></script>
+    <script src="/static/moment.min.js"></script>
+    <script src="/static/daterangepicker.js"></script>
 	<script>
     $(document).ready(function () {
 	  $('#transactions-section').show();
 	  $('#tableprogress').hide();
-	  let table = new DataTable('#payeetranstable');
+	  var tbl = document.getElementById('payeetranstable0');
+	  var min = tbl.rows[1].cells[0].innerText;
+	  var max = tbl.rows[tbl.rows.length-1].cells[0].innerText;
+	  let table = new DataTable('#payeetranstable0', {
+		  paging: false
+	  });
+	  var twrap = document.getElementById('payeetranstable0_wrapper');
+	  twrap.firstElementChild.firstElementChild.remove();
+	  twrap.firstElementChild.firstElementChild.classList.remove("col-md-6");
+	  $('#payeetranstable0_filter').prepend('<label>Date Range: </label><input type="text" name="datefilter" class="form-control form-control-sm" value="'+ min + ' - '+ max +'" />');
+	  $('input[name="datefilter"]').daterangepicker({
+		locale: {
+		  format: "YYYY-MM-DD",
+          cancelLabel: 'Clear'
+		}
+	  });
+	  $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+		min = picker.startDate.format('YYYY-MM-DD');
+		max = picker.endDate.format('YYYY-MM-DD');
+		table.draw();
+	  });
+	  $.fn.dataTable.ext.search.push(
+		function( settings, data, dataIndex ) {
+        var tdate = data[0];
+
+        if ( ( min == '' && max == '' ) ||
+             ( min == '' && tdate <= max ) ||
+             ( min <= tdate && '' == max ) ||
+             ( min <= tdate && tdate <= max ) )
+        {
+            return true;
+        }
+        return false;
+		}
+	  );
 
     // Update the toggle button based on current color scheme
     function updateDarkToggleButton() {
@@ -91,7 +128,7 @@
 	<div class="tab-content">
 		{{range $accIdx, $accName := .AccountNames}}
 		<div class="tab-pane{{if eq 0 $accIdx}} active{{end}}" id="acctab{{$accIdx}}" role="tabpanel" aria-labelledby="tab{{$accIdx}}">
-			<table id="payeetranstable" class="table table-bordered table-hover paginated-table">
+			<table id="payeetranstable{{$accIdx}}" class="table table-bordered table-hover paginated-table">
 				<thead>
 					<tr>
 						<th>Date</th>
