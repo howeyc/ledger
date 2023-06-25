@@ -3,15 +3,18 @@
     <link id="css-light" href="/static/bootstrap-5.0.0.min.css" rel="stylesheet">
     <link id="css-dark" href="/static/bootstrap-nightfall.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
     <link href="/static/dropdown.css" rel="stylesheet">
+    <link href="/static/datatables-1.13.4.min.css" rel="stylesheet">
 {{end}}
 {{define "common-scripts"}}
     <script src="/static/jquery-3.6.0.min.js"></script>
     <script src="/static/bootstrap-5.0.0.bundle.min.js"></script>
     <script src="/static/chart-3.1.1.min.js"></script>
+    <script src="/static/datatables-1.13.4.min.js"></script>
 	<script>
     $(document).ready(function () {
 	  $('#transactions-section').show();
 	  $('#tableprogress').hide();
+	  let table = new DataTable('#payeetranstable');
 
     // Update the toggle button based on current color scheme
     function updateDarkToggleButton() {
@@ -88,7 +91,7 @@
 	<div class="tab-content">
 		{{range $accIdx, $accName := .AccountNames}}
 		<div class="tab-pane{{if eq 0 $accIdx}} active{{end}}" id="acctab{{$accIdx}}" role="tabpanel" aria-labelledby="tab{{$accIdx}}">
-			<table class="table table-bordered table-hover paginated-table">
+			<table id="payeetranstable" class="table table-bordered table-hover paginated-table">
 				<thead>
 					<tr>
 						<th>Date</th>
