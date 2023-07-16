@@ -17,8 +17,8 @@ func NewLedgerReader(filename string) (io.Reader, error) {
 	if ierr != nil {
 		return &buf, ierr
 	}
-	io.Copy(&buf, ifile)
+	_, cerr := io.Copy(&buf, ifile)
 	ifile.Close()
 
-	return &buf, nil
+	return &buf, cerr
 }

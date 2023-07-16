@@ -170,7 +170,7 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 	return false
 }
 
-func (lp *parser) parseAccount(accName string) (accountName string, err error) {
+func (lp *parser) parseAccount(accName string) (accountName string) {
 	accountName = accName
 
 	var line string

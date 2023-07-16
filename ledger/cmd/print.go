@@ -250,7 +250,7 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 					outBalanceString,
 				}
 				if err := csvWriter.Write(record); err != nil {
-					fmt.Fprintf(os.Stderr, "error writing record to CSV:", err)
+					fmt.Fprintf(os.Stderr, "error writing record to CSV: %s", err)
 					return
 				}
 			}
@@ -260,7 +260,7 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 	// Write any buffered data to the underlying writer (standard output).
 	csvWriter.Flush()
 	if err := csvWriter.Error(); err != nil {
-		fmt.Fprintf(os.Stderr, "error flushing CSV buffer:", err)
+		fmt.Fprintf(os.Stderr, "error flushing CSV buffer: %s", err)
 		return
 	}
 }
