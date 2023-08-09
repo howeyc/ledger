@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -109,6 +110,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 	accWidth := columns - 11
 	formatString := fmt.Sprintf("%%-%[1]d.%[1]ds %%10.10s\n", accWidth)
 
+	var buf bytes.Buffer
 	overallBalance := decimal.Zero
 	for _, account := range accountList {
 		accDepth := len(strings.Split(account.Name, ":"))
@@ -117,17 +119,13 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
 			outBalanceString := account.Balance.StringFixedBank()
-			fmt.Printf(formatString, account.Name, outBalanceString)
+			fmt.Fprintf(&buf, formatString, account.Name, outBalanceString)
 		}
 	}
-	fmt.Println(strings.Repeat("-", columns))
+	fmt.Fprintln(&buf, strings.Repeat("-", columns))
 	outBalanceString := overallBalance.StringFixedBank()
-	fmt.Printf(formatString, "", outBalanceString)
-}
-
-// PrintTransaction prints a transaction formatted to fit in specified column width.
-func PrintTransaction(trans *ledger.Transaction, columns int) {
-	WriteTransaction(os.Stdout, trans, columns)
+	fmt.Fprintf(&buf, formatString, "", outBalanceString)
+	io.Copy(os.Stdout, &buf)
 }
 
 // WriteTransaction writes a transaction formatted to fit in specified column width.
@@ -174,6 +172,7 @@ func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, column
 		})
 	}
 
+	var buf bytes.Buffer
 	for _, trans := range generalLedger {
 		inFilter := len(filterArr) == 0
 		for _, accChange := range trans.AccountChanges {
@@ -184,9 +183,10 @@ func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, column
 			}
 		}
 		if inFilter {
-			PrintTransaction(trans, columns)
+			WriteTransaction(&buf, trans, columns)
 		}
 	}
+	io.Copy(os.Stdout, &buf)
 }
 
 // PrintRegister prints each transaction that matches the given filters.
@@ -203,6 +203,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	col2width := remainingWidth - col1width
 	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", col1width, col2width)
 
+	var buf bytes.Buffer
 	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
@@ -216,7 +217,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				runningBalance = runningBalance.Add(accChange.Balance)
 				outBalanceString := accChange.Balance.StringFixedBank()
 				outRunningBalanceString := runningBalance.StringFixedBank()
-				fmt.Printf(formatString,
+				fmt.Fprintf(&buf, formatString,
 					trans.Date.Format(transactionDateFormat),
 					trans.Payee,
 					accChange.Name,
@@ -225,6 +226,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 			}
 		}
 	}
+	io.Copy(os.Stdout, &buf)
 }
 
 // PrintCSV prints each transaction that matches the given filters in CSV format

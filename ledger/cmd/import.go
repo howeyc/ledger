@@ -177,7 +177,7 @@ var importCmd = &cobra.Command{
 				if commentColumn >= 0 && record[commentColumn] != "" {
 					trans.Comments = []string{";" + record[commentColumn]}
 				}
-				PrintTransaction(trans, 80)
+				WriteTransaction(os.Stdout, trans, 80)
 			}
 		}
 
