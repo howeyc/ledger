@@ -239,10 +239,12 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		}
 
 		// Check for expr
-		trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
-			f, _ := compute.Evaluate(s)
-			return fmt.Sprintf("%f", f)
-		})
+		if calcExpr.MatchString(trimmedLine) {
+			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
+				f, _ := compute.Evaluate(s)
+				return fmt.Sprintf("%f", f)
+			})
+		}
 
 		var accChange Account
 		accChange.Name = trimmedLine
