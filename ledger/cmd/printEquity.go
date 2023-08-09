@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"log"
-	"sort"
+	"os"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/howeyc/ledger"
@@ -47,11 +49,11 @@ var equityCmd = &cobra.Command{
 			}
 		}
 
-		sort.Slice(trans.AccountChanges, func(i, j int) bool {
-			return trans.AccountChanges[i].Name < trans.AccountChanges[j].Name
+		slices.SortFunc(trans.AccountChanges, func(a, b ledger.Account) int {
+			return strings.Compare(a.Name, b.Name)
 		})
 
-		PrintTransaction(&trans, 80)
+		WriteTransaction(os.Stdout, &trans, 80)
 	},
 }
 

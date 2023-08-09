@@ -1,7 +1,7 @@
 package ledger
 
 import (
-	"sort"
+	"slices"
 	"strings"
 
 	"github.com/howeyc/ledger/decimal"
@@ -50,8 +50,8 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 		count++
 	}
 
-	sort.Slice(accList, func(i, j int) bool {
-		return accList[i].Name < accList[j].Name
+	slices.SortFunc(accList, func(a, b *Account) int {
+		return strings.Compare(a.Name, b.Name)
 	})
 	return accList
 }

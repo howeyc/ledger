@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -140,8 +141,8 @@ func mergeAccounts(input *ledger.Transaction) {
 	}
 
 	// Map is random order, order by name for consistency (helps with tests)
-	sort.Slice(input.AccountChanges, func(i, j int) bool {
-		return input.AccountChanges[i].Name < input.AccountChanges[j].Name
+	slices.SortFunc(input.AccountChanges, func(a, b ledger.Account) int {
+		return strings.Compare(a.Name, b.Name)
 	})
 }
 
@@ -245,7 +246,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			}
 		}
 
-		sort.Slice(values, func(i, j int) bool { return values[i].Balance.Cmp(values[j].Balance) > 0 })
+		slices.SortFunc(values, func(a, b lbAccount) int { return a.Balance.Cmp(b.Balance) })
 
 		maxIdx := 0
 		for idx := range values {

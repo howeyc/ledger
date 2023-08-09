@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"net/http"
-	"sort"
+	"slices"
+	"strings"
 
 	"github.com/howeyc/ledger"
 	"github.com/julienschmidt/httprouter"
@@ -148,11 +149,12 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 		pData.Stocks = append(pData.Stocks, sectionInfo)
 	}
 
-	sort.Slice(pData.Stocks, func(i, j int) bool {
-		return pData.Stocks[i].Ticker < pData.Stocks[j].Ticker
-	})
-	sort.SliceStable(pData.Stocks, func(i, j int) bool {
-		return pData.Stocks[i].Section < pData.Stocks[j].Section
+	slices.SortFunc(pData.Stocks, func(a, b stockInfo) int {
+		if diff := strings.Compare(a.Section, b.Section); diff == 0 {
+			return strings.Compare(a.Ticker, b.Ticker)
+		} else {
+			return diff
+		}
 	})
 
 	err = t.Execute(w, pData)

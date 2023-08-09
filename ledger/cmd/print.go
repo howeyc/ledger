@@ -7,7 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
-	"sort"
+	"slices"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -54,8 +54,8 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return nil, parseError
 	}
 
-	sort.SliceStable(generalLedger, func(i, j int) bool {
-		return generalLedger[i].Date.Before(generalLedger[j].Date)
+	slices.SortStableFunc(generalLedger, func(a, b *ledger.Transaction) int {
+		return a.Date.Compare(b.Date)
 	})
 
 	generalLedger = ledger.TransactionsInDateRange(generalLedger, parsedStartDate, parsedEndDate)
@@ -137,8 +137,8 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 	}
 
 	// Print accounts sorted by name
-	sort.Slice(trans.AccountChanges, func(i, j int) bool {
-		return trans.AccountChanges[i].Name < trans.AccountChanges[j].Name
+	slices.SortFunc(trans.AccountChanges, func(a, b ledger.Account) int {
+		return strings.Compare(a.Name, b.Name)
 	})
 
 	fmt.Fprintf(w, "%s %s", trans.Date.Format(transactionDateFormat), trans.Payee)
@@ -169,8 +169,8 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
 	// Print transactions by date
 	if len(generalLedger) > 1 {
-		sort.SliceStable(generalLedger, func(i, j int) bool {
-			return generalLedger[i].Date.Before(generalLedger[j].Date)
+		slices.SortStableFunc(generalLedger, func(a, b *ledger.Transaction) int {
+			return a.Date.Compare(b.Date)
 		})
 	}
 
