@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -79,9 +78,6 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 	}()
 	return c, e
 }
-
-// Calculation expressions are enclosed in parantheses
-var calcExpr = regexp.MustCompile(`(?s) \((.*)\)`)
 
 type parser struct {
 	scanner    *bufio.Scanner
@@ -238,14 +234,6 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 			break
 		}
 
-		// Check for expr
-		if calcExpr.MatchString(trimmedLine) {
-			trimmedLine = calcExpr.ReplaceAllStringFunc(trimmedLine, func(s string) string {
-				f, _ := compute.Evaluate(s)
-				return fmt.Sprintf("%f", f)
-			})
-		}
-
 		var accChange Account
 		accChange.Name = trimmedLine
 		accChange.Comment = currentComment
@@ -255,6 +243,12 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 			if decbal, derr := decimal.NewFromString(amt); derr == nil {
 				accChange.Name = acc
 				accChange.Balance = decbal
+			} else if i := strings.Index(trimmedLine, "("); i >= 0 {
+				acc := strings.TrimSpace(trimmedLine[:i])
+				amt := trimmedLine[i+1 : len(trimmedLine)-1]
+				f, _ := compute.Evaluate(amt)
+				accChange.Name = acc
+				accChange.Balance = decimal.NewFromFloat(f)
 			}
 		}
 		trans.AccountChanges = append(trans.AccountChanges, accChange)

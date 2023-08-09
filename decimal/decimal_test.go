@@ -320,6 +320,11 @@ var testParseCases = []testCase{
 		`strconv.ParseInt: parsing "1QZ": invalid syntax`,
 		"1QZ.56",
 	},
+	{
+		"error-expr-1",
+		`strconv.ParseInt: parsing "(123 * 6)": invalid syntax`,
+		"(123 * 6)",
+	},
 }
 
 func TestStringParse(t *testing.T) {
