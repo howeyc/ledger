@@ -25,7 +25,7 @@ func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) 
 	}
 	defer ifile.Close()
 	var mu sync.Mutex
-	parseLedger(filename, ifile, func(t *Transaction, e error) (stop bool) {
+	parseLedger(filename, ifile, func(t []*Transaction, e error) (stop bool) {
 		if e != nil {
 			err = e
 			stop = true
@@ -33,7 +33,7 @@ func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) 
 		}
 
 		mu.Lock()
-		generalLedger = append(generalLedger, t)
+		generalLedger = append(generalLedger, t...)
 		mu.Unlock()
 		return
 	})
@@ -43,14 +43,14 @@ func ParseLedgerFile(filename string) (generalLedger []*Transaction, err error) 
 
 // ParseLedger parses a ledger file and returns a list of Transactions.
 func ParseLedger(ledgerReader io.Reader) (generalLedger []*Transaction, err error) {
-	parseLedger("", ledgerReader, func(t *Transaction, e error) (stop bool) {
+	parseLedger("", ledgerReader, func(t []*Transaction, e error) (stop bool) {
 		if e != nil {
 			err = e
 			stop = true
 			return
 		}
 
-		generalLedger = append(generalLedger, t)
+		generalLedger = append(generalLedger, t...)
 		return
 	})
 
@@ -63,11 +63,13 @@ func ParseLedgerAsync(ledgerReader io.Reader) (c chan *Transaction, e chan error
 	e = make(chan error)
 
 	go func() {
-		parseLedger("", ledgerReader, func(t *Transaction, err error) (stop bool) {
+		parseLedger("", ledgerReader, func(tlist []*Transaction, err error) (stop bool) {
 			if err != nil {
 				e <- err
 			} else {
-				c <- t
+				for _, t := range tlist {
+					c <- t
+				}
 			}
 			return
 		})
@@ -87,10 +89,12 @@ type parser struct {
 	dateLayout string
 }
 
-func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Transaction, err error) (stop bool)) (stop bool) {
+func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Transaction, err error) (stop bool)) (stop bool) {
 	var lp parser
 	lp.scanner = bufio.NewScanner(ledgerReader)
 	lp.filename = filename
+
+	var tlist []*Transaction
 
 	var line string
 	for lp.scanner.Scan() {
@@ -160,9 +164,10 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t *Trans
 				}
 				continue
 			}
-			callback(trans, nil)
+			tlist = append(tlist, trans)
 		}
 	}
+	callback(tlist, nil)
 	return false
 }
 
@@ -209,7 +214,12 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 	if derr != nil {
 		return nil, derr
 	}
-	trans = &Transaction{Payee: payeeString, Date: transDate, PayeeComment: payeeComment}
+	trans = &Transaction{
+		Payee:          payeeString,
+		Date:           transDate,
+		PayeeComment:   payeeComment,
+		AccountChanges: make([]Account, 0, 2),
+	}
 
 	var line string
 	for lp.scanner.Scan() {
