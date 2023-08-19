@@ -27,6 +27,9 @@
 - [Reports](./Web_Reports.md)
 - [Stock Portfolio](./Web_Portfolio.md)
 
+# Other
+- [Performance](./Performance.md)
+
 -----
 
 [Example File](./Example.md)
