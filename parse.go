@@ -214,16 +214,10 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 	if derr != nil {
 		return nil, derr
 	}
-	trans = &Transaction{
-		Payee:          payeeString,
-		Date:           transDate,
-		PayeeComment:   payeeComment,
-		AccountChanges: make([]Account, 0, 2),
-	}
 
-	var line string
+	postings := make([]Account, 0, 2)
 	for lp.scanner.Scan() {
-		line = lp.scanner.Text()
+		line := lp.scanner.Text()
 		// remove heading and tailing space from the line
 		trimmedLine := strings.TrimSpace(line)
 		lp.lineCount++
@@ -261,9 +255,15 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 				accChange.Balance = decimal.NewFromFloat(f)
 			}
 		}
-		trans.AccountChanges = append(trans.AccountChanges, accChange)
+		postings = append(postings, accChange)
 	}
 
+	trans = &Transaction{
+		Payee:          payeeString,
+		Date:           transDate,
+		PayeeComment:   payeeComment,
+		AccountChanges: postings,
+	}
 	transErr := balanceTransaction(trans)
 	if transErr != nil {
 		err = fmt.Errorf("Unable to balance transaction: %w", transErr)
