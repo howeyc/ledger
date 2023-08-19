@@ -16,22 +16,22 @@ echo "" >> perf.md
 
 echo "### Stats" >> perf.md
 echo "" >> perf.md
-cat perf-stats.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' >> perf.md
+cat perf-stats.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' | sed -e 's/hledger-cli/hledger/g'  >> perf.md
 echo "" >> perf.md
 
 echo "### Balance" >> perf.md
 echo "" >> perf.md
-cat perf-bal.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' >> perf.md
+cat perf-bal.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' | sed -e 's/hledger-cli/hledger/g' >> perf.md
 echo "" >> perf.md
 
 echo "### Register" >> perf.md
 echo "" >> perf.md
-cat perf-reg.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' >> perf.md
+cat perf-reg.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' | sed -e 's/hledger-cli/hledger/g' >> perf.md
 echo "" >> perf.md
 
 echo "### Print" >> perf.md
 echo "" >> perf.md
-cat perf-print.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' >> perf.md
+cat perf-print.md | sed -e 's/\.\/ledger/ledger-go/g' | sed -e 's/ledger /ledger-cli /g' | sed -e 's/hledger-cli/hledger/g' >> perf.md
 echo "" >> perf.md
 
 rm perf-stats.md perf-bal.md perf-reg.md perf-print.md
