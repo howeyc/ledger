@@ -96,6 +96,36 @@ var testCases = []testCase{
 		errors.New(":5: Unable to parse transaction: Unable to balance transaction: more than one account empty"),
 	},
 	{
+		"all empty",
+		`1970/01/01 Payee
+	Expense/test
+	Wallet
+	Assets
+	Bank
+`,
+		[]*Transaction{
+			{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					{
+						Name: "Expense/test",
+					},
+					{
+						Name: "Wallet",
+					},
+					{
+						Name: "Assets",
+					},
+					{
+						Name: "Bank",
+					},
+				},
+			},
+		},
+		nil,
+	},
+	{
 		"multiple empty lines",
 		`1970/01/01 Payee
 	Expense/test  (123 * 3)

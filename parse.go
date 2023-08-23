@@ -278,29 +278,34 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 // with the remaining balance.
 func balanceTransaction(input *Transaction) error {
 	balance := decimal.Zero
-	var emptyFound bool
+	var numEmpty int
 	var emptyAccIndex int
 	if len(input.AccountChanges) < 2 {
 		return fmt.Errorf("need at least two postings")
 	}
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance.IsZero() {
-			if emptyFound {
-				return fmt.Errorf("more than one account empty")
-			}
+			numEmpty++
 			emptyAccIndex = accIndex
-			emptyFound = true
 		} else {
 			balance = balance.Add(accChange.Balance)
 		}
 	}
-	if balance.Sign() != 0 {
-		if !emptyFound {
-			return fmt.Errorf("no empty account to place extra balance")
-		}
+
+	if balance.IsZero() {
+		// If everything adds up, then all is well.
+		return nil
 	}
-	if emptyFound {
+
+	switch numEmpty {
+	case 0:
+		return fmt.Errorf("no empty account to place extra balance")
+	case 1:
+		// If there is a single empty account, then it is obvious where to
+		// place the remaining balance.
 		input.AccountChanges[emptyAccIndex].Balance = balance.Neg()
+	default:
+		return fmt.Errorf("more than one account empty")
 	}
 
 	return nil
