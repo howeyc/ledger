@@ -217,9 +217,7 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 
 	postings := make([]Account, 0, 2)
 	for lp.scanner.Scan() {
-		line := lp.scanner.Text()
-		// remove heading and tailing space from the line
-		trimmedLine := strings.TrimSpace(line)
+		trimmedLine := lp.scanner.Text()
 		lp.lineCount++
 
 		var currentComment string
@@ -239,22 +237,22 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		}
 
 		var accChange Account
-		accChange.Name = trimmedLine
 		accChange.Comment = currentComment
-		if i := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); i >= 0 {
-			acc := strings.TrimSpace(trimmedLine[:i])
-			amt := trimmedLine[i+1:]
-			if decbal, derr := decimal.NewFromString(amt); derr == nil {
-				accChange.Name = acc
+		if iSpace := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); iSpace >= 0 {
+			if decbal, derr := decimal.NewFromString(trimmedLine[iSpace+1:]); derr == nil {
+				accChange.Name = strings.TrimSpace(trimmedLine[:iSpace])
 				accChange.Balance = decbal
-			} else if i := strings.Index(trimmedLine, "("); i >= 0 {
-				acc := strings.TrimSpace(trimmedLine[:i])
-				amt := trimmedLine[i+1 : len(trimmedLine)-1]
-				f, _ := compute.Evaluate(amt)
-				accChange.Name = acc
+			} else if iParen := strings.Index(trimmedLine, "("); iParen >= 0 {
+				accChange.Name = strings.TrimSpace(trimmedLine[:iParen])
+				f, _ := compute.Evaluate(trimmedLine[iParen+1 : len(trimmedLine)-1])
 				accChange.Balance = decimal.NewFromFloat(f)
+			} else {
+				accChange.Name = strings.TrimSpace(trimmedLine)
 			}
+		} else {
+			accChange.Name = strings.TrimSpace(trimmedLine)
 		}
+
 		postings = append(postings, accChange)
 	}
 
@@ -263,14 +261,14 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		Date:           transDate,
 		PayeeComment:   payeeComment,
 		AccountChanges: postings,
+		Comments:       lp.comments,
 	}
-	transErr := balanceTransaction(trans)
-	if transErr != nil {
+	lp.comments = nil
+
+	if transErr := balanceTransaction(trans); transErr != nil {
 		err = fmt.Errorf("Unable to balance transaction: %w", transErr)
 		return
 	}
-	trans.Comments = lp.comments
-	lp.comments = nil
 	return
 }
 
