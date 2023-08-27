@@ -353,6 +353,35 @@ var testCases = []testCase{
 		nil,
 	},
 	{
+		"empty account comment",
+		`; comment
+	1970/01/01 Payee
+	Expense/test   58
+	Assets                   ; comment in trans
+`,
+		[]*Transaction{
+			{
+				Payee: "Payee",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					{
+						Name:    "Expense/test",
+						Balance: decimal.NewFromFloat(58),
+					},
+					{
+						Name:    "Assets",
+						Balance: decimal.NewFromFloat(-58),
+						Comment: "; comment in trans",
+					},
+				},
+				Comments: []string{
+					"; comment",
+				},
+			},
+		},
+		nil,
+	},
+	{
 		"header comment",
 		`; comment
 	1970/01/01 Payee
