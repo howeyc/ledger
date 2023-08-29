@@ -15,6 +15,7 @@ import (
 
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
+	date "github.com/joyt/godate"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +35,8 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		columnWidth = 132
 	}
 
-	parsedStartDate, tstartErr := time.Parse(transactionDateFormat, startString)
-	parsedEndDate, tendErr := time.Parse(transactionDateFormat, endString)
+	parsedStartDate, tstartErr := date.Parse(startString)
+	parsedEndDate, tendErr := date.Parse(endString)
 
 	if tstartErr != nil || tendErr != nil {
 		return nil, errors.New("unable to parse start or end date string argument")
