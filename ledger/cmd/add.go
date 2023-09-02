@@ -135,10 +135,6 @@ var addCmd = &cobra.Command{
 			mw = io.MultiWriter(f, os.Stdout)
 		}
 
-		if columnWide {
-			columnWidth = 132
-		}
-
 		for _, t := range trans {
 			WriteTransaction(mw, t, columnWidth)
 		}
@@ -150,5 +146,4 @@ func init() {
 
 	addCmd.Flags().BoolVarP(&addDryRun, "dry-run", "n", false, "Do not add to ledger file. Display only.")
 	addCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	addCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
 }

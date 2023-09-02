@@ -17,6 +17,7 @@ import (
 	"github.com/howeyc/ledger/decimal"
 	date "github.com/joyt/godate"
 	"github.com/spf13/cobra"
+	"golang.org/x/term"
 )
 
 const (
@@ -33,6 +34,13 @@ var payeeFilter string
 func cliTransactions() ([]*ledger.Transaction, error) {
 	if columnWidth == 80 && columnWide {
 		columnWidth = 132
+		fd := int(os.Stdout.Fd())
+		if term.IsTerminal(fd) {
+			tw, _, err := term.GetSize(fd)
+			if err == nil {
+				columnWidth = tw
+			}
+		}
 	}
 
 	parsedStartDate, tstartErr := date.Parse(startString)
@@ -97,7 +105,7 @@ func init() {
 	printCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	printCmd.Flags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
 	printCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	printCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
+	printCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (use terminal width).")
 }
 
 // PrintBalances prints out account balances formatted to a window set to a width of columns.

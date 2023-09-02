@@ -17,6 +17,7 @@ require (
 	github.com/pelletier/go-toml v1.9.4
 	github.com/shopspring/decimal v1.3.1
 	github.com/spf13/cobra v1.4.0
+	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
 	golang.org/x/time v0.3.0
 )
 
@@ -38,5 +39,4 @@ require (
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
-	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 )

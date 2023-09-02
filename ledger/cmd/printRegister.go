@@ -51,7 +51,7 @@ func init() {
 	registerCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	registerCmd.Flags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
 	registerCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	registerCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
+	registerCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (use terminal width).")
 
 	registerCmd.Flags().StringVar(&period, "period", "", "Split output into periods (Monthly,Quarterly,SemiYearly,Yearly).")
 }

@@ -53,7 +53,7 @@ func init() {
 	balanceCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	balanceCmd.Flags().StringVar(&payeeFilter, "payee", "", "Filter output to payees that contain this string.")
 	balanceCmd.Flags().IntVar(&columnWidth, "columns", 80, "Set a column width for output.")
-	balanceCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (same as --columns=132).")
+	balanceCmd.Flags().BoolVar(&columnWide, "wide", false, "Wide output (use terminal width).")
 
 	balanceCmd.Flags().StringVar(&period, "period", "", "Split output into periods (Monthly,Quarterly,SemiYearly,Yearly).")
 	balanceCmd.Flags().BoolVar(&showEmptyAccounts, "empty", false, "Show empty (zero balance) accounts.")
