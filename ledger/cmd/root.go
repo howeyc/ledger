@@ -63,7 +63,7 @@ func init() {
 	ledgerFilePath = os.Getenv("LEDGER_FILE")
 
 	rootCmd.PersistentFlags().StringVarP(&ledgerFilePath, "file", "f", ledgerFilePath, "ledger file (default is $LEDGER_FILE)")
-	rootCmd.PersistentFlags().StringVarP(&cpuprofile, "profile", "", "", "write profile to `file`")
+	rootCmd.PersistentFlags().StringVarP(&cpuprofile, "prof", "", "", "write cpu profile to `file`")
 }
 
 // initConfig reads in config file and ENV variables if set.

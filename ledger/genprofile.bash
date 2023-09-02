@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-./ledger --profile "bal.pprof" bal > /dev/null
-./ledger --profile "reg.pprof" reg > /dev/null
-./ledger --profile "print.pprof" print > /dev/null
-./ledger --profile "stats.pprof" stats > /dev/null
+./ledger --prof "bal.pprof" bal > /dev/null
+./ledger --prof "reg.pprof" reg > /dev/null
+./ledger --prof "print.pprof" print > /dev/null
+./ledger --prof "stats.pprof" stats > /dev/null
 
 rm default.pgo
 
