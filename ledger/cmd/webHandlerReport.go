@@ -246,7 +246,8 @@ func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Par
 			}
 		}
 
-		slices.SortFunc(values, func(a, b lbAccount) int { return a.Balance.Cmp(b.Balance) })
+		// descending (-1 to reverse order)
+		slices.SortFunc(values, func(a, b lbAccount) int { return -1 * a.Balance.Cmp(b.Balance) })
 
 		maxIdx := 0
 		for idx := range values {
