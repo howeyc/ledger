@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		
+
     <title>Ledger - Report - {{.ReportName}}</title>
 
 	{{template "common-css"}}
@@ -15,7 +15,7 @@
   <body>
 
       {{template "nav" .}}
-	
+
    <div class="container">
       <div class="content-header">
         <div class="row">
@@ -41,7 +41,7 @@
       <div class="row">
       <div class="col-xs-12">
 
-		  {{template "payee-transaction-table" .}}
+{{template "payee-transaction-table" .}}
 
       </div>
       </div>
@@ -53,7 +53,7 @@
    {{template "common-scripts"}}
     <script>
     $(document).ready(function() {
-	var ctx = document.getElementById("chart-area").getContext("2d");
+    var ctx = document.getElementById("chart-area").getContext("2d");
     {{if eq .ChartType "Radar"}}
     var data = {
         labels: [
@@ -78,7 +78,7 @@
         backgroundColor: "rgba({{.RGBColor}},0.2)",
         color: "rgba({{.RGBColor}},1)",
         borderColor: "rgba({{.RGBColor}},1)",
-		fill: true,
+        fill: true,
         data: [
         {{range .Values}}
         {{.StringFixedBank}},
@@ -88,8 +88,8 @@
     {{end}}
         ]
     };
-		{{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx, {type: 'line', data: data, options: {interaction: {mode: 'index'}}});{{end}}
-		{{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx, {type: 'radar', data: data});{{end}}
+        {{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx, {type: 'line', data: data, options: {interaction: {mode: 'index'}}});{{end}}
+        {{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx, {type: 'radar', data: data});{{end}}
     {{end}}
     {{if eq .ChartType "Bar" "StackedBar"}}
         datasets: [
@@ -108,8 +108,8 @@
     {{end}}
         ]
     };
-    {{if eq .ChartType "Bar"}} var myPieChart = new Chart(ctx, {type: 'bar', data: data});{{end}}
-	{{if eq .ChartType "StackedBar"}} var myPieChart = new Chart(ctx,{type: 'bar', data: data, options: {scales: {x: {stacked: true}, y: {stacked: true}}}});{{end}}
+    {{if eq .ChartType "Bar"}} var myPieChart = new Chart(ctx, {type: 'bar', data: data, options: {interaction: {mode: 'index'}}});{{end}}
+    {{if eq .ChartType "StackedBar"}} var myPieChart = new Chart(ctx,{type: 'bar', data: data, options: {interaction: {mode: 'index'}, scales: {x: {stacked: true}, y: {stacked: true}}}});{{end}}
     {{end}}
     });
     </script>

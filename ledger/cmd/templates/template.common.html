@@ -1,15 +1,13 @@
 {{define "common-css"}}
-    <meta name="color-scheme" content="light dark">
-    <link id="css-light" href="/static/bootstrap-5.0.0.min.css" rel="stylesheet">
-    <link id="css-dark" href="/static/bootstrap-nightfall.min.css" rel="stylesheet" media="(prefers-color-scheme: dark)">
+    <link href="/static/bootstrap-5.3.2.min.css" rel="stylesheet">
     <link href="/static/dropdown.css" rel="stylesheet">
     <link href="/static/datatables-1.13.4.min.css" rel="stylesheet">
     <link href="/static/daterangepicker.css" rel="stylesheet">
 {{end}}
 {{define "common-scripts"}}
-    <script src="/static/jquery-3.6.0.min.js"></script>
-    <script src="/static/bootstrap-5.0.0.bundle.min.js"></script>
-    <script src="/static/chart-3.1.1.min.js"></script>
+    <script src="/static/jquery-3.7.1.min.js"></script>
+    <script src="/static/bootstrap-5.3.2.bundle.min.js"></script>
+    <script src="/static/chart-4.4.0.umd.js"></script>
     <script src="/static/datatables-1.13.4.min.js"></script>
     <script src="/static/moment.min.js"></script>
     <script src="/static/daterangepicker.js"></script>
@@ -18,6 +16,7 @@
 	  $('#transactions-section').show();
 	  $('#tableprogress').hide();
 	  var tbl = document.getElementById('payeetranstable0');
+		if (tbl) {
 	  var min = tbl.rows[1].cells[0].innerText;
 	  var max = tbl.rows[tbl.rows.length-1].cells[0].innerText;
 	  let table = new DataTable('#payeetranstable0', {
@@ -52,16 +51,24 @@
         return false;
 		}
 	  );
+		}
 
     // Update the toggle button based on current color scheme
     function updateDarkToggleButton() {
-      if (typeof $("body").attr("data-color-scheme") === 'undefined') {
+      if (typeof $("body").attr("data-bs-theme") === 'undefined') {
         $dark = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
         $("#css-toggle-btn").prop( "checked", $dark );
+		if ($dark) {
+			$mode = "dark";
+		} else {
+			$mode = "light";
+		}
+        toggle_color_scheme_css($mode);
       } else {
-        $mode = $("body").attr("data-color-scheme");
+        $mode = $("body").attr("data-bs-theme");
         $dark = ($mode == 'dark') ? true : false;
         $("#css-toggle-btn").prop( "checked", $dark );
+        toggle_color_scheme_css($mode);
       }
     }
 
@@ -69,43 +76,39 @@
     if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addListener( updateDarkToggleButton );
 
     // function to toggle the css
-    function toggle_color_scheme_css($id, $mode) {
+    function toggle_color_scheme_css($mode) {
       $dark = ($mode == 'dark') ? true : false;
-      $("#"+$id+"-dark").attr( "disabled", !$dark );
-      $("body").attr( "data-color-scheme", ($dark ? "dark" : "light" ) );
+      $("body").attr( "data-bs-theme", ($dark ? "dark" : "light" ) );
       localStorage.colorMode = $mode;
     }
 
     // function to initialise the css
-    function init_color_scheme_css($id, $mode) {
+    function init_color_scheme_css($mode) {
       $dark = ($mode == 'dark') ? true : false;
-      toggle_color_scheme_css($id, $mode);
-      setTimeout(function(){  // let the browser catch up
-        $("#"+$id+"-dark").removeAttr("media");
-      }, 100);
+      toggle_color_scheme_css($mode);
     }
 
     // toggle button click code
     $("#css-toggle-btn").bind("click", function() {
       // get current mode
       // don't use `.data("color-scheme")`, it doesn't refresh
-      $mode = $("body").attr("data-color-scheme");
+      $mode = $("body").attr("data-bs-theme");
       // test if this is a first time click event, if so initialise the code
       if (typeof $mode === 'undefined') {
         // not defined yet - set pref. & ask the browser if alt. is active
         $mode = 'light';
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) $mode = 'dark';
-        init_color_scheme_css("css", $mode);
+        init_color_scheme_css($mode);
       }
       // by here we have the current mode, so swap it
       $mode = ($mode == 'dark') ? 'light' : 'dark';
-      toggle_color_scheme_css("css", $mode);
+      toggle_color_scheme_css($mode);
     });
 
     // Check localStorage for initial value
-    $("body").attr("data-color-scheme", localStorage.colorMode);
+    $("body").attr("data-bs-theme", localStorage.colorMode);
     updateDarkToggleButton();
-    init_color_scheme_css("css", localStorage.colorMode);
+    init_color_scheme_css(localStorage.colorMode);
 
     });
 	</script>
