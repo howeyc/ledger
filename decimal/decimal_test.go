@@ -321,6 +321,16 @@ var testParseCases = []testCase{
 		"5555555555555555555555555550000000000000000",
 	},
 	{
+		"error-6",
+		"atoi failed",
+		"-",
+	},
+	{
+		"error-7",
+		"atoi failed",
+		"",
+	},
+	{
 		"error-badint-1",
 		`atoi failed`,
 		"1QZ.56",
