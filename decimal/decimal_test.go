@@ -316,13 +316,18 @@ var testParseCases = []testCase{
 		"0.e0",
 	},
 	{
+		"error-5",
+		"atoi failed",
+		"5555555555555555555555555550000000000000000",
+	},
+	{
 		"error-badint-1",
-		`strconv.ParseInt: parsing "1QZ": invalid syntax`,
+		`atoi failed`,
 		"1QZ.56",
 	},
 	{
 		"error-expr-1",
-		`strconv.ParseInt: parsing "(123 * 6)": invalid syntax`,
+		`atoi failed`,
 		"(123 * 6)",
 	},
 }
@@ -369,7 +374,7 @@ func FuzzStringParse(f *testing.F) {
 }
 
 func BenchmarkNewFromString(b *testing.B) {
-	numbers := []string{"10.0", "245.6", "3", "2.456"}
+	numbers := []string{"10.0", "245.6", "354", "2.456"}
 	for n := 0; n < b.N; n++ {
 		for _, numStr := range numbers {
 			NewFromString(numStr)

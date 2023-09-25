@@ -15,21 +15,27 @@ package decimal
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 )
 
 // Decimal represents a fixed-point decimal.
 type Decimal int64
 
-// scaleFactor used for math operations, 3 digit precision
-const scaleFactor Decimal = 1000
+// scaleFactor used for math operations,
+const scaleFactor = 1000
+
+// precision of 3 digits
+const precision = 3
 
 // Zero constant, to make initializations easier.
 const Zero = Decimal(0)
 
 // One constant, to make initializations easier.
-const One = scaleFactor
+const One = Decimal(scaleFactor)
+
+// Parse max/min for whole number part
+const parseMax = (1<<63 - 1) / scaleFactor
+const parseMin = (-1 << 63) / scaleFactor
 
 // NewFromFloat converts a float64 to Decimal. Only 3 digits of precision after
 // the decimal point are preserved.
@@ -43,27 +49,51 @@ func NewFromInt(i int64) Decimal {
 	return Decimal(i) * scaleFactor
 }
 
+// atoi64 is equivalent to strconv.Atoi
+func atoi64(s string) (bool, int64, error) {
+	sLen := len(s)
+	if sLen < 1 || sLen > 18 {
+		return false, 0, errors.New("atoi failed")
+	}
+	neg := false
+	if s[0] == '-' {
+		neg = true
+		s = s[1:]
+		if len(s) < 1 {
+			return false, 0, errors.New("atoi failed")
+		}
+	}
+
+	var n int64
+	for _, ch := range []byte(s) {
+		ch -= '0'
+		if ch > 9 {
+			return false, 0, errors.New("atoi failed")
+		}
+		n = n*10 + int64(ch)
+	}
+	if neg {
+		n = -n
+	}
+	return neg, n, nil
+}
+
 // NewFromString returns a Decimal from a string representation. Throws an
 // error if integer parsing fails.
 func NewFromString(s string) (Decimal, error) {
-	neg := false
 	if whole, frac, split := strings.Cut(s, "."); split {
-		if strings.HasPrefix(whole, "-") {
-			neg = true
-		}
-		w, err := strconv.ParseInt(whole, 10, 64)
+		neg, w, err := atoi64(whole)
 		if err != nil {
 			return Zero, err
 		}
-		b := w
-		w = w * int64(scaleFactor)
 
 		// overflow
-		if w/int64(scaleFactor) != b {
+		if w > parseMax || w < parseMin {
 			return Zero, errors.New("number too big")
 		}
+		w = w * int64(scaleFactor)
 
-		// Parse up to 3 digits and scale up
+		// Parse up to *precision* digits and scale up
 		var f int64
 		var seen int
 		for _, b := range frac {
@@ -73,11 +103,11 @@ func NewFromString(s string) (Decimal, error) {
 			}
 			f += int64(b - '0')
 			seen++
-			if seen == 3 {
+			if seen == precision {
 				break
 			}
 		}
-		for seen < 3 {
+		for seen < precision {
 			f *= 10
 			seen++
 		}
@@ -87,13 +117,12 @@ func NewFromString(s string) (Decimal, error) {
 		}
 		return Decimal(w + f), err
 	} else {
-		i, err := strconv.ParseInt(s, 10, 64)
-		b := i
-		d := NewFromInt(i)
-		if int64(d/scaleFactor) != b {
+		_, i, err := atoi64(s)
+		if i > parseMax || i < parseMin {
 			return Zero, errors.New("number too big")
 		}
-		return d, err
+		i = i * int64(scaleFactor)
+		return Decimal(i), err
 	}
 }
 
