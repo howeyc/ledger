@@ -13,6 +13,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/fatih/color"
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
 	date "github.com/joyt/godate"
@@ -117,7 +118,8 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		fmt.Fprintf(os.Stderr, "warning: `columns` too small, setting to %d\n", columns)
 	}
 	accWidth := columns - 11
-	formatString := fmt.Sprintf("%%-%[1]d.%[1]ds %%10.10s\n", accWidth)
+	formatAcc := fmt.Sprintf("%%-%[1]d.%[1]ds", accWidth)
+	formatAmt := "%10.10s"
 
 	var buf bytes.Buffer
 	overallBalance := decimal.Zero
@@ -128,12 +130,24 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
 			outBalanceString := account.Balance.StringFixedBank()
-			fmt.Fprintf(&buf, formatString, account.Name, outBalanceString)
+			amtColor := color.New(color.Reset)
+			if account.Balance.Sign() < 0 {
+				amtColor = color.New(color.FgRed)
+			}
+			bline := color.New(color.FgBlue).Sprintf(formatAcc, account.Name) +
+				" " + amtColor.Sprintf(formatAmt, outBalanceString)
+			fmt.Fprintln(&buf, bline)
 		}
 	}
 	fmt.Fprintln(&buf, strings.Repeat("-", columns))
 	outBalanceString := overallBalance.StringFixedBank()
-	fmt.Fprintf(&buf, formatString, "", outBalanceString)
+	amtColor := color.New(color.Reset)
+	if overallBalance.Sign() < 0 {
+		amtColor = color.New(color.FgRed)
+	}
+	bline := color.New(color.FgBlue).Sprintf(formatAcc, "") +
+		" " + amtColor.Sprintf(formatAmt, outBalanceString)
+	fmt.Fprintln(&buf, bline)
 	io.Copy(os.Stdout, &buf)
 }
 
@@ -210,7 +224,10 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	remainingWidth := columns - (10 * 3) - (4 * 1)
 	col1width := remainingWidth / 3
 	col2width := remainingWidth - col1width
-	formatString := fmt.Sprintf("%%-10.10s %%-%[1]d.%[1]ds %%-%[2]d.%[2]ds %%10.10s %%10.10s\n", col1width, col2width)
+	formatDate := "%-10.10s"
+	formatAmount := "%10.10s"
+	formatPayee := fmt.Sprintf("%%-%[1]d.%[1]ds", col1width)
+	formatAccount := fmt.Sprintf("%%-%[1]d.%[1]ds", col2width)
 
 	var buf bytes.Buffer
 	runningBalance := decimal.Zero
@@ -226,12 +243,22 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				runningBalance = runningBalance.Add(accChange.Balance)
 				outBalanceString := accChange.Balance.StringFixedBank()
 				outRunningBalanceString := runningBalance.StringFixedBank()
-				fmt.Fprintf(&buf, formatString,
-					trans.Date.Format(transactionDateFormat),
-					trans.Payee,
-					accChange.Name,
-					outBalanceString,
-					outRunningBalanceString)
+
+				balamtColor := color.New(color.Reset)
+				if accChange.Balance.Sign() < 0 {
+					balamtColor = color.New(color.FgRed)
+				}
+				runamtColor := color.New(color.Reset)
+				if runningBalance.Sign() < 0 {
+					runamtColor = color.New(color.FgRed)
+				}
+
+				bline := fmt.Sprintf(formatDate, trans.Date.Format(transactionDateFormat)) + " " +
+					color.New(color.Bold).Sprintf(formatPayee, trans.Payee) + " " +
+					color.New(color.FgBlue).Sprintf(formatAccount, accChange.Name) +
+					" " + balamtColor.Sprintf(formatAmount, outBalanceString) +
+					" " + runamtColor.Sprintf(formatAmount, outRunningBalanceString)
+				fmt.Fprintln(&buf, bline)
 			}
 		}
 	}
