@@ -14,7 +14,7 @@ package decimal
 
 import (
 	"errors"
-	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -200,6 +200,39 @@ func (d Decimal) Cmp(d1 Decimal) int {
 	return 0
 }
 
+// fmtFrac formats the fraction of v/10**prec (e.g., ".12345") into the
+// tail of buf. It returns the index where the
+// output bytes begin and the value v/10**prec.
+func fmtFrac(buf []byte, v uint64, prec int) (nw int, nv uint64) {
+	w := len(buf)
+	for i := 0; i < prec; i++ {
+		digit := v % 10
+		w--
+		buf[w] = byte(digit) + '0'
+		v /= 10
+	}
+	w--
+	buf[w] = '.'
+	return w, v
+}
+
+// fmtInt formats v into the tail of buf.
+// It returns the index where the output begins.
+func fmtInt(buf []byte, v uint64) int {
+	w := len(buf)
+	if v == 0 {
+		w--
+		buf[w] = '0'
+	} else {
+		for v > 0 {
+			w--
+			buf[w] = byte(v%10) + '0'
+			v /= 10
+		}
+	}
+	return w
+}
+
 // StringFixedBank returns a banker rounded fixed-point string with 2 digits
 // after the decimal point.
 //
@@ -208,32 +241,32 @@ func (d Decimal) Cmp(d1 Decimal) int {
 // NewFromFloat(5.455).StringFixedBank() == "5.46"
 // NewFromFloat(5.445).StringFixedBank() == "5.44"
 func (d Decimal) StringFixedBank() string {
-	whole := d / scaleFactor
-	frac := (d % scaleFactor) / 10
-	rem := d % 10
+	var buf [24]byte
+	w := len(buf)
 
-	sign := ""
-	if frac < 0 {
-		frac = -frac
-		whole = -whole
-		sign = "-"
-	}
-	if rem < 0 {
-		rem = -rem
+	u := uint64(d)
+	neg := d < 0
+	if neg {
+		u = -u
 	}
 
-	if rem > 5 {
-		frac++
-	} else if rem == 5 && frac%2 != 0 {
-		frac++
+	// Bank rounding
+	rem := u % 10
+	u /= 10
+	if rem > 5 || (rem == 5 && u%2 != 0) {
+		u++
 	}
 
-	if frac >= 100 {
-		whole++
-		frac -= 100
+	// fmt functions from time.Duration
+	w, u = fmtFrac(buf[:w], u, precision-1)
+	w = fmtInt(buf[:w], u)
+
+	if neg {
+		w--
+		buf[w] = '-'
 	}
 
-	return fmt.Sprintf("%s%d.%02d", sign, whole, frac)
+	return string(buf[w:])
 }
 
 // StringTruncate returns the whole-number (Int) part of d.
@@ -243,7 +276,7 @@ func (d Decimal) StringFixedBank() string {
 // NewFromFloat(5.44).StringTruncate() == "5"
 func (d Decimal) StringTruncate() string {
 	whole := d / scaleFactor
-	return fmt.Sprintf("%d", whole)
+	return strconv.FormatInt(int64(whole), 10)
 }
 
 // StringRound returns the nearest rounded whole-number (Int) part of d.
@@ -255,18 +288,18 @@ func (d Decimal) StringTruncate() string {
 // NewFromFloat(-5.5).StringRound() == "6"
 func (d Decimal) StringRound() string {
 	whole := d / scaleFactor
-	frac := (d % scaleFactor) / 100
+	frac := (d % scaleFactor)
 	neg := false
 	if frac < 0 {
 		frac = -frac
 		neg = true
 	}
-	if frac >= 5 {
+	if frac >= (5 * (scaleFactor / 10)) {
 		if neg {
 			whole--
 		} else {
 			whole++
 		}
 	}
-	return fmt.Sprintf("%d", whole)
+	return strconv.FormatInt(int64(whole), 10)
 }

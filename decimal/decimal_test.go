@@ -1,6 +1,7 @@
 package decimal
 
 import (
+	"math/rand"
 	"strings"
 	"testing"
 
@@ -388,6 +389,22 @@ func BenchmarkNewFromString(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for _, numStr := range numbers {
 			NewFromString(numStr)
+		}
+	}
+}
+
+func BenchmarkStringFixedBank(b *testing.B) {
+	var numbers [1000]Decimal
+	for i := 0; i < len(numbers); i++ {
+		numbers[i] = NewFromFloat(rand.Float64() * 100000)
+		if i%2 == 0 {
+			numbers[i] *= -1
+		}
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		for _, num := range numbers {
+			num.StringFixedBank()
 		}
 	}
 }
