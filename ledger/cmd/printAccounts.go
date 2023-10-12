@@ -60,7 +60,7 @@ func init() {
 
 	var startDate, endDate time.Time
 	startDate = time.Date(1970, 1, 1, 0, 0, 0, 0, time.Local)
-	endDate = time.Now()
+	endDate = time.Now().Add(1<<63 - 1)
 	accountsCmd.Flags().StringVarP(&startString, "begin-date", "b", startDate.Format(transactionDateFormat), "Begin date of transaction processing.")
 	accountsCmd.Flags().StringVarP(&endString, "end-date", "e", endDate.Format(transactionDateFormat), "End date of transaction processing.")
 	accountsCmd.Flags().BoolVarP(&accountLeavesOnly, "leaves-only", "l", false, "Only show most-depth accounts")
