@@ -121,6 +121,10 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 	formatAcc := fmt.Sprintf("%%-%[1]d.%[1]ds", accWidth)
 	formatAmt := "%10.10s"
 
+	colorNeg := color.New(color.FgRed)
+	colorAccount := color.New(color.FgBlue)
+	colorReset := color.New(color.Reset)
+
 	var buf bytes.Buffer
 	overallBalance := decimal.Zero
 	for _, account := range accountList {
@@ -130,24 +134,26 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
 			outBalanceString := account.Balance.StringFixedBank()
-			amtColor := color.New(color.Reset)
+			amtColor := colorReset
 			if account.Balance.Sign() < 0 {
-				amtColor = color.New(color.FgRed)
+				amtColor = colorNeg
 			}
-			bline := color.New(color.FgBlue).Sprintf(formatAcc, account.Name) +
-				" " + amtColor.Sprintf(formatAmt, outBalanceString)
-			fmt.Fprintln(&buf, bline)
+			colorAccount.Fprintf(&buf, formatAcc, account.Name)
+			fmt.Fprint(&buf, " ")
+			amtColor.Fprintf(&buf, formatAmt, outBalanceString)
+			fmt.Fprintln(&buf, "")
 		}
 	}
 	fmt.Fprintln(&buf, strings.Repeat("-", columns))
 	outBalanceString := overallBalance.StringFixedBank()
-	amtColor := color.New(color.Reset)
+	amtColor := colorReset
 	if overallBalance.Sign() < 0 {
-		amtColor = color.New(color.FgRed)
+		amtColor = colorNeg
 	}
-	bline := color.New(color.FgBlue).Sprintf(formatAcc, "") +
-		" " + amtColor.Sprintf(formatAmt, outBalanceString)
-	fmt.Fprintln(&buf, bline)
+	colorAccount.Fprintf(&buf, formatAcc, "")
+	fmt.Fprint(&buf, " ")
+	amtColor.Fprintf(&buf, formatAmt, outBalanceString)
+	fmt.Fprintln(&buf, "")
 	io.Copy(os.Stdout, &buf)
 }
 
@@ -229,6 +235,11 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	formatPayee := fmt.Sprintf("%%-%[1]d.%[1]ds", col1width)
 	formatAccount := fmt.Sprintf("%%-%[1]d.%[1]ds", col2width)
 
+	colorNeg := color.New(color.FgRed)
+	colorPayee := color.New(color.Bold)
+	colorAccount := color.New(color.FgBlue)
+	colorReset := color.New(color.Reset)
+
 	var buf bytes.Buffer
 	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
@@ -244,21 +255,25 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 				outBalanceString := accChange.Balance.StringFixedBank()
 				outRunningBalanceString := runningBalance.StringFixedBank()
 
-				balamtColor := color.New(color.Reset)
+				balamtColor := colorReset
 				if accChange.Balance.Sign() < 0 {
-					balamtColor = color.New(color.FgRed)
+					balamtColor = colorNeg
 				}
-				runamtColor := color.New(color.Reset)
+				runamtColor := colorReset
 				if runningBalance.Sign() < 0 {
-					runamtColor = color.New(color.FgRed)
+					runamtColor = colorNeg
 				}
 
-				bline := fmt.Sprintf(formatDate, trans.Date.Format(transactionDateFormat)) + " " +
-					color.New(color.Bold).Sprintf(formatPayee, trans.Payee) + " " +
-					color.New(color.FgBlue).Sprintf(formatAccount, accChange.Name) +
-					" " + balamtColor.Sprintf(formatAmount, outBalanceString) +
-					" " + runamtColor.Sprintf(formatAmount, outRunningBalanceString)
-				fmt.Fprintln(&buf, bline)
+				fmt.Fprintf(&buf, formatDate, trans.Date.Format(transactionDateFormat))
+				buf.WriteString(" ")
+				colorPayee.Fprintf(&buf, formatPayee, trans.Payee)
+				buf.WriteString(" ")
+				colorAccount.Fprintf(&buf, formatAccount, accChange.Name)
+				buf.WriteString(" ")
+				balamtColor.Fprintf(&buf, formatAmount, outBalanceString)
+				buf.WriteString(" ")
+				runamtColor.Fprintf(&buf, formatAmount, outRunningBalanceString)
+				fmt.Fprintln(&buf, "")
 			}
 		}
 	}
