@@ -10,31 +10,31 @@ Comparison between various ledger-like applications:
 
 | Command | Mean | Min | Max | Relative |
 |:---|---:|---:|---:|---:|
-| `ledger-go stats` | 13.9ms ± 800µs | 11.9ms | 16.4ms | 1.00 |
-| `ledger-cli stats` | 163ms ± 1.5ms | 161.1ms | 168.4ms | 11.65 ± 0.70 |
-| `hledger stats` | 1.3441s ± 36.5ms | 1.3152s | 1.4253s | 96.06 ± 6.26 |
+| `ledger-go stats` | 13.9ms ± 700µs | 12.2ms | 16.1ms | 1.00 |
+| `ledger-cli stats` | 166.7ms ± 1.6ms | 164ms | 172ms | 11.93 ± 0.65 |
+| `hledger stats` | 1.3901s ± 6.3ms | 1.3771s | 1.3972s | 99.42 ± 5.32 |
 
 ## Balance
 
 | Command | Mean | Min | Max | Relative |
 |:---|---:|---:|---:|---:|
-| `ledger-go bal` | 23.3ms ± 700µs | 21.2ms | 25.6ms | 1.00 |
-| `ledger-cli bal` | 151.8ms ± 7.1ms | 139.8ms | 169.9ms | 6.50 ± 0.37 |
-| `hledger bal` | 1.3373s ± 10.8ms | 1.315s | 1.3554s | 57.23 ± 1.98 |
+| `ledger-go bal` | 20.9ms ± 500µs | 19.7ms | 23.3ms | 1.00 |
+| `ledger-cli bal` | 143.6ms ± 1.9ms | 141.3ms | 150.1ms | 6.85 ± 0.22 |
+| `hledger bal` | 1.3921s ± 8.1ms | 1.3768s | 1.4074s | 66.36 ± 1.93 |
 
 ## Register
 
 | Command | Mean | Min | Max | Relative |
 |:---|---:|---:|---:|---:|
-| `ledger-go reg` | 51.5ms ± 1.1ms | 49.2ms | 55.3ms | 1.00 |
-| `ledger-cli reg` | 1.7532s ± 18.1ms | 1.723s | 1.7786s | 34.02 ± 0.85 |
-| `hledger reg` | 1.9308s ± 14.3ms | 1.9056s | 1.9462s | 37.46 ± 0.90 |
+| `ledger-go reg` | 45.4ms ± 1ms | 43.8ms | 49.3ms | 1.00 |
+| `ledger-cli reg` | 1.724s ± 11ms | 1.7066s | 1.7445s | 37.90 ± 0.91 |
+| `hledger reg` | 1.996s ± 8.7ms | 1.978s | 2.0081s | 43.88 ± 1.03 |
 
 ## Print
 
 | Command | Mean | Min | Max | Relative |
 |:---|---:|---:|---:|---:|
-| `ledger-go print` | 40.3ms ± 800µs | 38.4ms | 42.3ms | 1.00 |
-| `ledger-cli print` | 238.6ms ± 3.2ms | 234.1ms | 246ms | 5.92 ± 0.15 |
-| `hledger print` | 1.5484s ± 10.1ms | 1.525s | 1.5558s | 38.42 ± 0.87 |
+| `ledger-go print` | 32.5ms ± 1ms | 30.4ms | 36.2ms | 1.00 |
+| `ledger-cli print` | 244.5ms ± 1.9ms | 242.3ms | 249ms | 7.52 ± 0.25 |
+| `hledger print` | 1.6632s ± 8.1ms | 1.6481s | 1.6783s | 51.14 ± 1.67 |
 
