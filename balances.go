@@ -3,8 +3,6 @@ package ledger
 import (
 	"slices"
 	"strings"
-
-	"github.com/howeyc/ledger/decimal"
 )
 
 // GetBalances provided a list of transactions and filter strings, returns account balances of
@@ -13,41 +11,31 @@ import (
 //
 // Accounts are sorted by name.
 func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
-	balances := make(map[string]decimal.Decimal)
-	filters := len(filterArr) > 0
+	var accList []*Account
+	balances := make(map[string]*Account)
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
-			inFilter := false
-			if filters {
-				for i := 0; i < len(filterArr) && !inFilter; i++ {
-					if strings.Contains(accChange.Name, filterArr[i]) {
-						inFilter = true
-					}
+			inFilter := len(filterArr) == 0
+			for i := 0; i < len(filterArr) && !inFilter; i++ {
+				if strings.Contains(accChange.Name, filterArr[i]) {
+					inFilter = true
 				}
-			} else {
-				inFilter = true
 			}
 			if inFilter {
 				accHier := strings.Split(accChange.Name, ":")
 				accDepth := len(accHier)
 				for currDepth := accDepth; currDepth > 0; currDepth-- {
 					currAccName := strings.Join(accHier[:currDepth], ":")
-					if ratNum, ok := balances[currAccName]; !ok {
-						balances[currAccName] = accChange.Balance
+					if acc, ok := balances[currAccName]; !ok {
+						acc := &Account{Name: currAccName, Balance: accChange.Balance}
+						accList = append(accList, acc)
+						balances[currAccName] = acc
 					} else {
-						balances[currAccName] = ratNum.Add(accChange.Balance)
+						acc.Balance = acc.Balance.Add(accChange.Balance)
 					}
 				}
 			}
 		}
-	}
-
-	accList := make([]*Account, len(balances))
-	count := 0
-	for accName, accBalance := range balances {
-		account := &Account{Name: accName, Balance: accBalance}
-		accList[count] = account
-		count++
 	}
 
 	slices.SortFunc(accList, func(a, b *Account) int {
