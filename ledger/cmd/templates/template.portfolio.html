@@ -52,7 +52,7 @@
         </thead>
         <tbody>
           {{range .Stocks}}
-          <tr {{if eq .Type "Total"}}class="bg-warning"{{end}}{{if eq .Type "Section Total"}}class="bg-info"{{end}}>
+          <tr {{if eq .Type "Total"}}class="table-warning"{{end}}{{if eq .Type "Section Total"}}class="table-info"{{end}}>
             <td>{{.Name}}</td>
             <td class="info-overall text-end">{{printf "%.2f" .Cost}}</td>
             <td class="info-overall text-end">{{printf "%.2f" .MarketValue}}</td>
