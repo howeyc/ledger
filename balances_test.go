@@ -3,7 +3,10 @@ package ledger
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 
 	"github.com/howeyc/ledger/decimal"
 )
@@ -38,6 +41,36 @@ var testBalCases = []testBalCase{
 		},
 		nil,
 	},
+	{
+		"heirarchy",
+		`1970/01/01 Payee
+	Expense:test  (123 * 3)
+	Assets
+
+1970/01/01 Payee
+	Expense:foo   123
+	Assets
+`,
+		[]Account{
+			{
+				Name:    "Assets",
+				Balance: decimal.NewFromFloat(-4 * 123),
+			},
+			{
+				Name:    "Expense",
+				Balance: decimal.NewFromFloat(123 + 369),
+			},
+			{
+				Name:    "Expense:foo",
+				Balance: decimal.NewFromFloat(123),
+			},
+			{
+				Name:    "Expense:test",
+				Balance: decimal.NewFromFloat(369),
+			},
+		},
+		nil,
+	},
 }
 
 func TestBalanceLedger(t *testing.T) {
@@ -53,6 +86,37 @@ func TestBalanceLedger(t *testing.T) {
 		if string(exp) != string(got) {
 			t.Errorf("Error(%s): expected \n`%s`, \ngot \n`%s`", tc.name, exp, got)
 		}
+	}
+}
+
+func BenchmarkGetBalances(b *testing.B) {
+	var trans []*Transaction
+	for i := 0; i < 100000; i++ {
+		a := rand.Intn(50)
+		b := rand.Intn(10)
+		c := rand.Intn(5)
+		d := rand.Intn(50)
+		e := rand.Intn(10)
+		f := rand.Intn(5)
+		amt := rand.Float64() * 10000
+		trans = append(trans, &Transaction{
+			Date:  time.Now(),
+			Payee: fmt.Sprintf("Trans %d", i),
+			AccountChanges: []Account{
+				{
+					Name:    fmt.Sprintf("Acc%d:Acc%d:Acc%d", a, b, c),
+					Balance: decimal.NewFromFloat(amt),
+				},
+				{
+					Name:    fmt.Sprintf("Acc%d:Acc%d:Acc%d", d, e, f),
+					Balance: decimal.NewFromFloat(-amt),
+				},
+			},
+		})
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		GetBalances(trans, []string{})
 	}
 }
 

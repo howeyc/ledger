@@ -3,6 +3,8 @@ package ledger
 import (
 	"slices"
 	"strings"
+
+	"github.com/howeyc/ledger/decimal"
 )
 
 // GetBalances provided a list of transactions and filter strings, returns account balances of
@@ -13,6 +15,37 @@ import (
 func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	var accList []*Account
 	balances := make(map[string]*Account)
+
+	// at every depth, for each account, track the parent account
+	depthMap := make(map[int]map[string]string)
+	var maxDepth int
+
+	incAccount := func(accName string, val decimal.Decimal) {
+		// track parent
+		var pmap map[string]string
+		pmapfound := false
+		accDepth := strings.Count(accName, ":") + 1
+		pmap, pmapfound = depthMap[accDepth]
+		if !pmapfound {
+			pmap = make(map[string]string)
+			depthMap[accDepth] = pmap
+		}
+		if _, foundparent := pmap[accName]; !foundparent && accDepth > 1 {
+			colIdx := strings.LastIndex(accName, ":")
+			pmap[accName] = accName[:colIdx]
+			maxDepth = max(maxDepth, accDepth)
+		}
+
+		// add to balance
+		if acc, ok := balances[accName]; !ok {
+			acc := &Account{Name: accName, Balance: val}
+			accList = append(accList, acc)
+			balances[accName] = acc
+		} else {
+			acc.Balance = acc.Balance.Add(val)
+		}
+	}
+
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
@@ -22,19 +55,15 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 				}
 			}
 			if inFilter {
-				accHier := strings.Split(accChange.Name, ":")
-				accDepth := len(accHier)
-				for currDepth := accDepth; currDepth > 0; currDepth-- {
-					currAccName := strings.Join(accHier[:currDepth], ":")
-					if acc, ok := balances[currAccName]; !ok {
-						acc := &Account{Name: currAccName, Balance: accChange.Balance}
-						accList = append(accList, acc)
-						balances[currAccName] = acc
-					} else {
-						acc.Balance = acc.Balance.Add(accChange.Balance)
-					}
-				}
+				incAccount(accChange.Name, accChange.Balance)
 			}
+		}
+	}
+
+	// roll-up balances
+	for curDepth := maxDepth; curDepth > 1; curDepth-- {
+		for accName, parentName := range depthMap[curDepth] {
+			incAccount(parentName, balances[accName].Balance)
 		}
 	}
 
