@@ -7,8 +7,8 @@ syn match ledgerComment /;.*/
 syn match ledgerFloatAmount /\<-\?\d\+\.\d\+\>/ contained
 syn match ledgerIntAmount /\<-\?\d\+\>/ contained
 
-syn match ledgerAccount /\<\%(\%(\w\|\s\)\+:\)\+\%(\w\|\s\)*\w\+\s\{2}/me=e-2 contained
-syn match ledgerAccountEOL /\<\%(\%(\w\|\s\)\+:\)\+\%(\w\|\s\)*\w\+\>$/ contained
+syn match ledgerAccount /\<\%(\%(\w\|\s\|\/\)\+:\)\+\%(\w\|\s\|\/\)*\w\+\s\{2}/me=e-2 contained
+syn match ledgerAccountEOL /\<\%(\%(\w\|\s\|\/\)\+:\)\+\%(\w\|\s\|\/\)*\w\+\>$/ contained
 
 syn match ledgerPostingEmpty /^\s\{2,}.*$/ contains=ledgerAccountEOL
 syn match ledgerPostingAmount /^\s\{2,}\S.\+\s\{2,}.\+$/ contains=ledgerAccount,ledgerFloatAmount,ledgerIntAmount
