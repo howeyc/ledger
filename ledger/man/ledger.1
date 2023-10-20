@@ -172,21 +172,6 @@ Days since last posting
 .It Ic version
 Output version string.
 .El
-.Sh ADD TRANSACTIONS
-.Nm
-has a top-level command to add a transaction by interactively answering a series
-of prompts, using existing transactions to populate the selection prompts.
-.Pp
-.Bl -tag -width balance
-.It Ic add
-Add a transaction using prompts.
-.Bl -tag -compact -width "--dry-run (n) "
-.It Fl \-columns Ar INT
-Width of output in characters.
-.It Fl \-dry-run ( Fl n )
-Do not alter ledger file. Display only.
-.El
-.El
 .Sh IMPORT TRANSACTIONS
 .Nm
 has a top-level command to convert csv formatted postings to transaction format.
