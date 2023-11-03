@@ -33,24 +33,25 @@ var accountsCmd = &cobra.Command{
 		}
 
 		balances := ledger.GetBalances(generalLedger, args)
-		var currentAccount string
-		if len(balances) > 0 {
-			currentAccount = balances[0].Name
-		}
-		for _, account := range balances[1:] {
-			if accountLeavesOnly && !strings.HasPrefix(account.Name, currentAccount) {
-				fmt.Println(currentAccount)
-			} else if accountMatchDepth && filterDepth == strings.Count(currentAccount, ":") {
-				fmt.Println(currentAccount)
-			} else if !accountLeavesOnly && !accountMatchDepth {
-				fmt.Println(currentAccount)
+
+		children := make(map[string]int)
+		for _, acc := range balances {
+			if i := strings.LastIndex(acc.Name, ":"); i >= 0 {
+				children[acc.Name[:i]]++
 			}
-			currentAccount = account.Name
 		}
-		if accountMatchDepth && filterDepth == strings.Count(currentAccount, ":") {
-			fmt.Println(currentAccount)
-		} else if !accountMatchDepth {
-			fmt.Println(currentAccount)
+
+		for _, acc := range balances {
+			match := true
+			if accountLeavesOnly && children[acc.Name] > 0 {
+				match = false
+			}
+			if accountMatchDepth && filterDepth != strings.Count(acc.Name, ":") {
+				match = false
+			}
+			if match {
+				fmt.Println(acc.Name)
+			}
 		}
 	},
 }
