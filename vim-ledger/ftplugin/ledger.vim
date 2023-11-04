@@ -63,3 +63,9 @@ if has('autocmd')
 		autocmd BufWritePre * call _LedgerFormatFile()
 	augroup END
 endif
+
+" Commands for ledger file type:
+" insert date
+nnoremap <buffer> <localleader>id "=strftime("%Y/%m/%d")<CR>P
+" delete posting amount
+nnoremap <buffer> <localleader>da $BbelD
