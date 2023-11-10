@@ -82,9 +82,14 @@ func atoi64(s string) (bool, int64, error) {
 // error if integer parsing fails.
 func NewFromString(s string) (Decimal, error) {
 	if whole, frac, split := strings.Cut(s, "."); split {
-		neg, w, err := atoi64(whole)
-		if err != nil {
-			return Zero, err
+		var neg bool
+		var w int64
+		if whole != "" {
+			var err error
+			neg, w, err = atoi64(whole)
+			if err != nil {
+				return Zero, err
+			}
 		}
 
 		// overflow
@@ -115,7 +120,7 @@ func NewFromString(s string) (Decimal, error) {
 		if neg {
 			f = -f
 		}
-		return Decimal(w + f), err
+		return Decimal(w + f), nil
 	} else {
 		_, i, err := atoi64(s)
 		if i > parseMax || i < parseMin {
