@@ -346,6 +346,11 @@ var testParseCases = []testCase{
 		"0.50",
 		".50",
 	},
+	{
+		"negmissingwhole",
+		"-0.50",
+		"-.50",
+	},
 }
 
 func TestStringParse(t *testing.T) {

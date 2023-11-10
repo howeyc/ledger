@@ -84,7 +84,9 @@ func NewFromString(s string) (Decimal, error) {
 	if whole, frac, split := strings.Cut(s, "."); split {
 		var neg bool
 		var w int64
-		if whole != "" {
+		if whole == "-" {
+			neg = true
+		} else if whole != "" {
 			var err error
 			neg, w, err = atoi64(whole)
 			if err != nil {
