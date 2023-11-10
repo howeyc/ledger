@@ -298,47 +298,47 @@ var testParseCases = []testCase{
 	},
 	{
 		"error-1",
-		"number too big",
+		errTooBig.Error(),
 		"100000000000000000",
 	},
 	{
 		"error-2",
-		"number too big",
+		errTooBig.Error(),
 		"10000000000000000",
 	},
 	{
 		"error-3",
-		"number too big",
+		errTooBig.Error(),
 		"10000000000000000.56",
 	},
 	{
 		"error-4",
-		"invalid syntax",
+		errInvalid.Error(),
 		"0.e0",
 	},
 	{
 		"error-5",
-		"atoi failed",
+		errTooBig.Error(),
 		"5555555555555555555555555550000000000000000",
 	},
 	{
 		"error-6",
-		"atoi failed",
+		errEmpty.Error(),
 		"-",
 	},
 	{
 		"error-7",
-		"atoi failed",
+		errEmpty.Error(),
 		"",
 	},
 	{
 		"error-badint-1",
-		`atoi failed`,
+		errInvalid.Error(),
 		"1QZ.56",
 	},
 	{
 		"error-expr-1",
-		`atoi failed`,
+		errInvalid.Error(),
 		"(123 * 6)",
 	},
 	{
@@ -350,6 +350,21 @@ var testParseCases = []testCase{
 		"negmissingwhole",
 		"-0.50",
 		"-.50",
+	},
+	{
+		"missingfrac",
+		"5.00",
+		"5.",
+	},
+	{
+		"neg-missingfrac",
+		"-5.00",
+		"-5.",
+	},
+	{
+		"just-a-decimal",
+		"0.00",
+		".",
 	},
 }
 
@@ -363,6 +378,9 @@ func TestStringParse(t *testing.T) {
 			if err.Error() != tc.Result {
 				t.Fatalf("Error(%s): expected `%s`, got `%s`", tc.name, tc.Result, err)
 			}
+		}
+		if !strings.HasPrefix(tc.name, "error") && err != nil {
+			t.Fatalf("Error(%s): unexpected error `%s`", tc.name, err)
 		}
 		if !strings.HasPrefix(tc.name, "error") && tc.Result != d.StringFixedBank() {
 			t.Errorf("Error(%s): expected \n`%s`, \ngot \n`%s`", tc.name, tc.Result, d.StringFixedBank())
@@ -395,7 +413,7 @@ func FuzzStringParse(f *testing.F) {
 }
 
 func BenchmarkNewFromString(b *testing.B) {
-	numbers := []string{"10.0", "245.6", "354", "2.456"}
+	numbers := []string{"10.0", "245.6", "354", "2.456", "-31.2"}
 	for n := 0; n < b.N; n++ {
 		for _, numStr := range numbers {
 			NewFromString(numStr)

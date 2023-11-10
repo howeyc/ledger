@@ -49,18 +49,26 @@ func NewFromInt(i int64) Decimal {
 	return Decimal(i) * scaleFactor
 }
 
+var errEmpty = errors.New("empty string")
+var errTooBig = errors.New("number too big")
+var errInvalid = errors.New("invalid syntax")
+
 // atoi64 is equivalent to strconv.Atoi
 func atoi64(s string) (bool, int64, error) {
 	sLen := len(s)
-	if sLen < 1 || sLen > 18 {
-		return false, 0, errors.New("atoi failed")
+	if sLen < 1 {
+		return false, 0, errEmpty
 	}
+	if sLen > 18 {
+		return false, 0, errTooBig
+	}
+
 	neg := false
 	if s[0] == '-' {
 		neg = true
 		s = s[1:]
 		if len(s) < 1 {
-			return false, 0, errors.New("atoi failed")
+			return neg, 0, errEmpty
 		}
 	}
 
@@ -68,7 +76,7 @@ func atoi64(s string) (bool, int64, error) {
 	for _, ch := range []byte(s) {
 		ch -= '0'
 		if ch > 9 {
-			return false, 0, errors.New("atoi failed")
+			return neg, 0, errInvalid
 		}
 		n = n*10 + int64(ch)
 	}
@@ -82,21 +90,15 @@ func atoi64(s string) (bool, int64, error) {
 // error if integer parsing fails.
 func NewFromString(s string) (Decimal, error) {
 	if whole, frac, split := strings.Cut(s, "."); split {
-		var neg bool
-		var w int64
-		if whole == "-" {
-			neg = true
-		} else if whole != "" {
-			var err error
-			neg, w, err = atoi64(whole)
-			if err != nil {
-				return Zero, err
-			}
+		neg, w, err := atoi64(whole)
+		// if fractional portion exists, whole part can be empty
+		if err != nil && err != errEmpty {
+			return Zero, err
 		}
 
 		// overflow
 		if w > parseMax || w < parseMin {
-			return Zero, errors.New("number too big")
+			return Zero, errTooBig
 		}
 		w = w * int64(scaleFactor)
 
@@ -106,7 +108,7 @@ func NewFromString(s string) (Decimal, error) {
 		for _, b := range frac {
 			f *= 10
 			if b < '0' || b > '9' {
-				return Zero, errors.New("invalid syntax")
+				return Zero, errInvalid
 			}
 			f += int64(b - '0')
 			seen++
@@ -126,7 +128,7 @@ func NewFromString(s string) (Decimal, error) {
 	} else {
 		_, i, err := atoi64(s)
 		if i > parseMax || i < parseMin {
-			return Zero, errors.New("number too big")
+			return Zero, errTooBig
 		}
 		i = i * int64(scaleFactor)
 		return Decimal(i), err
