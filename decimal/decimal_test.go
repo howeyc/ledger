@@ -341,6 +341,16 @@ var testParseCases = []testCase{
 		`atoi failed`,
 		"(123 * 6)",
 	},
+	{
+		"missingwhole",
+		"0.50",
+		".50",
+	},
+	{
+		"negmissingwhole",
+		"-0.50",
+		"-.50",
+	},
 }
 
 func TestStringParse(t *testing.T) {
