@@ -64,6 +64,23 @@ if has('autocmd')
 	augroup END
 endif
 
+" show payee line and amount as fold header
+if has('folding')
+	function! LedgerFoldText()
+		let line = getline(v:foldstart)
+		let cmt = matchstr(line, ' ;.*')
+		let sidx = stridx(line, "  ")
+		if sidx > 0
+			let line = strpart(line, 0, sidx)
+		endif
+		let amt = matchstr(getline(v:foldstart+1), '-\?\d\+\.\d\+')
+		let blanks = repeat(' ', 80-(len(line)+len(amt)))
+		return line .. blanks .. amt .. cmt
+	endfunction
+
+	setlocal foldtext=LedgerFoldText()
+endif
+
 " Commands for ledger file type:
 " insert date
 nnoremap <buffer> <localleader>id "=strftime("%Y/%m/%d")<CR>P
