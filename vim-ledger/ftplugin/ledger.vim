@@ -79,6 +79,9 @@ if has('folding')
 	endfunction
 
 	setlocal foldtext=LedgerFoldText()
+
+	" foldexpr to use blank lines to separate folds
+	setlocal foldexpr=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'<1':1
 endif
 
 " Commands for ledger file type:
