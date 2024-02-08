@@ -9,10 +9,9 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
-	"github.com/julienschmidt/httprouter"
 )
 
-func quickviewHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func quickviewHandler(w http.ResponseWriter, r *http.Request) {
 	if len(quickviewConfigData.Accounts) < 1 {
 		http.Redirect(w, r, "/accounts", http.StatusFound)
 		return
@@ -52,7 +51,7 @@ func quickviewHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	}
 }
 
-func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 	strDate := r.FormValue("transactionDate")
 	strPayee := r.FormValue("transactionPayee")
 
@@ -99,8 +98,8 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request, _ httprou
 	fmt.Fprintf(w, "Transaction added!")
 }
 
-func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	accountName := params.ByName("accountName")
+func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request) {
+	accountName := r.PathValue("accountName")
 
 	t, err := loadTemplates("templates/template.addtransaction.html")
 	if err != nil {
@@ -158,7 +157,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request, params h
 	}
 }
 
-func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := loadTemplates("templates/template.addtransaction.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -183,7 +182,7 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.
 	}
 }
 
-func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func accountsHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := loadTemplates("templates/template.accounts.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -209,8 +208,8 @@ func accountsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 	}
 }
 
-func accountHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	accountName := params.ByName("accountName")
+func accountHandler(w http.ResponseWriter, r *http.Request) {
+	accountName := r.PathValue("accountName")
 
 	t, err := loadTemplates("templates/template.account.html")
 	if err != nil {

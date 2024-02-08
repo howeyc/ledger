@@ -2,11 +2,9 @@ package cmd
 
 import (
 	"net/http"
-
-	"github.com/julienschmidt/httprouter"
 )
 
-func ledgerHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func ledgerHandler(w http.ResponseWriter, r *http.Request) {
 	t, err := loadTemplates("templates/template.ledger.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)

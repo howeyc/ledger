@@ -4,13 +4,13 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+	"cmp"
 
 	"github.com/howeyc/ledger"
-	"github.com/julienschmidt/httprouter"
 )
 
-func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	portfolioName := params.ByName("portfolioName")
+func portfolioHandler(w http.ResponseWriter, r *http.Request) {
+	portfolioName := r.PathValue("portfolioName")
 
 	var portfolio portfolioStruct
 	for _, port := range portfolioConfigData.Portfolios {
@@ -150,11 +150,10 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request, params httprouter.
 	}
 
 	slices.SortFunc(pData.Stocks, func(a, b stockInfo) int {
-		if diff := strings.Compare(a.Section, b.Section); diff == 0 {
-			return strings.Compare(a.Ticker, b.Ticker)
-		} else {
-			return diff
-		}
+		return cmp.Or(
+			strings.Compare(a.Section, b.Section),
+			strings.Compare(a.Ticker, b.Ticker),
+		)
 	})
 
 	err = t.Execute(w, pData)

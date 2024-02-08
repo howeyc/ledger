@@ -11,7 +11,6 @@ import (
 	"github.com/howeyc/ledger/ledger/cmd/internal/httpcompress"
 
 	"github.com/howeyc/ledger"
-	"github.com/julienschmidt/httprouter"
 	"github.com/spf13/cobra"
 )
 
@@ -52,32 +51,32 @@ var webCmd = &cobra.Command{
 			log.Fatalln(err)
 		}
 
-		m := httprouter.New()
+		m := http.NewServeMux()
 
 		fileServer := http.FileServer(http.FS(contentStatic))
-		m.GET("/static/*filepath", func(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
+		m.HandleFunc("GET /static/{filepath...}", func(w http.ResponseWriter, req *http.Request) {
 			w.Header().Set("Vary", "Accept-Encoding")
 			w.Header().Set("Cache-Control", "public, max-age=7776000")
-			req.URL.Path = "/static/" + ps.ByName("filepath")
+			req.URL.Path = "/static/" + req.PathValue("filepath")
 			fileServer.ServeHTTP(w, req)
 		})
 
 		if !webReadOnly {
-			m.GET("/addtrans", httpcompress.Middleware(addTransactionHandler, false))
-			m.GET("/addtrans/:accountName", httpcompress.Middleware(addQuickTransactionHandler, false))
-			m.POST("/addtrans", httpcompress.Middleware(addTransactionPostHandler, false))
+			m.HandleFunc("GET /addtrans", httpcompress.Middleware(addTransactionHandler, false))
+			m.HandleFunc("GET /addtrans/{accountName}", httpcompress.Middleware(addQuickTransactionHandler, false))
+			m.HandleFunc("POST /addtrans", httpcompress.Middleware(addTransactionPostHandler, false))
 		}
 
-		m.GET("/ledger", httpcompress.Middleware(ledgerHandler, false))
-		m.GET("/accounts", httpcompress.Middleware(accountsHandler, false))
-		m.GET("/portfolio/:portfolioName", httpcompress.Middleware(portfolioHandler, false))
-		m.GET("/account/:accountName", httpcompress.Middleware(accountHandler, false))
-		m.GET("/report/:reportName", httpcompress.Middleware(reportHandler, false))
-		m.GET("/favicon.ico", func(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+		m.HandleFunc("GET /ledger", httpcompress.Middleware(ledgerHandler, false))
+		m.HandleFunc("GET /accounts", httpcompress.Middleware(accountsHandler, false))
+		m.HandleFunc("GET /portfolio/{portfolioName}", httpcompress.Middleware(portfolioHandler, false))
+		m.HandleFunc("GET /account/{accountName}", httpcompress.Middleware(accountHandler, false))
+		m.HandleFunc("GET /report/{reportName}", httpcompress.Middleware(reportHandler, false))
+		m.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, req *http.Request) {
 			req.URL.Path = "/static/favicon.ico"
 			fileServer.ServeHTTP(w, req)
 		})
-		m.GET("/", httpcompress.Middleware(quickviewHandler, false))
+		m.HandleFunc("/", httpcompress.Middleware(quickviewHandler, false))
 
 		log.Println("Listening on port", serverPort)
 		var listenAddress string

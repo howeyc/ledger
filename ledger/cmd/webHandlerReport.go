@@ -11,7 +11,6 @@ import (
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/pdr"
-	"github.com/julienschmidt/httprouter"
 	colorful "github.com/lucasb-eyer/go-colorful"
 )
 
@@ -146,8 +145,8 @@ func mergeAccounts(input *ledger.Transaction) {
 	})
 }
 
-func reportHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	reportName := params.ByName("reportName")
+func reportHandler(w http.ResponseWriter, r *http.Request) {
+	reportName := r.PathValue("reportName")
 
 	trans, terr := getTransactions()
 	if terr != nil {
