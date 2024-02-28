@@ -577,7 +577,7 @@ account endofledger`)
 }
 
 func BenchmarkParseLedger(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		_, _ = ParseLedgerFile("testdata/ledgerBench.dat")
 	}
 }

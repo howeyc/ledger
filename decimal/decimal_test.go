@@ -414,7 +414,7 @@ func FuzzStringParse(f *testing.F) {
 
 func BenchmarkNewFromString(b *testing.B) {
 	numbers := []string{"10.0", "245.6", "354", "2.456", "-31.2"}
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		for _, numStr := range numbers {
 			NewFromString(numStr)
 		}
@@ -423,14 +423,14 @@ func BenchmarkNewFromString(b *testing.B) {
 
 func BenchmarkStringFixedBank(b *testing.B) {
 	var numbers [1000]Decimal
-	for i := 0; i < len(numbers); i++ {
+	for i := range len(numbers) {
 		numbers[i] = NewFromFloat(rand.Float64() * 100000)
 		if i%2 == 0 {
 			numbers[i] *= -1
 		}
 	}
 	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
+	for range b.N {
 		for _, num := range numbers {
 			num.StringFixedBank()
 		}

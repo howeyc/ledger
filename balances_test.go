@@ -91,7 +91,7 @@ func TestBalanceLedger(t *testing.T) {
 
 func BenchmarkGetBalances(b *testing.B) {
 	var trans []*Transaction
-	for i := 0; i < 100000; i++ {
+	for i := range 100000 {
 		a := rand.Intn(50)
 		b := rand.Intn(10)
 		c := rand.Intn(5)
@@ -115,7 +115,7 @@ func BenchmarkGetBalances(b *testing.B) {
 		})
 	}
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		GetBalances(trans, []string{})
 	}
 }

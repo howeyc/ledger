@@ -214,7 +214,7 @@ func (d Decimal) Cmp(d1 Decimal) int {
 // output bytes begin and the value v/10**prec.
 func fmtFrac(buf []byte, v uint64, prec int) (nw int, nv uint64) {
 	w := len(buf)
-	for i := 0; i < prec; i++ {
+	for range prec {
 		digit := v % 10
 		w--
 		buf[w] = byte(digit) + '0'
