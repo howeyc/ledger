@@ -1,6 +1,6 @@
 # Portfolio
 
-The web service included in `ledger` allows tracking a porfolio of various
+The web service included in `ledger` allows tracking a portfolio of various
 holdings. Currently stocks, mutual funds, and crypto currencies are supported.
 
 Basically, you just create a portfolio configuration file where you match your
