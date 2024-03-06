@@ -6,7 +6,7 @@ Run `ledger -f ledger.dat accounts` to see an account list.
 
 ## Only Leaf (Max Depth) Accounts
 
-If we are only intersted in the highest depth accounts and not interested
+If we are only interested in the highest depth accounts and not interested
 in seeing all the parent account levels we can get that, just
 run `ledger -f ledger.dat accounts -l`
 
