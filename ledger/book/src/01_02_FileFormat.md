@@ -18,9 +18,9 @@ finance greatness.
 
 * Transaction - Series of consecutive lines that represent the move of money
 from one account to one (*or more*) other accounts.
-* Transaction Date - Date the transaction occured.
+* Transaction Date - Date the transaction occurred.
 * Payee - Description following on the same line as the Date. Usually the place
-of business or person the transaction occured at/with.
+of business or person the transaction occurred at/with.
 * Posting - Line containing account and (*optionally*) amount.
 
 ## Basic transaction format
