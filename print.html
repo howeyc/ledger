@@ -186,9 +186,9 @@ finance greatness.</p>
 <ul>
 <li>Transaction - Series of consecutive lines that represent the move of money
 from one account to one (<em>or more</em>) other accounts.</li>
-<li>Transaction Date - Date the transaction occured.</li>
+<li>Transaction Date - Date the transaction occurred.</li>
 <li>Payee - Description following on the same line as the Date. Usually the place
-of business or person the transaction occured at/with.</li>
+of business or person the transaction occurred at/with.</li>
 <li>Posting - Line containing account and (<em>optionally</em>) amount.</li>
 </ul>
 <h2 id="basic-transaction-format"><a class="header" href="#basic-transaction-format">Basic transaction format</a></h2>
@@ -343,7 +343,7 @@ Liabilities
 Liabilities:MasterCard
 </code></pre>
 <h2 id="only-leaf-max-depth-accounts"><a class="header" href="#only-leaf-max-depth-accounts">Only Leaf (Max Depth) Accounts</a></h2>
-<p>If we are only intersted in the highest depth accounts and not interested
+<p>If we are only interested in the highest depth accounts and not interested
 in seeing all the parent account levels we can get that, just
 run <code>ledger -f ledger.dat accounts -l</code></p>
 <pre><code class="language-sh">Assets:Bank:Checking
@@ -453,7 +453,7 @@ Expenses:Food                                                             485.92
 <p>Some users like to keep ledger files for each year. To aid in creating a new
 starting balance for the next file, we can use the <code>ledger equity</code> command to
 generate the required transaction to have the correct starting balances.</p>
-<p>Let's start 2022, using all transactions upto the end of 2021. As the end date
+<p>Let's start 2022, using all transactions up to the end of 2021. As the end date
 on the command line is not included, we can use 2022/01/01 as the end date.</p>
 <p>Run <code>ledger -f ledger.dat equity -e &quot;2022/01/01&quot;</code></p>
 <pre><code class="language-sh">2021/12/31 Opening Balances
@@ -692,14 +692,14 @@ running total in the last column.</p>
 2022/01/11 Panda Express   Liabilities:MasterCard              -17.34     -60.92
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="stats"><a class="header" href="#stats">Stats</a></h1>
-<p>A nice little summary of various ledger stats is avaible.</p>
+<p>A nice little summary of various ledger stats is available.</p>
 <p>Run <code>ledger -f ledger.dat stats</code></p>
 <pre><code class="language-sh">Time period               : 2021-12-01 to 2022-01-15 (6 weeks 3 days)
 Unique payees             : 8
 Unique accounts           : 10
 Number of transactions    : 12 (0.3 per day)
 Number of postings        : 25 (0.6 per day)
-Time since last post      : 1 year
+Time since last post      : 2 years
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
 <p>The web service included in <code>ledger</code> allows for the easy and quick viewing
@@ -738,7 +738,7 @@ short_name = &quot;Card&quot;
 account.</p>
 <p><img src="webshots/account.png" alt="account page" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="add-transaction"><a class="header" href="#add-transaction">Add Transaction</a></h1>
-<p>The web interface also has the ablity to add transactions to the ledger file.</p>
+<p>The web interface also has the ability to add transactions to the ledger file.</p>
 <p><img src="webshots/addtrans.png" alt="add transaction" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="reports"><a class="header" href="#reports">Reports</a></h1>
 <p>The web service included in <code>ledger</code> allows for the configuration of many types
@@ -806,7 +806,7 @@ over time and shows how much money has been saved per month.</p>
 <p>Graph Assets against Liabilities.</p>
 <p><img src="webshots/report-networth.png" alt="net worth line chart" /></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="portfolio"><a class="header" href="#portfolio">Portfolio</a></h1>
-<p>The web service included in <code>ledger</code> allows tracking a porfolio of various
+<p>The web service included in <code>ledger</code> allows tracking a portfolio of various
 holdings. Currently stocks, mutual funds, and crypto currencies are supported.</p>
 <p>Basically, you just create a portfolio configuration file where you match your
 accounts to commodities and the shares of the commodity the account represents.</p>
