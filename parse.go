@@ -164,25 +164,13 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 	return false
 }
 
-func (lp *parser) parseAccount(accName string) (accountName string) {
-	accountName = accName
-
+func (lp *parser) parseAccount(accName string) {
 	for lp.scanner.Scan() {
 		// Read until blank line (ignore all sub-directives)
-		// remove heading and tailing space from the line
-		trimmedLine := strings.TrimSpace(lp.scanner.Text())
-
-		// skip comments
-		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			trimmedLine = trimmedLine[:commentIdx]
-		}
-
-		// stop slurping up sub-directives on empty line
-		if len(trimmedLine) == 0 {
+		if len(lp.scanner.Text()) == 0 {
 			return
 		}
 	}
-
 	return
 }
 
