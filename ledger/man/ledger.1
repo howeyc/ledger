@@ -92,20 +92,16 @@ The alias
 .Ic bal
 is also accepted.
 .It Ic equity
-Print a transaction with a series of postings that balance current totals for
-accounts. The purpose of this report is to close the books for a prior year, while using
-these equity postings to carry forward those balances. Options available for this
-command are:
+Print a transaction with a series of postings that has totals for accounts. The
+purpose of this report is to close the books for a prior year, while using
+these equity postings to carry forward those balances. Options available for
+this command are:
 .Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
 .It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
 Begin date of transactions to include in processing.
 .It Fl \-end-date ( Fl e ) Ar YYYY-mm-dd
 End date of transactions to include in processing.
 .El
-.It Ic lint
-Parse the 
-.Nm
-file and output any parsing errors.
 .It Ic print Oo Ar account-filter Oc
 Print out the full transactions of any matching postings using the same
 format as they would appear in a data file.  This can be used to extract
@@ -169,8 +165,6 @@ Postings total
 .It
 Days since last posting
 .El
-.It Ic version
-Output version string.
 .El
 .Sh IMPORT TRANSACTIONS
 .Nm
@@ -275,6 +269,16 @@ defined.
 .El
 .Pp
 Example configuration files: web-porfolio-sample.toml, web-quickview-sample.toml, web-reports-sample.toml
+.Sh OTHER COMMANDS
+.Bl -tag -width balance
+.It Ic help
+Display help for commands.
+.It Ic lint
+Parse the 
+.Nm
+file and output any parsing errors.
+.It Ic version
+Output version information.
 .Sh OPTIONS
 .Bl -tag -width -indent
 .It Fl \-file Ar FILE Pq Fl f
