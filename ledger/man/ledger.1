@@ -91,17 +91,6 @@ Use terminal width
 The alias
 .Ic bal
 is also accepted.
-.It Ic equity
-Print a transaction with a series of postings that has totals for accounts. The
-purpose of this report is to close the books for a prior year, while using
-these equity postings to carry forward those balances. Options available for
-this command are:
-.Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
-.It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
-Begin date of transactions to include in processing.
-.It Fl \-end-date ( Fl e ) Ar YYYY-mm-dd
-End date of transactions to include in processing.
-.El
 .It Ic print Oo Ar account-filter Oc
 Print out the full transactions of any matching postings using the same
 format as they would appear in a data file.  This can be used to extract
@@ -165,6 +154,21 @@ Postings total
 .It
 Days since last posting
 .El
+.El
+.Sh EQUITY TRANSACTION
+.Nm
+has a command to generate an equity transaction for a specified period.
+.Bl -tag -width equity
+.It Ic equity
+Print a transaction with a series of postings that has totals for accounts. The
+purpose of this is to close the books for a period. The equity transaction can
+be used as an inital transaction in a new file to start a new period. Options
+available for this command are:
+.Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
+.It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
+Begin date of transactions to include in processing.
+.It Fl \-end-date ( Fl e ) Ar YYYY-mm-dd
+End date of transactions to include in processing.
 .El
 .Sh IMPORT TRANSACTIONS
 .Nm
