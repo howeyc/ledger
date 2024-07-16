@@ -12,7 +12,7 @@ var exportCmd = &cobra.Command{
 	Aliases: []string{"exp"},
 	Use:     "export [account-substring-filter]...",
 	Short:   "export to CSV",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)

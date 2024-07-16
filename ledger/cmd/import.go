@@ -26,7 +26,7 @@ var importCmd = &cobra.Command{
 	Use:   "import <account-substring> <csv-file>",
 	Args:  cobra.ExactArgs(2),
 	Short: "Import transactions from csv to ledger format",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		var accountSubstring, csvFileName string
 		accountSubstring = args[0]
 		csvFileName = args[1]

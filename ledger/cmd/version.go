@@ -15,7 +15,7 @@ var (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Version of ledger",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		fmt.Printf("ledger %s\n", version)
 		if bi, ok := debug.ReadBuildInfo(); ok {
 			fmt.Print(bi)

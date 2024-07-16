@@ -17,7 +17,7 @@ var accountMatchDepth bool
 var accountsCmd = &cobra.Command{
 	Use:   "accounts [account-substring-filter]...",
 	Short: "Print accounts list",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)

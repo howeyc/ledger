@@ -15,7 +15,7 @@ var balanceCmd = &cobra.Command{
 	Aliases: []string{"bal"},
 	Use:     "balance [account-substring-filter]...",
 	Short:   "Print account balances",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)

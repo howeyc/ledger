@@ -16,7 +16,7 @@ import (
 var equityCmd = &cobra.Command{
 	Use:   "equity",
 	Short: "Print account equity as transaction",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)

@@ -43,7 +43,7 @@ func getTransactions() ([]*ledger.Transaction, error) {
 var webCmd = &cobra.Command{
 	Use:   "web",
 	Short: "Web service",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		configLoaders(time.Minute * 5)
 
 		// initialize cache

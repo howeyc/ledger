@@ -11,7 +11,7 @@ import (
 var lintCmd = &cobra.Command{
 	Use:   "lint",
 	Short: "Check ledger for errors",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		_, lerr := ledger.ParseLedgerFile(ledgerFilePath)
 		if lerr != nil {
 			fmt.Println("Ledger: ", lerr)

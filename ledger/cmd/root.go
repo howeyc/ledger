@@ -16,7 +16,7 @@ var cpuf *os.File
 var rootCmd = &cobra.Command{
 	Use:   "ledger",
 	Short: "Plain text accounting",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	PersistentPreRun: func(_ *cobra.Command, _ []string) {
 		if cpuprofile != "" {
 			var err error
 			cpuf, err = os.Create(cpuprofile)
@@ -28,7 +28,7 @@ var rootCmd = &cobra.Command{
 			}
 		}
 	},
-	PersistentPostRun: func(cmd *cobra.Command, args []string) {
+	PersistentPostRun: func(_ *cobra.Command, _ []string) {
 		if cpuprofile != "" {
 			pprof.StopCPUProfile()
 			cpuf.Close()

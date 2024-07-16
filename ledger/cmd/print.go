@@ -86,7 +86,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 var printCmd = &cobra.Command{
 	Use:   "print [account-substring-filter]...",
 	Short: "Print transactions in ledger file format",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)
