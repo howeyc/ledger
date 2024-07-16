@@ -115,8 +115,8 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 
 		before, after, split := strings.Cut(trimmedLine, " ")
 		if !split {
-			if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(),
-				fmt.Errorf("Unable to parse payee line: %s", trimmedLine))) {
+			if callback(nil, fmt.Errorf("%s:%d: unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(),
+				fmt.Errorf("unable to parse payee line: %s", trimmedLine))) {
 				return true
 			}
 			if len(currentComment) > 0 {
@@ -126,11 +126,11 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 		}
 		switch before {
 		case "account":
-			lp.parseAccount(after)
+			lp.skipAccount()
 		case "include":
 			paths, _ := filepath.Glob(filepath.Join(filepath.Dir(lp.scanner.Name()), after))
 			if len(paths) < 1 {
-				callback(nil, fmt.Errorf("%s:%d: Unable to include file(%s): %w", lp.scanner.Name(), lp.scanner.LineNumber(), after, errors.New("not found")))
+				callback(nil, fmt.Errorf("%s:%d: unable to include file(%s): %w", lp.scanner.Name(), lp.scanner.LineNumber(), after, errors.New("not found")))
 				return true
 			}
 			var wg sync.WaitGroup
@@ -152,7 +152,7 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 		default:
 			trans, transErr := lp.parseTransaction(before, after, currentComment)
 			if transErr != nil {
-				if callback(nil, fmt.Errorf("%s:%d: Unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(), transErr)) {
+				if callback(nil, fmt.Errorf("%s:%d: unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(), transErr)) {
 					return true
 				}
 				continue
@@ -164,14 +164,13 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 	return false
 }
 
-func (lp *parser) parseAccount(accName string) {
+func (lp *parser) skipAccount() {
 	for lp.scanner.Scan() {
 		// Read until blank line (ignore all sub-directives)
 		if len(lp.scanner.Text()) == 0 {
 			return
 		}
 	}
-	return
 }
 
 func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) {
@@ -181,7 +180,7 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 		// try to find new date layout
 		transDate, lp.dateLayout, err = date.ParseAndGetLayout(dateString)
 		if err != nil {
-			err = fmt.Errorf("Unable to parse date(%s): %w", dateString, err)
+			err = fmt.Errorf("unable to parse date(%s): %w", dateString, err)
 		}
 	}
 	return
@@ -243,7 +242,7 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 	lp.comments = nil
 
 	if transErr := balanceTransaction(trans); transErr != nil {
-		err = fmt.Errorf("Unable to balance transaction: %w", transErr)
+		err = fmt.Errorf("unable to balance transaction: %w", transErr)
 		return
 	}
 	return
@@ -256,7 +255,7 @@ func balanceTransaction(input *Transaction) error {
 	var numEmpty int
 	var emptyAccIndex int
 	if len(input.AccountChanges) < 2 {
-		return fmt.Errorf("need at least two postings")
+		return errors.New("need at least two postings")
 	}
 	for accIndex, accChange := range input.AccountChanges {
 		if accChange.Balance.IsZero() {
@@ -274,13 +273,13 @@ func balanceTransaction(input *Transaction) error {
 
 	switch numEmpty {
 	case 0:
-		return fmt.Errorf("no empty account to place extra balance")
+		return errors.New("no empty account to place extra balance")
 	case 1:
 		// If there is a single empty account, then it is obvious where to
 		// place the remaining balance.
 		input.AccountChanges[emptyAccIndex].Balance = balance.Neg()
 	default:
-		return fmt.Errorf("more than one account empty")
+		return errors.New("more than one account empty")
 	}
 
 	return nil

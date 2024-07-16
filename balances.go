@@ -22,10 +22,8 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 
 	incAccount := func(accName string, val decimal.Decimal) {
 		// track parent
-		var pmap map[string]string
-		pmapfound := false
 		accDepth := strings.Count(accName, ":") + 1
-		pmap, pmapfound = depthMap[accDepth]
+		pmap, pmapfound := depthMap[accDepth]
 		if !pmapfound {
 			pmap = make(map[string]string)
 			depthMap[accDepth] = pmap

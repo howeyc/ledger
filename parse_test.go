@@ -50,7 +50,7 @@ var testCases = []testCase{
 	Assets      123
 `,
 		nil,
-		errors.New(":1: Unable to parse transaction: Unable to parse payee line: 1970/01/01Payee"),
+		errors.New(":1: unable to parse transaction: unable to parse payee line: 1970/01/01Payee"),
 	},
 	{
 		"bad payee date",
@@ -59,7 +59,7 @@ var testCases = []testCase{
 	Assets      123
 `,
 		nil,
-		errors.New(`:1: Unable to parse transaction: Unable to parse date(1970/02/31): parsing time "1970/02/31": extra text: "1970/02/31"`),
+		errors.New(`:1: unable to parse transaction: unable to parse date(1970/02/31): parsing time "1970/02/31": extra text: "1970/02/31"`),
 	},
 	{
 		"unbalanced error",
@@ -68,21 +68,21 @@ var testCases = []testCase{
 	Assets      123
 `,
 		nil,
-		errors.New(":3: Unable to parse transaction: Unable to balance transaction: no empty account to place extra balance"),
+		errors.New(":3: unable to parse transaction: unable to balance transaction: no empty account to place extra balance"),
 	},
 	{
 		"single posting",
 		`1970/01/01 Payee
 	Assets:Account    5`,
 		nil,
-		errors.New(":2: Unable to parse transaction: Unable to balance transaction: need at least two postings"),
+		errors.New(":2: unable to parse transaction: unable to balance transaction: need at least two postings"),
 	},
 	{
 		"no posting",
 		`1970/01/01 Payee
 `,
 		nil,
-		errors.New(":1: Unable to parse transaction: Unable to balance transaction: need at least two postings"),
+		errors.New(":1: unable to parse transaction: unable to balance transaction: need at least two postings"),
 	},
 	{
 		"multiple empty",
@@ -93,7 +93,7 @@ var testCases = []testCase{
 	Bank
 `,
 		nil,
-		errors.New(":5: Unable to parse transaction: Unable to balance transaction: more than one account empty"),
+		errors.New(":5: unable to parse transaction: unable to balance transaction: more than one account empty"),
 	},
 	{
 		"all empty",

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"errors"
 	"html/template"
 	"path"
 	"strings"
@@ -36,7 +36,7 @@ func qvshortname(accname string) string {
 func loadTemplates(filenames ...string) (*template.Template, error) {
 	if len(filenames) == 0 {
 		// Not really a problem, but be consistent.
-		return nil, fmt.Errorf("html/template: no files named in call to ParseFiles")
+		return nil, errors.New("html/template: no files named in call to ParseFiles")
 	}
 	funcMap := template.FuncMap{
 		"abbrev":      abbrev,

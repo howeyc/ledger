@@ -37,7 +37,11 @@ func fundQuote(symbol string) (quote avQuote, err error) {
 	go func() {
 		avLimiter.Wait(context.Background())
 
-		resp, herr := http.Get("https://alphavantage.co/query?function=GLOBAL_QUOTE&symbol=" + symbol + "&datatype=csv&apikey=" + portfolioConfigData.AVToken)
+		req, rerr := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://alphavantage.co/query?function=GLOBAL_QUOTE&symbol="+symbol+"&datatype=csv&apikey="+portfolioConfigData.AVToken, http.NoBody)
+		if rerr != nil {
+			return
+		}
+		resp, herr := http.DefaultClient.Do(req)
 		if herr != nil {
 			return
 		}
@@ -72,7 +76,11 @@ type gdaxQuote struct {
 
 // https://docs.pro.coinbase.com/
 func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
-	resp, herr := http.Get("https://api.pro.coinbase.com/products/" + symbol + "/stats")
+	req, rerr := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://api.pro.coinbase.com/products/"+symbol+"/stats", http.NoBody)
+	if rerr != nil {
+		return
+	}
+	resp, herr := http.DefaultClient.Do(req)
 	if herr != nil {
 		return quote, herr
 	}
@@ -93,16 +101,19 @@ func cryptoQuote(symbol string) (quote gdaxQuote, err error) {
 var avdCache *cache.Cache = cache.New(time.Hour*24, time.Hour)
 
 // https://www.alphavantage.co/documentation/#weeklyadj
-func fundAnnualDividends(symbol string) (amount float64, err error) {
+func fundAnnualDividends(symbol string) float64 {
 	if div, found := avdCache.Get(symbol); found {
-		return div.(float64), nil
+		return div.(float64)
 	}
 
 	go func() {
 		avLimiter.Wait(context.Background())
 
-		yearAgo := time.Now().AddDate(-1, 0, 0).Format(time.DateOnly)
-		resp, herr := http.Get("https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&datatype=csv&symbol=" + symbol + "&apikey=" + portfolioConfigData.AVToken)
+		req, rerr := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY_ADJUSTED&datatype=csv&symbol="+symbol+"&apikey="+portfolioConfigData.AVToken, http.NoBody)
+		if rerr != nil {
+			return
+		}
+		resp, herr := http.DefaultClient.Do(req)
 		if herr != nil {
 			return
 		}
@@ -127,6 +138,9 @@ func fundAnnualDividends(symbol string) (amount float64, err error) {
 			return
 		}
 
+		yearAgo := time.Now().AddDate(-1, 0, 0).Format(time.DateOnly)
+
+		var amount float64
 		for _, rec := range recs[1:] {
 			if div, derr := strconv.ParseFloat(rec[divIdx], 64); rec[0] > yearAgo && derr == nil {
 				amount += div
@@ -136,5 +150,5 @@ func fundAnnualDividends(symbol string) (amount float64, err error) {
 		avdCache.Add(symbol, amount, cache.DefaultExpiration)
 	}()
 
-	return amount, nil
+	return 0
 }

@@ -100,7 +100,7 @@ func NewFromString(s string) (Decimal, error) {
 		if w > parseMax || w < parseMin {
 			return Zero, errTooBig
 		}
-		w = w * int64(scaleFactor)
+		w *= int64(scaleFactor)
 
 		// Parse up to *precision* digits and scale up
 		var f int64
@@ -125,14 +125,14 @@ func NewFromString(s string) (Decimal, error) {
 			f = -f
 		}
 		return Decimal(w + f), nil
-	} else {
-		_, i, err := atoi64(s)
-		if i > parseMax || i < parseMin {
-			return Zero, errTooBig
-		}
-		i = i * int64(scaleFactor)
-		return Decimal(i), err
 	}
+
+	_, i, err := atoi64(s)
+	if i > parseMax || i < parseMin {
+		return Zero, errTooBig
+	}
+	i *= int64(scaleFactor)
+	return Decimal(i), err
 }
 
 // IsZero returns true if d == 0

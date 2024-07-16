@@ -90,7 +90,7 @@ func TestBalanceLedger(t *testing.T) {
 }
 
 func BenchmarkGetBalances(b *testing.B) {
-	var trans []*Transaction
+	trans := make([]*Transaction, 0, 100000)
 	for i := range 100000 {
 		a := rand.Intn(50)
 		b := rand.Intn(10)

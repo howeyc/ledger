@@ -29,14 +29,14 @@ func TestIncludeGlob(t *testing.T) {
 
 func TestIncludeUnbalanced(t *testing.T) {
 	_, err := ParseLedgerFile("testdata/ledgerRootUnbalanced.dat")
-	if err.Error() != "testdata/ledger-2021-05.dat:12: Unable to parse transaction: Unable to balance transaction: no empty account to place extra balance" {
+	if err.Error() != "testdata/ledger-2021-05.dat:12: unable to parse transaction: unable to balance transaction: no empty account to place extra balance" {
 		t.Fatal(err)
 	}
 }
 
 func TestIncludeNonExistant(t *testing.T) {
 	_, err := ParseLedgerFile("testdata/ledgerRootNonExist.dat")
-	if err.Error() != "testdata/ledgerRootNonExist.dat:3: Unable to include file(ledger-xxxxx.dat): not found" {
+	if err.Error() != "testdata/ledgerRootNonExist.dat:3: unable to include file(ledger-xxxxx.dat): not found" {
 		t.Fatal(err)
 	}
 }

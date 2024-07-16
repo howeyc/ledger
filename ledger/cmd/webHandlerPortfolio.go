@@ -1,10 +1,10 @@
 package cmd
 
 import (
+	"cmp"
 	"net/http"
 	"slices"
 	"strings"
-	"cmp"
 
 	"github.com/howeyc/ledger"
 )
@@ -71,7 +71,7 @@ func portfolioHandler(w http.ResponseWriter, r *http.Request) {
 					sclose = quote.PreviousClose
 				}
 				if portfolio.ShowDividends {
-					div, _ := fundAnnualDividends(symbol)
+					div := fundAnnualDividends(symbol)
 					si.AnnualDividends = div * shares
 				}
 			case "Crypto":

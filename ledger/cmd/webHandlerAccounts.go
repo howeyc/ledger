@@ -157,7 +157,7 @@ func addQuickTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
+func addTransactionHandler(w http.ResponseWriter, _ *http.Request) {
 	t, err := loadTemplates("templates/template.addtransaction.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -182,7 +182,7 @@ func addTransactionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func accountsHandler(w http.ResponseWriter, r *http.Request) {
+func accountsHandler(w http.ResponseWriter, _ *http.Request) {
 	t, err := loadTemplates("templates/template.accounts.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)

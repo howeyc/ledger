@@ -137,11 +137,10 @@ func startEndTime(trans []*Transaction) (start, end time.Time) {
 
 // TransactionsByPeriod will return the transactions for each period.
 func TransactionsByPeriod(trans []*Transaction, per Period) []*RangeTransactions {
-	var results []*RangeTransactions
-
 	tStart, tEnd := startEndTime(trans)
 
 	boundaries := getDateBoundaries(per, tStart, tEnd)
+	results := make([]*RangeTransactions, 0, len(boundaries)-1)
 
 	bStart := boundaries[0]
 	for _, boundary := range boundaries[1:] {
@@ -165,11 +164,10 @@ type RangeBalance struct {
 
 // BalancesByPeriod will return the account balances for each period.
 func BalancesByPeriod(trans []*Transaction, per Period, rType RangeType) []*RangeBalance {
-	var results []*RangeBalance
-
 	tStart, tEnd := startEndTime(trans)
 
 	boundaries := getDateBoundaries(per, tStart, tEnd)
+	results := make([]*RangeBalance, 0, len(boundaries)-1)
 
 	bStart := boundaries[0]
 	for _, boundary := range boundaries[1:] {

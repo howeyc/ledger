@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func ledgerHandler(w http.ResponseWriter, r *http.Request) {
+func ledgerHandler(w http.ResponseWriter, _ *http.Request) {
 	t, err := loadTemplates("templates/template.ledger.html")
 	if err != nil {
 		http.Error(w, err.Error(), 500)
