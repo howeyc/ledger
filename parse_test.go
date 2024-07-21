@@ -75,14 +75,14 @@ var testCases = []testCase{
 		`1970/01/01 Payee
 	Assets:Account    5`,
 		nil,
-		errors.New(":2: unable to parse transaction: unable to balance transaction: need at least two postings"),
+		errors.New(":2: unable to parse transaction: need at least two postings"),
 	},
 	{
 		"no posting",
 		`1970/01/01 Payee
 `,
 		nil,
-		errors.New(":1: unable to parse transaction: unable to balance transaction: need at least two postings"),
+		errors.New(":1: unable to parse transaction: need at least two postings"),
 	},
 	{
 		"multiple empty",

@@ -192,6 +192,11 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		return nil, derr
 	}
 
+	transBal := decimal.Zero
+	var numEmpty int
+	var emptyAccIndex int
+	var accIndex int
+
 	postings := make([]Account, 0, 2)
 	for lp.scanner.Scan() {
 		trimmedLine := lp.scanner.Text()
@@ -228,8 +233,33 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		} else {
 			accChange.Name = strings.TrimSpace(trimmedLine)
 		}
-
 		postings = append(postings, accChange)
+
+		if accChange.Balance.IsZero() {
+			numEmpty++
+			emptyAccIndex = accIndex
+		}
+		accIndex++
+
+		transBal = transBal.Add(accChange.Balance)
+	}
+
+	if len(postings) < 2 {
+		err = errors.New("need at least two postings")
+		return
+	}
+
+	if !transBal.IsZero() {
+		switch numEmpty {
+		case 0:
+			return nil, errors.New("unable to balance transaction: no empty account to place extra balance")
+		case 1:
+			// If there is a single empty account, then it is obvious where to
+			// place the remaining balance.
+			postings[emptyAccIndex].Balance = transBal.Neg()
+		default:
+			return nil, errors.New("unable to balance transaction: more than one account empty")
+		}
 	}
 
 	trans = &Transaction{
@@ -241,46 +271,5 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 	}
 	lp.comments = nil
 
-	if transErr := balanceTransaction(trans); transErr != nil {
-		err = fmt.Errorf("unable to balance transaction: %w", transErr)
-		return
-	}
 	return
-}
-
-// Takes a transaction and balances it. This is mainly to fill in the empty part
-// with the remaining balance.
-func balanceTransaction(input *Transaction) error {
-	balance := decimal.Zero
-	var numEmpty int
-	var emptyAccIndex int
-	if len(input.AccountChanges) < 2 {
-		return errors.New("need at least two postings")
-	}
-	for accIndex, accChange := range input.AccountChanges {
-		if accChange.Balance.IsZero() {
-			numEmpty++
-			emptyAccIndex = accIndex
-		} else {
-			balance = balance.Add(accChange.Balance)
-		}
-	}
-
-	if balance.IsZero() {
-		// If everything adds up, then all is well.
-		return nil
-	}
-
-	switch numEmpty {
-	case 0:
-		return errors.New("no empty account to place extra balance")
-	case 1:
-		// If there is a single empty account, then it is obvious where to
-		// place the remaining balance.
-		input.AccountChanges[emptyAccIndex].Balance = balance.Neg()
-	default:
-		return errors.New("more than one account empty")
-	}
-
-	return nil
 }
