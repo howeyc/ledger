@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
 
-./ledger --prof "bal.pprof" bal > /dev/null
-./ledger --prof "reg.pprof" reg > /dev/null
-./ledger --prof "print.pprof" print > /dev/null
-./ledger --prof "stats.pprof" stats > /dev/null
+for i in $(seq 1 10);
+do
+	./ledger --prof "bal$i.pprof" bal > /dev/null
+	./ledger --prof "reg$i.pprof" reg > /dev/null
+	./ledger --prof "print$i.pprof" print > /dev/null
+	./ledger --prof "stats$i.pprof" stats > /dev/null
+done
 
 rm default.pgo
 
-go tool pprof -proto reg.pprof bal.pprof print.pprof stats.pprof > default.pgo
+go tool pprof -proto reg{1..10}.pprof bal{1..10}.pprof print{1..10}.pprof stats{1..10}.pprof > default.pgo
 
-rm bal.pprof
-rm reg.pprof
-rm print.pprof
-rm stats.pprof
+rm bal{1..10}.pprof
+rm reg{1..10}.pprof
+rm print{1..10}.pprof
+rm stats{1..10}.pprof
