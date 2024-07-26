@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"bytes"
+	"bufio"
 	"encoding/csv"
 	"errors"
 	"fmt"
@@ -23,6 +23,7 @@ import (
 
 const (
 	transactionDateFormat = "2006/01/02"
+	newLine               = "\n"
 )
 
 var startString, endString string
@@ -31,6 +32,7 @@ var showEmptyAccounts bool
 var columnWide bool
 var period string
 var payeeFilter string
+var spaceStr string
 
 func cliTransactions() ([]*ledger.Transaction, error) {
 	if columnWidth == 80 && columnWide {
@@ -43,6 +45,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 			}
 		}
 	}
+	spaceStr = strings.Repeat(" ", columnWidth)
 
 	parsedStartDate, tstartErr := date.Parse(startString)
 	parsedEndDate, tendErr := date.Parse(endString)
@@ -125,10 +128,10 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 	colorAccount := color.New(color.FgBlue)
 	colorReset := color.New(color.Reset)
 
-	var buf bytes.Buffer
+	buf := bufio.NewWriter(os.Stdout)
 	overallBalance := decimal.Zero
 	for _, account := range accountList {
-		accDepth := len(strings.Split(account.Name, ":"))
+		accDepth := strings.Count(account.Name, ":") + 1
 		if accDepth == 1 {
 			overallBalance = overallBalance.Add(account.Balance)
 		}
@@ -138,29 +141,30 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			if account.Balance.Sign() < 0 {
 				amtColor = colorNeg
 			}
-			colorAccount.Fprintf(&buf, formatAcc, account.Name)
-			fmt.Fprint(&buf, " ")
-			amtColor.Fprintf(&buf, formatAmt, outBalanceString)
-			fmt.Fprintln(&buf, "")
+			colorAccount.Fprintf(buf, formatAcc, account.Name)
+			buf.WriteString(" ")
+			amtColor.Fprintf(buf, formatAmt, outBalanceString)
+			buf.WriteString(newLine)
 		}
 	}
-	fmt.Fprintln(&buf, strings.Repeat("-", columns))
+	fmt.Fprintln(buf, strings.Repeat("-", columns))
 	outBalanceString := overallBalance.StringFixedBank()
 	amtColor := colorReset
 	if overallBalance.Sign() < 0 {
 		amtColor = colorNeg
 	}
-	colorAccount.Fprintf(&buf, formatAcc, "")
-	fmt.Fprint(&buf, " ")
-	amtColor.Fprintf(&buf, formatAmt, outBalanceString)
-	fmt.Fprintln(&buf, "")
-	io.Copy(os.Stdout, &buf)
+	colorAccount.Fprintf(buf, formatAcc, "")
+	buf.WriteString(" ")
+	amtColor.Fprintf(buf, formatAmt, outBalanceString)
+	buf.WriteString(newLine)
+	buf.Flush()
 }
 
 // WriteTransaction writes a transaction formatted to fit in specified column width.
-func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
+func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int) {
 	for _, c := range trans.Comments {
-		fmt.Fprintln(w, c)
+		w.WriteString(c)
+		w.WriteString(newLine)
 	}
 
 	// Print accounts sorted by name
@@ -168,28 +172,35 @@ func WriteTransaction(w io.Writer, trans *ledger.Transaction, columns int) {
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	fmt.Fprintf(w, "%s %s", trans.Date.Format(transactionDateFormat), trans.Payee)
+	w.WriteString(trans.Date.Format(transactionDateFormat))
+	w.WriteString(spaceStr[:1])
+	w.WriteString(trans.Payee)
 	if len(trans.PayeeComment) > 0 {
 		spaceCount := columns - 10 - utf8.RuneCountInString(trans.Payee)
 		if spaceCount < 1 {
 			spaceCount = 1
 		}
-		fmt.Fprintf(w, "%s%s", strings.Repeat(" ", spaceCount), trans.PayeeComment)
+		w.WriteString(spaceStr[:spaceCount])
+		w.WriteString(trans.PayeeComment)
 	}
-	fmt.Fprintln(w, "")
+	w.WriteString(newLine)
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.StringFixedBank()
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
 		}
-		fmt.Fprintf(w, "    %s%s%s", accChange.Name, strings.Repeat(" ", spaceCount), outBalanceString)
+		w.WriteString(spaceStr[:4])
+		w.WriteString(accChange.Name)
+		w.WriteString(spaceStr[:spaceCount])
+		w.WriteString(outBalanceString)
 		if len(accChange.Comment) > 0 {
-			fmt.Fprintf(w, " %s", accChange.Comment)
+			w.WriteString(spaceStr[:1])
+			w.WriteString(accChange.Comment)
 		}
-		fmt.Fprintln(w, "")
+		w.WriteString(newLine)
 	}
-	fmt.Fprintln(w, "")
+	w.WriteString(newLine)
 }
 
 // PrintLedger prints all transactions as a formatted ledger file.
@@ -201,7 +212,7 @@ func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, column
 		})
 	}
 
-	var buf bytes.Buffer
+	buf := bufio.NewWriter(os.Stdout)
 	for _, trans := range generalLedger {
 		inFilter := len(filterArr) == 0
 		for _, accChange := range trans.AccountChanges {
@@ -212,10 +223,10 @@ func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, column
 			}
 		}
 		if inFilter {
-			WriteTransaction(&buf, trans, columns)
+			WriteTransaction(buf, trans, columns)
 		}
 	}
-	io.Copy(os.Stdout, &buf)
+	buf.Flush()
 }
 
 // PrintRegister prints each transaction that matches the given filters.
@@ -230,7 +241,6 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	remainingWidth := columns - (10 * 3) - (4 * 1)
 	col1width := remainingWidth / 3
 	col2width := remainingWidth - col1width
-	formatDate := "%-10.10s"
 	formatAmount := "%10.10s"
 	formatPayee := fmt.Sprintf("%%-%[1]d.%[1]ds", col1width)
 	formatAccount := fmt.Sprintf("%%-%[1]d.%[1]ds", col2width)
@@ -240,7 +250,7 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	colorAccount := color.New(color.FgBlue)
 	colorReset := color.New(color.Reset)
 
-	var buf bytes.Buffer
+	buf := bufio.NewWriter(os.Stdout)
 	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
@@ -264,20 +274,20 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 					runamtColor = colorNeg
 				}
 
-				fmt.Fprintf(&buf, formatDate, trans.Date.Format(transactionDateFormat))
+				buf.WriteString(trans.Date.Format(transactionDateFormat))
 				buf.WriteString(" ")
-				colorPayee.Fprintf(&buf, formatPayee, trans.Payee)
+				colorPayee.Fprintf(buf, formatPayee, trans.Payee)
 				buf.WriteString(" ")
-				colorAccount.Fprintf(&buf, formatAccount, accChange.Name)
+				colorAccount.Fprintf(buf, formatAccount, accChange.Name)
 				buf.WriteString(" ")
-				balamtColor.Fprintf(&buf, formatAmount, outBalanceString)
+				balamtColor.Fprintf(buf, formatAmount, outBalanceString)
 				buf.WriteString(" ")
-				runamtColor.Fprintf(&buf, formatAmount, outRunningBalanceString)
-				fmt.Fprintln(&buf, "")
+				runamtColor.Fprintf(buf, formatAmount, outRunningBalanceString)
+				buf.WriteString(newLine)
 			}
 		}
 	}
-	io.Copy(os.Stdout, &buf)
+	buf.Flush()
 }
 
 // PrintCSV prints each transaction that matches the given filters in CSV format
