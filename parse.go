@@ -85,6 +85,10 @@ type parser struct {
 
 	comments   []string
 	dateLayout string
+
+	strPrevDate string
+	prevDateErr error
+	prevDate    time.Time
 }
 
 func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Transaction, err error) (stop bool)) (stop bool) {
@@ -174,6 +178,11 @@ func (lp *parser) skipAccount() {
 }
 
 func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) {
+	// seen before, skip parse
+	if lp.strPrevDate == dateString {
+		return lp.prevDate, lp.prevDateErr
+	}
+
 	// try current date layout
 	transDate, err = time.Parse(lp.dateLayout, dateString)
 	if err != nil {
@@ -183,6 +192,12 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 			err = fmt.Errorf("unable to parse date(%s): %w", dateString, err)
 		}
 	}
+
+	// maybe next date is same
+	lp.strPrevDate = dateString
+	lp.prevDate = transDate
+	lp.prevDateErr = err
+
 	return
 }
 
