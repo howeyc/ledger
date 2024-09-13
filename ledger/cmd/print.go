@@ -45,7 +45,6 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 			}
 		}
 	}
-	spaceStr = strings.Repeat(" ", columnWidth)
 
 	parsedStartDate, tstartErr := date.Parse(startString)
 	parsedEndDate, tendErr := date.Parse(endString)
@@ -160,6 +159,10 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 
 // WriteTransaction writes a transaction formatted to fit in specified column width.
 func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int) {
+	if len(spaceStr) < columns {
+		spaceStr = strings.Repeat(" ", columns)
+	}
+
 	for _, c := range trans.Comments {
 		w.WriteString(c)
 		w.WriteString(newLine)
