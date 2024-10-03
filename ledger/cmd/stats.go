@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"math"
-	"slices"
 	"strings"
 	"time"
 
@@ -31,9 +30,6 @@ func printStats(generalLedger []*ledger.Transaction) {
 		fmt.Println("Empty ledger.")
 		return
 	}
-	slices.SortFunc(generalLedger, func(a, b *ledger.Transaction) int {
-		return a.Date.Compare(b.Date)
-	})
 
 	startDate := generalLedger[0].Date
 	endDate := generalLedger[len(generalLedger)-1].Date

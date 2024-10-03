@@ -206,13 +206,6 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 
 // PrintLedger prints all transactions as a formatted ledger file.
 func PrintLedger(generalLedger []*ledger.Transaction, filterArr []string, columns int) {
-	// Print transactions by date
-	if len(generalLedger) > 1 {
-		slices.SortStableFunc(generalLedger, func(a, b *ledger.Transaction) int {
-			return a.Date.Compare(b.Date)
-		})
-	}
-
 	buf := bufio.NewWriter(os.Stdout)
 	for _, trans := range generalLedger {
 		inFilter := len(filterArr) == 0
