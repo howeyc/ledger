@@ -89,10 +89,33 @@ type parser struct {
 	strPrevDate string
 	prevDateErr error
 	prevDate    time.Time
+
+	transactions []Transaction
+	ctIdx        int
+	postings     []Account
+	cpIdx        int
+}
+
+const preAllocSize = 100000
+const preAllocWarn = 10
+
+func (p *parser) init() {
+	p.transactions = make([]Transaction, preAllocSize)
+	p.postings = make([]Account, preAllocSize*3)
+	p.ctIdx = 0
+	p.cpIdx = 0
+}
+
+func (p *parser) grow() {
+	if len(p.transactions)-p.ctIdx < preAllocWarn ||
+		len(p.postings)-p.cpIdx < (preAllocWarn*3) {
+		p.init()
+	}
 }
 
 func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Transaction, err error) (stop bool)) (stop bool) {
 	var lp parser
+	lp.init()
 	lp.scanner = newLineScanner(filename, ledgerReader)
 
 	var tlist []*Transaction
@@ -212,54 +235,49 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 	var emptyAccIndex int
 	var accIndex int
 
-	postings := make([]Account, 0, 2)
 	for lp.scanner.Scan() {
 		trimmedLine := lp.scanner.Text()
 
-		var currentComment string
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
-			currentComment = trimmedLine[commentIdx:]
+			currentComment := trimmedLine[commentIdx:]
 			trimmedLine = trimmedLine[:commentIdx]
 			trimmedLine = strings.TrimSpace(trimmedLine)
 			if len(trimmedLine) == 0 {
 				lp.comments = append(lp.comments, currentComment)
 				continue
 			}
+			lp.postings[lp.cpIdx+accIndex].Comment = currentComment
 		}
 
 		if len(trimmedLine) == 0 {
 			break
 		}
 
-		var accChange Account
-		accChange.Comment = currentComment
 		if iSpace := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); iSpace >= 0 {
 			if decbal, derr := decimal.NewFromString(trimmedLine[iSpace+1:]); derr == nil {
-				accChange.Name = strings.TrimSpace(trimmedLine[:iSpace])
-				accChange.Balance = decbal
+				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine[:iSpace])
+				lp.postings[lp.cpIdx+accIndex].Balance = decbal
 			} else if iParen := strings.Index(trimmedLine, "("); iParen >= 0 {
-				accChange.Name = strings.TrimSpace(trimmedLine[:iParen])
+				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine[:iParen])
 				f, _ := compute.Evaluate(trimmedLine[iParen+1 : len(trimmedLine)-1])
-				accChange.Balance = decimal.NewFromFloat(f)
+				lp.postings[lp.cpIdx+accIndex].Balance = decimal.NewFromFloat(f)
 			} else {
-				accChange.Name = strings.TrimSpace(trimmedLine)
+				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine)
 			}
 		} else {
-			accChange.Name = strings.TrimSpace(trimmedLine)
+			lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine)
 		}
-		postings = append(postings, accChange)
 
-		if accChange.Balance.IsZero() {
+		if lp.postings[lp.cpIdx+accIndex].Balance.IsZero() {
 			numEmpty++
 			emptyAccIndex = accIndex
 		}
+		transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance)
 		accIndex++
-
-		transBal = transBal.Add(accChange.Balance)
 	}
 
-	if len(postings) < 2 {
+	if accIndex < 2 {
 		err = errors.New("need at least two postings")
 		return
 	}
@@ -271,20 +289,25 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 		case 1:
 			// If there is a single empty account, then it is obvious where to
 			// place the remaining balance.
-			postings[emptyAccIndex].Balance = transBal.Neg()
+			lp.postings[lp.cpIdx+emptyAccIndex].Balance = transBal.Neg()
 		default:
 			return nil, errors.New("unable to balance transaction: more than one account empty")
 		}
 	}
 
-	trans = &Transaction{
-		Payee:          payeeString,
-		Date:           transDate,
-		PayeeComment:   payeeComment,
-		AccountChanges: postings,
-		Comments:       lp.comments,
-	}
+	lp.transactions[lp.ctIdx].Payee = payeeString
+	lp.transactions[lp.ctIdx].Date = transDate
+	lp.transactions[lp.ctIdx].PayeeComment = payeeComment
+	lp.transactions[lp.ctIdx].AccountChanges = lp.postings[lp.cpIdx : lp.cpIdx+accIndex]
+	lp.transactions[lp.ctIdx].Comments = lp.comments
+
+	trans = &lp.transactions[lp.ctIdx]
+
 	lp.comments = nil
+	lp.cpIdx += accIndex
+	lp.ctIdx++
+
+	lp.grow()
 
 	return
 }
