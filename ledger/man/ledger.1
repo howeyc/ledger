@@ -158,12 +158,15 @@ Days since last posting
 .Sh EQUITY TRANSACTION
 .Nm
 has a command to generate an equity transaction for a specified period.
-.Bl -tag -width equity
-.It Ic equity
-Print a transaction with a series of postings that has totals for accounts. The
-purpose of this is to close the books for a period. The equity transaction can
-be used as an inital transaction in a new file to start a new period. Options
-available for this command are:
+.Bl -tag width equity
+.It Ic equity Oo Ar account-filter Oc
+Print a transaction with a series of postings that has totals for accounts that
+match the
+.Ar account-filter .
+The purpose of this is to close the books for a period. The equity transaction
+can be used as an inital transaction in a new file to start a new period. The
+amount necessary to balance the transaction is assigned to the Equity account.
+Options available for this command are:
 .Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
 .It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
 Begin date of transactions to include in processing.

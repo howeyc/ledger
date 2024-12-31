@@ -14,9 +14,9 @@ import (
 
 // equityCmd represents the equity command
 var equityCmd = &cobra.Command{
-	Use:   "equity",
+	Use:   "equity [account-substring-filter]...",
 	Short: "Print account equity as transaction",
-	Run: func(_ *cobra.Command, _ []string) {
+	Run: func(_ *cobra.Command, args []string) {
 		generalLedger, err := cliTransactions()
 		if err != nil {
 			log.Fatalln(err)
@@ -29,17 +29,27 @@ var equityCmd = &cobra.Command{
 			trans.Date = generalLedger[len(generalLedger)-1].Date
 		}
 
+		filterArr := args
 		balances := make(map[string]decimal.Decimal)
 		for _, trans := range generalLedger {
 			for _, accChange := range trans.AccountChanges {
-				if decNum, ok := balances[accChange.Name]; !ok {
-					balances[accChange.Name] = accChange.Balance
-				} else {
-					balances[accChange.Name] = decNum.Add(accChange.Balance)
+				inFilter := len(filterArr) == 0
+				for _, filter := range filterArr {
+					if strings.Contains(accChange.Name, filter) {
+						inFilter = true
+					}
+				}
+				if inFilter {
+					if decNum, ok := balances[accChange.Name]; !ok {
+						balances[accChange.Name] = accChange.Balance
+					} else {
+						balances[accChange.Name] = decNum.Add(accChange.Balance)
+					}
 				}
 			}
 		}
 
+		eqBal := decimal.Zero
 		for name, bal := range balances {
 			if !bal.IsZero() {
 				trans.AccountChanges = append(trans.AccountChanges, ledger.Account{
@@ -47,7 +57,12 @@ var equityCmd = &cobra.Command{
 					Balance: bal,
 				})
 			}
+			eqBal = eqBal.Add(bal)
 		}
+		trans.AccountChanges = append(trans.AccountChanges, ledger.Account{
+			Name:    "Equity",
+			Balance: eqBal.Neg(),
+		})
 
 		slices.SortFunc(trans.AccountChanges, func(a, b ledger.Account) int {
 			return strings.Compare(a.Name, b.Name)
