@@ -23,7 +23,7 @@ var registerCmd = &cobra.Command{
 		if period == "" {
 			PrintRegister(generalLedger, args, columnWidth)
 		} else {
-			lperiod := ledger.Period(period)
+			lperiod := ledger.Period(strings.Title(period))
 			rtrans := ledger.TransactionsByPeriod(generalLedger, lperiod)
 			for rIdx, rt := range rtrans {
 				if len(rt.Transactions) < 1 {

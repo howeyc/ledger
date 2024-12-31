@@ -15,7 +15,7 @@ import (
 )
 
 func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period, err error) {
-	period = ledger.Period(dateFreq)
+	period = ledger.Period(strings.Title(dateFreq))
 
 	start, end, err = pdr.ParseRange(dateRange, time.Now())
 

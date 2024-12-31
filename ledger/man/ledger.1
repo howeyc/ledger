@@ -80,7 +80,11 @@ End date of transactions to include in processing.
 Filter transactions used in processing to payees that contain this string.
 .It Fl \-period Ar STR
 Split output into multiple results based on specified period. Valid options are:
+.Sy Daily ,
+.Sy Weekly ,
+.Sy BiWeekly ,
 .Sy Monthly ,
+.Sy BiMonthly ,
 .Sy Quarterly ,
 .Sy SemiYearly ,
 .Sy Yearly
@@ -126,7 +130,11 @@ End date of transactions to include in processing.
 Filter transactions used in processing to payees that contain this string.
 .It Fl \-period Ar STR
 Split output into multiple results based on specified period. Valid options are:
+.Sy Daily ,
+.Sy Weekly ,
+.Sy BiWeekly ,
 .Sy Monthly ,
+.Sy BiMonthly ,
 .Sy Quarterly ,
 .Sy SemiYearly ,
 .Sy Yearly
@@ -165,7 +173,9 @@ match the
 .Ar account-filter .
 The purpose of this is to close the books for a period. The equity transaction
 can be used as an inital transaction in a new file to start a new period. The
-amount necessary to balance the transaction is assigned to the Equity account.
+amount necessary to balance the transaction is assigned to the
+.Sy Equity
+account.
 Options available for this command are:
 .Bl -tag -compact -width "--begin-date (b) YYYY-mm-dd "
 .It Fl \-begin-date ( Fl b ) Ar YYYY-mm-dd
