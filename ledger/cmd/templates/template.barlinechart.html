@@ -53,6 +53,36 @@
    {{template "common-scripts"}}
     <script>
     $(document).ready(function() {
+
+	const totalSumLabel = {
+		id: 'totalSumLabel',
+		afterDatasetsDraw(chart, args, plugins) {
+			const yHidden = [];
+
+			for (let i = 0; i < chart.data.labels.length; i++) {
+				const dataPointRow = chart.data.datasets.map((dataset, index) => {
+					let yCoordinate;
+					if (chart.getDatasetMeta(index).hidden == true) {
+						yCoordinate = 1000;
+					} else {
+						yCoordinate = chart.getDatasetMeta(index).data[i].y;
+					}
+					return yCoordinate
+				})
+				yHidden.push(dataPointRow)
+			}
+
+			chart.data.datasets[0].data.forEach((dataPoint, index) => {
+				const yPos = Math.min(...yHidden[index]);
+				chart.ctx.save();
+				chart.ctx.fillStyle = '#666';
+				chart.ctx.textAlign = 'center';
+				chart.ctx.fillText(chart.scales.y.getValueForPixel(yPos).toFixed(2), chart.getDatasetMeta(0).data[index].x, yPos - 10);
+				chart.ctx.restore();
+			})
+		}
+	}
+
     var ctx = document.getElementById("chart-area").getContext("2d");
     {{if eq .ChartType "Radar"}}
     var data = {
@@ -109,7 +139,7 @@
         ]
     };
     {{if eq .ChartType "Bar"}} var myPieChart = new Chart(ctx, {type: 'bar', data: data, options: {interaction: {mode: 'index'}}});{{end}}
-    {{if eq .ChartType "StackedBar"}} var myPieChart = new Chart(ctx,{type: 'bar', data: data, options: {interaction: {mode: 'index'}, scales: {x: {stacked: true}, y: {stacked: true}}}});{{end}}
+    {{if eq .ChartType "StackedBar"}} var myPieChart = new Chart(ctx,{type: 'bar', data: data, options: {interaction: {mode: 'index'}, scales: {x: {stacked: true}, y: {stacked: true}}}, plugins: [totalSumLabel]});{{end}}
     {{end}}
     });
     </script>
