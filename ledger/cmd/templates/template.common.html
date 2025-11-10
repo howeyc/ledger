@@ -111,7 +111,10 @@
     init_color_scheme_css(localStorage.colorMode);
 
     });
-	</script>
+
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    </script>
 {{end}}
 {{define "payee-transaction-table"}}
 <div id="tableprogress" class="text-center">
@@ -147,8 +150,30 @@
 					{{if or (eq $accName "All") (substr $trAcc.Name $accName)}}
 					<tr>
 						<td>{{$trans.Date.Format "2006-01-02"}}</td>
-						<td class="d-none d-sm-block">{{$trans.Payee}}</td>
-						<td class="d-block d-sm-none">{{printf "%.16s" $trans.Payee}}</td>
+						<td class="d-none d-sm-block">
+							{{$trans.Payee}}
+							{{if $trans.PayeeComment}}
+							<button type="button" class="btn btn-primary"
+								data-bs-container="body"
+								data-bs-toggle="popover"
+								data-bs-placement="top"
+								data-bs-content="{{$trans.PayeeComment}}">
+								C
+							</button>
+							{{end}}
+						</td>
+						<td class="d-block d-sm-none">
+							{{printf "%.16s" $trans.Payee}}
+							{{if $trans.PayeeComment}}
+							<button type="button" class="btn btn-primary"
+								data-bs-container="body"
+								data-bs-toggle="popover"
+								data-bs-placement="top"
+								data-bs-content="{{$trans.PayeeComment}}">
+								C
+							</button>
+							{{end}}
+						</td>
 						<td class="text-end">{{$trAcc.Balance.StringFixedBank}}</td>
 					</tr>
 					{{end}}
