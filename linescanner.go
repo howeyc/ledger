@@ -21,8 +21,15 @@ func newLineScanner(filename string, r io.Reader) *linescanner {
 	lp := &linescanner{}
 	lp.scanner = bufio.NewScanner(r)
 	if fs, fserr := os.Stat(filename); fserr == nil {
-		lp.scanner.Buffer(make([]byte, int(fs.Size())), int(fs.Size()))
-		lp.unsafe = true
+		size := int(fs.Size())
+		// only pre-alloc for large files
+		if size > bufio.MaxScanTokenSize {
+			// allocate large enough such that scanner in bufio doesn't need to
+			// move anything during scanning
+			size *= 2
+			lp.scanner.Buffer(make([]byte, size), size)
+			lp.unsafe = true
+		}
 	}
 	lp.filename = filename
 
