@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.10">
+    <BkToCstmrStmt>
+        <GrpHdr>
+            <MsgId>1111111-000000</MsgId>
+            <CreDtTm>2025-07-31T12:37:01.152446900Z</CreDtTm>
+        </GrpHdr>
+        <Stmt>
+            <Id>1111111-000000-99999999</Id>
+            <CreDtTm>2025-07-31T12:37:01.152446900Z</CreDtTm>
+            <FrToDt>
+                <FrDtTm>2025-07-12T00:00:00+01:00</FrDtTm>
+                <ToDtTm>2025-07-14T00:00:00+01:00</ToDtTm>
+            </FrToDt>
+            <Acct>
+                <Id>
+                                <IBAN>BE00000000000</IBAN>
+                </Id>
+                <Ccy>EUR</Ccy>
+                <Ownr>
+                    <Nm>Sample</Nm>
+                    <PstlAdr>
+                        <AdrTp>
+                            <Cd>ADDR</Cd>
+                        </AdrTp>
+                            <PstCd>EU-0000</PstCd>
+                        <TwnNm>Fake</TwnNm>
+                        <AdrLine>Happy lane</AdrLine>
+                    </PstlAdr>
+                    <Id>
+                            <OrgId>
+                                <Othr>
+                                    <Id>0000000001234</Id>
+                                    <SchmeNm>
+                                        <Cd>COID</Cd>
+                                    </SchmeNm>
+                                </Othr>
+                            </OrgId>
+                    </Id>
+                </Ownr>
+                <Svcr>
+                    <FinInstnId>
+                        <Nm>Wise Europe SA</Nm>
+                        <PstlAdr>
+                            <AdrTp>
+                                <Cd>ADDR</Cd>
+                            </AdrTp>
+                            <PstCd>1050</PstCd>
+                            <TwnNm>Brussels</TwnNm>
+                            <AdrLine>Rue du Trône 100, 3rd floor</AdrLine>
+                        </PstlAdr>
+                    </FinInstnId>
+                </Svcr>
+            </Acct>
+            <Bal>
+                <Tp>
+                    <CdOrPrtry>
+                        <Cd>CLBD</Cd>
+                    </CdOrPrtry>
+                </Tp>
+                <Amt Ccy="EUR">67.71</Amt>
+                <CdtDbtInd>CRDT</CdtDbtInd>
+                <Dt>
+                    <DtTm>2025-07-14T00:00:00+01:00</DtTm>
+                </Dt>
+            </Bal>
+            <Bal>
+                <Tp>
+                    <CdOrPrtry>
+                        <Cd>OPBD</Cd>
+                    </CdOrPrtry>
+                </Tp>
+                <Amt Ccy="EUR">306.61</Amt>
+                <CdtDbtInd>CRDT</CdtDbtInd>
+                <Dt>
+                    <DtTm>2025-07-12T00:00:00+01:00</DtTm>
+                </Dt>
+            </Bal>
+            <Bal>
+                <Tp>
+                    <CdOrPrtry>
+                        <Prtry>Unrealised gains and losses</Prtry>
+                    </CdOrPrtry>
+                </Tp>
+                <Amt Ccy="EUR">2.26</Amt>
+                <CdtDbtInd>CRDT</CdtDbtInd>
+                <Dt>
+                    <DtTm>2025-07-14T00:00:00+01:00</DtTm>
+                </Dt>
+            </Bal>
+            <TxsSummry>
+                <TtlNtries>
+                    <NbOfNtries>2</NbOfNtries>
+                    <Sum>-38.90</Sum>
+                    <TtlNetNtry>
+                        <Amt>38.90</Amt>
+                        <CdtDbtInd>DBIT</CdtDbtInd>
+                    </TtlNetNtry>
+                </TtlNtries>
+                <TtlCdtNtries>
+                    <NbOfNtries>0</NbOfNtries>
+                    <Sum>0</Sum>
+                </TtlCdtNtries>
+                <TtlDbtNtries>
+                    <NbOfNtries>2</NbOfNtries>
+                    <Sum>-38.90</Sum>
+                </TtlDbtNtries>
+            </TxsSummry>
+            <Ntry>
+                <Amt Ccy="EUR">3.90</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>
+                    <Cd>BOOK</Cd>
+                </Sts>
+                <BookgDt>
+                    <DtTm>2025-07-13T05:32:45.916737+01:00</DtTm>
+                </BookgDt>
+                <BkTxCd>
+                    <Prtry>
+                        <Cd>CARD-675</Cd>
+                    </Prtry>
+                </BkTxCd>
+                <AddtlNtryInf>Card transaction of EUR issued</AddtlNtryInf>
+            </Ntry>
+            <Ntry>
+                <NtryRef>00001/2025</NtryRef>
+                <Amt Ccy="EUR">35.00</Amt>
+                <CdtDbtInd>DBIT</CdtDbtInd>
+                <Sts>
+                    <Cd>BOOK</Cd>
+                </Sts>
+                <BookgDt>
+                    <DtTm>2025-07-12T08:58:01.327701+01:00</DtTm>
+                </BookgDt>
+                <BkTxCd>
+                    <Prtry>
+                        <Cd>TRANSFER-0000</Cd>
+                    </Prtry>
+                </BkTxCd>
+                    <NtryDtls>
+                        <TxDtls>
+                            <RltdPties>
+                                    <Cdtr>
+                                        <Pty>
+                                            <Nm>LLC Company</Nm>
+                                        </Pty>
+                                    </Cdtr>
+                            </RltdPties>
+                        </TxDtls>
+                    </NtryDtls>
+                <AddtlNtryInf>Sent money to LLC Company</AddtlNtryInf>
+            </Ntry>
+        </Stmt>
+    </BkToCstmrStmt>
+</Document>
