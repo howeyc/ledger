@@ -21,7 +21,15 @@ func FuzzParseLedger(f *testing.F) {
 		overall := decimal.Zero
 		for _, t := range trans {
 			for _, p := range t.AccountChanges {
-				overall = overall.Add(p.Balance)
+				if p.Converted != nil {
+					overall = overall.Add(p.Converted.Neg())
+				} else if p.ConversionFactor != nil {
+					overall = overall.Add(p.Balance.Mul(
+						*p.ConversionFactor,
+					))
+				} else {
+					overall = overall.Add(p.Balance)
+				}
 			}
 		}
 		if !overall.IsZero() {

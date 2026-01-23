@@ -6,10 +6,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
-	"unicode"
 
 	"github.com/alfredxing/calc/compute"
 	"github.com/howeyc/ledger/decimal"
@@ -224,6 +224,52 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 	return
 }
 
+func (a *Account) parsePosting(trimmedLine string) (err error) {
+	trimmedLine = strings.TrimSpace(trimmedLine)
+
+	// Regex groups:
+	// 1: account name
+	// 2: amount (number or parenthesized expression)
+	// 3: @@ converted amount
+	// 4: @ conversion rate
+	re := regexp.MustCompile(
+		`^(.+?)(?:(?:\s{2,}|\t)([\-]?\d+(?:\.\d+)?|\([0-9+\-*\/. ]+\))(?:\s*(?:@@\s*([\-]?\d+(?:\.\d+)?)|@\s*([\-]?\d+(?:\.\d+)?)))?)?\s*$`,
+	)
+
+	m := re.FindStringSubmatch(trimmedLine)
+	if m == nil {
+		return fmt.Errorf("invalid posting: %q", trimmedLine)
+	}
+
+	a.Name = m[1]
+	if m[2] != "" {
+		bal, err := compute.Evaluate(m[2])
+		if err != nil {
+			return err
+		}
+		a.Balance = decimal.NewFromFloat(bal)
+	}
+
+	// @@ explicit converted amount
+	if m[3] != "" {
+		conv, err := decimal.NewFromString(m[3])
+		if err != nil {
+			return err
+		}
+		a.Converted = &conv
+	}
+
+	// @ rate-based conversion
+	if m[4] != "" {
+		rate, err := decimal.NewFromString(m[4])
+		if err != nil {
+			return err
+		}
+		a.ConversionFactor = &rate
+	}
+	return
+}
+
 func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string) (trans *Transaction, err error) {
 	transDate, derr := lp.parseDate(dateString)
 	if derr != nil {
@@ -254,26 +300,22 @@ func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string)
 			break
 		}
 
-		if iSpace := strings.LastIndexFunc(trimmedLine, unicode.IsSpace); iSpace >= 0 {
-			if decbal, derr := decimal.NewFromString(trimmedLine[iSpace+1:]); derr == nil {
-				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine[:iSpace])
-				lp.postings[lp.cpIdx+accIndex].Balance = decbal
-			} else if iParen := strings.Index(trimmedLine, "("); iParen >= 0 {
-				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine[:iParen])
-				f, _ := compute.Evaluate(trimmedLine[iParen+1 : len(trimmedLine)-1])
-				lp.postings[lp.cpIdx+accIndex].Balance = decimal.NewFromFloat(f)
-			} else {
-				lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine)
-			}
-		} else {
-			lp.postings[lp.cpIdx+accIndex].Name = strings.TrimSpace(trimmedLine)
-		}
+		_ = lp.postings[lp.cpIdx+accIndex].parsePosting(trimmedLine)
 
 		if lp.postings[lp.cpIdx+accIndex].Balance.IsZero() {
 			numEmpty++
 			emptyAccIndex = accIndex
 		}
-		transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance)
+
+		if lp.postings[lp.cpIdx+accIndex].Converted != nil {
+			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Converted.Neg())
+		} else if lp.postings[lp.cpIdx+accIndex].ConversionFactor != nil {
+			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance.Mul(
+				*lp.postings[lp.cpIdx+accIndex].ConversionFactor,
+			))
+		} else {
+			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance)
+		}
 		accIndex++
 	}
 

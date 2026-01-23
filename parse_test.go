@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -513,6 +514,60 @@ account Assets
 		},
 		nil,
 	},
+	{
+		"conversion factor",
+		`1970/01/01 Converted CZK to EUR
+    Assets:Wise:CZK                                                   -2000.00 @ 0.5
+    Assets:Wise:EUR                                                    1000.00
+`,
+		[]*Transaction{
+			{
+				Payee: "Converted CZK to EUR",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					{
+						Name:             "Assets:Wise:CZK",
+						Balance:          decimal.NewFromFloat(-2000.0),
+						ConversionFactor: p(decimal.NewFromFloat(0.5)),
+					},
+					{
+						Name:    "Assets:Wise:EUR",
+						Balance: decimal.NewFromFloat(1000.0),
+					},
+				},
+			},
+		},
+		nil,
+	},
+	{
+		"conversion",
+		`1970/01/01 Converted CZK to EUR
+    Assets:Wise:CZK                                                   -2000.00 @@ 1000.00
+    Assets:Wise:EUR                                                    1000.00
+`,
+		[]*Transaction{
+			{
+				Payee: "Converted CZK to EUR",
+				Date:  time.Unix(0, 0).UTC(),
+				AccountChanges: []Account{
+					{
+						Name:      "Assets:Wise:CZK",
+						Balance:   decimal.NewFromFloat(-2000.0),
+						Converted: p(decimal.NewFromFloat(1000)),
+					},
+					{
+						Name:    "Assets:Wise:EUR",
+						Balance: decimal.NewFromFloat(1000.0),
+					},
+				},
+			},
+		},
+		nil,
+	},
+}
+
+func p(d decimal.Decimal) *decimal.Decimal {
+	return &d
 }
 
 func TestParseLedger(t *testing.T) {
@@ -579,5 +634,101 @@ account endofledger`)
 func BenchmarkParseLedger(b *testing.B) {
 	for b.Loop() {
 		_, _ = ParseLedgerFile("testdata/ledgerBench.dat")
+	}
+}
+
+func TestAccount_parsePosting(t *testing.T) {
+	tests := []struct {
+		name        string
+		trimmedLine string
+		want        Account
+		wantErr     bool
+	}{
+		{
+			"simple",
+			"Expense  123",
+			Account{Name: "Expense", Balance: decimal.NewFromFloat(123.0)},
+			false,
+		},
+		{
+			"empty",
+			"Expense",
+			Account{Name: "Expense", Balance: decimal.NewFromFloat(0.0)},
+			false,
+		},
+		{
+			"spaces",
+			"Expense:Cranks Unlimited	10",
+			Account{Name: "Expense:Cranks Unlimited", Balance: decimal.NewFromFloat(10.0)},
+			false,
+		},
+		{
+			"multiply",
+			"Expense  (123*2)",
+			Account{Name: "Expense", Balance: decimal.NewFromFloat(246.0)},
+			false,
+		},
+		{
+			"slash",
+			"Expense/test   158",
+			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(158.0)},
+			false,
+		},
+		{
+			"negative",
+			"Expense/test   -158",
+			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(-158.0)},
+			false,
+		},
+		{
+			"math",
+			"Expense:Bank of:Money  (123*2+3)",
+			Account{Name: "Expense:Bank of:Money", Balance: decimal.NewFromFloat(249.0)},
+			false,
+		},
+		{
+			"math with spaces",
+			"Expense/test  (123 * 3)",
+			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(123 * 3)},
+			false,
+		},
+		{
+			"converted",
+			"Expense/test   158 @@ 200",
+			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(158.0), Converted: p(decimal.NewFromFloat(200.0))},
+			false,
+		},
+		{
+			"conversion",
+			"Expense/test   100 @ 2",
+			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(100.0), ConversionFactor: p(decimal.NewFromFloat(2.0))},
+			false,
+		},
+		{
+			"conversion heirarchy",
+			"Assets:Wise:CZK                                                   -2000.00 @ 0.5",
+			Account{Name: "Assets:Wise:CZK", Balance: decimal.NewFromFloat(-2000.0), ConversionFactor: p(decimal.NewFromFloat(0.5))},
+			false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := Account{}
+			gotErr := a.parsePosting(tt.trimmedLine)
+			if gotErr != nil {
+				if !tt.wantErr {
+					t.Errorf("parsePosting() failed: %v", gotErr)
+				}
+				return
+			}
+			if !reflect.DeepEqual(a, tt.want) {
+				aJson, _ := json.Marshal(a)
+				wantJson, _ := json.Marshal(tt.want)
+				t.Errorf("got %+v wanted %+v", string(aJson), string(wantJson))
+			}
+			if tt.wantErr {
+				t.Fatal("parsePosting() succeeded unexpectedly")
+			}
+		})
 	}
 }

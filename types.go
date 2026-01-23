@@ -11,6 +11,11 @@ type Account struct {
 	Name    string
 	Balance decimal.Decimal
 	Comment string
+
+	// Balance converted using @@ notation
+	Converted *decimal.Decimal
+	// Conversion factor using @ notation
+	ConversionFactor *decimal.Decimal
 }
 
 // Transaction is the basis of a ledger. The ledger holds a list of transactions.
