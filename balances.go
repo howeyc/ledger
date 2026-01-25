@@ -40,7 +40,7 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 		}
 
 		if acc, ok := balances[accName][currency]; !ok {
-			acc := &Account{Name: accName, Balance: val}
+			acc := &Account{Name: accName, Currency: currency, Balance: val}
 			accList = append(accList, acc)
 			balances[accName][currency] = acc
 		} else {
