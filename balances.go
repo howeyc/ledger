@@ -14,13 +14,13 @@ import (
 // Accounts are sorted by name.
 func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	var accList []*Account
-	balances := make(map[string]*Account)
+	balances := make(map[string]map[string]*Account)
 
 	// at every depth, for each account, track the parent account
 	depthMap := make(map[int]map[string]string)
 	var maxDepth int
 
-	incAccount := func(accName string, val decimal.Decimal) {
+	incAccount := func(accName string, currency string, val decimal.Decimal) {
 		// track parent
 		accDepth := strings.Count(accName, ":") + 1
 		pmap, pmapfound := depthMap[accDepth]
@@ -35,10 +35,14 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 		}
 
 		// add to balance
-		if acc, ok := balances[accName]; !ok {
+		if _, ok := balances[accName]; !ok {
+			balances[accName] = make(map[string]*Account)
+		}
+
+		if acc, ok := balances[accName][currency]; !ok {
 			acc := &Account{Name: accName, Balance: val}
 			accList = append(accList, acc)
-			balances[accName] = acc
+			balances[accName][currency] = acc
 		} else {
 			acc.Balance = acc.Balance.Add(val)
 		}
@@ -53,7 +57,7 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 				}
 			}
 			if inFilter {
-				incAccount(accChange.Name, accChange.Balance)
+				incAccount(accChange.Name, accChange.Currency, accChange.Balance)
 			}
 		}
 	}
@@ -61,7 +65,9 @@ func GetBalances(generalLedger []*Transaction, filterArr []string) []*Account {
 	// roll-up balances
 	for curDepth := maxDepth; curDepth > 1; curDepth-- {
 		for accName, parentName := range depthMap[curDepth] {
-			incAccount(parentName, balances[accName].Balance)
+			for currency, acc := range balances[accName] {
+				incAccount(parentName, currency, acc.Balance)
+			}
 		}
 	}
 
