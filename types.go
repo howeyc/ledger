@@ -8,9 +8,11 @@ import (
 
 // Account holds the name and balance
 type Account struct {
-	Name    string
-	Balance decimal.Decimal
-	Comment string
+	Name string
+	// Default "" for no currency/token displayed
+	Currency string
+	Balance  decimal.Decimal
+	Comment  string
 
 	// Balance converted using @@ notation
 	Converted *decimal.Decimal

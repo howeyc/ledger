@@ -233,7 +233,13 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 	// 3: @@ converted amount
 	// 4: @ conversion rate
 	re := regexp.MustCompile(
-		`^(.+?)(?:(?:\s{2,}|\t)([\-]?\d+(?:\.\d+)?|\([0-9+\-*\/. ]+\))(?:\s*(?:@@\s*([\-]?\d+(?:\.\d+)?)|@\s*([\-]?\d+(?:\.\d+)?)))?)?\s*$`,
+		`^(?P<name>.+?)` +
+			`(?:(?:\s{2,}|\t)` +
+			`(?:(?P<currency>[A-Z\$]+)\s+)?` +
+			`(?P<amount>[\-]?\d+(?:\.\d+)?|\([0-9+\-*\/. ]+\))` +
+			`(?:\s*(?:@@\s*` +
+			`(?P<converted>[\-]?\d+(?:\.\d+)?)|@\s*` +
+			`(?P<factor>[\-]?\d+(?:\.\d+)?)))?)?\s*$`,
 	)
 
 	m := re.FindStringSubmatch(trimmedLine)
@@ -242,8 +248,10 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 	}
 
 	a.Name = m[1]
-	if m[2] != "" {
-		bal, err := compute.Evaluate(m[2])
+	a.Currency = m[2]
+
+	if m[3] != "" {
+		bal, err := compute.Evaluate(m[3])
 		if err != nil {
 			return err
 		}
@@ -251,8 +259,8 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 	}
 
 	// @@ explicit converted amount
-	if m[3] != "" {
-		conv, err := decimal.NewFromString(m[3])
+	if m[4] != "" {
+		conv, err := decimal.NewFromString(m[4])
 		if err != nil {
 			return err
 		}
@@ -260,8 +268,8 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 	}
 
 	// @ rate-based conversion
-	if m[4] != "" {
-		rate, err := decimal.NewFromString(m[4])
+	if m[5] != "" {
+		rate, err := decimal.NewFromString(m[5])
 		if err != nil {
 			return err
 		}

@@ -701,13 +701,43 @@ func TestAccount_parsePosting(t *testing.T) {
 		{
 			"conversion",
 			"Expense/test   100 @ 2",
-			Account{Name: "Expense/test", Balance: decimal.NewFromFloat(100.0), ConversionFactor: p(decimal.NewFromFloat(2.0))},
+			Account{Name: "Expense/test", Currency: "", Balance: decimal.NewFromFloat(100.0), ConversionFactor: p(decimal.NewFromFloat(2.0))},
 			false,
 		},
 		{
 			"conversion heirarchy",
 			"Assets:Wise:CZK                                                   -2000.00 @ 0.5",
 			Account{Name: "Assets:Wise:CZK", Balance: decimal.NewFromFloat(-2000.0), ConversionFactor: p(decimal.NewFromFloat(0.5))},
+			false,
+		},
+		{
+			"negative",
+			"Expense/test   EUR -158",
+			Account{Name: "Expense/test", Currency: "EUR", Balance: decimal.NewFromFloat(-158.0)},
+			false,
+		},
+		{
+			"math",
+			"Expense:Bank of:Money  USD  (123*2+3)",
+			Account{Name: "Expense:Bank of:Money", Currency: "USD", Balance: decimal.NewFromFloat(249.0)},
+			false,
+		},
+		{
+			"math with spaces",
+			"Expense/test    CZK  (123 * 3)",
+			Account{Name: "Expense/test", Currency: "CZK", Balance: decimal.NewFromFloat(123 * 3)},
+			false,
+		},
+		{
+			"converted",
+			"Expense/test   USD 158 @@ 200",
+			Account{Name: "Expense/test", Currency: "USD", Balance: decimal.NewFromFloat(158.0), Converted: p(decimal.NewFromFloat(200.0))},
+			false,
+		},
+		{
+			"conversion",
+			"Expense/test   $ 100 @ 2",
+			Account{Name: "Expense/test", Currency: "$", Balance: decimal.NewFromFloat(100.0), ConversionFactor: p(decimal.NewFromFloat(2.0))},
 			false,
 		},
 	}
