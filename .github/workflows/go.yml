@@ -23,7 +23,7 @@ jobs:
       run: go build -v ./...
 
     - name: Test
-      run: go test -v -coverprofile=profile.cov . ./decimal
+      run: go test -v -coverprofile=profile.cov .
       
     - uses: shogo82148/actions-goveralls@v1
       with: 

@@ -14,9 +14,9 @@ import (
 	"unicode/utf8"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/fastcolor"
 	date "github.com/joyt/godate"
+	"github.com/shopspring/decimal"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -133,7 +133,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			overallBalance = overallBalance.Add(account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Currency + " " + account.Balance.StringFixedBank()
+			outBalanceString := account.Currency + " " + account.Balance.StringFixedBank(2)
 			amtColor := colorReset
 			if account.Balance.Sign() < 0 {
 				amtColor = colorNeg
@@ -145,7 +145,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 	}
 	fmt.Fprintln(buf, strings.Repeat("-", columns))
-	outBalanceString := overallBalance.StringFixedBank()
+	outBalanceString := overallBalance.StringFixedBank(2)
 	amtColor := colorReset
 	if overallBalance.Sign() < 0 {
 		amtColor = colorNeg
@@ -186,7 +186,7 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 	}
 	w.WriteString(newLine)
 	for _, accChange := range trans.AccountChanges {
-		outBalanceString := accChange.Balance.StringFixedBank()
+		outBalanceString := accChange.Balance.StringFixedBank(2)
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
@@ -253,8 +253,8 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 			}
 			if inFilter {
 				runningBalance = runningBalance.Add(accChange.Balance)
-				outBalanceString := accChange.Balance.StringFixedBank()
-				outRunningBalanceString := runningBalance.StringFixedBank()
+				outBalanceString := accChange.Balance.StringFixedBank(2)
+				outRunningBalanceString := runningBalance.StringFixedBank(2)
 
 				balamtColor := colorReset
 				if accChange.Balance.Sign() < 0 {
@@ -297,7 +297,7 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 			}
 			if inFilter {
 				runningBalance = runningBalance.Add(accChange.Balance)
-				outBalanceString := accChange.Balance.StringFixedBank()
+				outBalanceString := accChange.Balance.StringFixedBank(2)
 				record := []string{trans.Date.Format(transactionDateFormat),
 					trans.Payee,
 					accChange.Name,

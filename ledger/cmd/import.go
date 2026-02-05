@@ -11,10 +11,10 @@ import (
 	"unicode/utf8"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/import/camt"
 	"github.com/howeyc/ledger/ledger/cmd/internal/import/qfx"
 	"github.com/jbrukh/bayesian"
+	"github.com/shopspring/decimal"
 	"github.com/spf13/cobra"
 )
 

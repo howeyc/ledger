@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"reflect"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/howeyc/ledger/decimal"
+	"github.com/shopspring/decimal"
 )
 
 type testCase struct {
@@ -751,9 +750,9 @@ func TestAccount_parsePosting(t *testing.T) {
 				}
 				return
 			}
-			if !reflect.DeepEqual(a, tt.want) {
-				aJson, _ := json.Marshal(a)
-				wantJson, _ := json.Marshal(tt.want)
+			aJson, _ := json.Marshal(a)
+			wantJson, _ := json.Marshal(tt.want)
+			if string(aJson) != string(wantJson) {
 				t.Errorf("got %+v wanted %+v", string(aJson), string(wantJson))
 			}
 			if tt.wantErr {

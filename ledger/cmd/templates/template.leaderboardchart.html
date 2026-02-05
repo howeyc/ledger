@@ -42,7 +42,7 @@
             <td>
                 <div class="progress">
 					<div class="progress-bar{{if eq $idx 0}} bg-warning{{end}}{{if eq $idx 1}} bg-secondary{{end}}" role="progressbar" aria-valuenow="{{$acc.Percentage}}" aria-valuemin="0" aria-valuemax="100" style="width: {{.Percentage}}%;">
-                    {{$acc.Balance.StringRound}} ({{$acc.Percentage}}%)
+                    {{$acc.Balance.StringFixed(0)}} ({{$acc.Percentage}}%)
                     </div>
                   </div>
             </td>

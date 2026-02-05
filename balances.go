@@ -4,7 +4,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/howeyc/ledger/decimal"
+	"github.com/shopspring/decimal"
 )
 
 // GetBalances provided a list of transactions and filter strings, returns account balances of

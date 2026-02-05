@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/howeyc/ledger/decimal"
+	"github.com/shopspring/decimal"
 )
 
 type testBalCase struct {

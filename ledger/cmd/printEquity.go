@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/decimal"
+	"github.com/shopspring/decimal"
 	"github.com/spf13/cobra"
 )
 

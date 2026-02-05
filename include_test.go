@@ -11,7 +11,7 @@ func TestIncludeSimple(t *testing.T) {
 		t.Fatal(err)
 	}
 	bals := GetBalances(trans, []string{"Assets"})
-	if bals[0].Balance.StringRound() != "50" {
+	if bals[0].Balance.StringFixed(0) != "50" {
 		t.Fatal(errors.New("should be 50"))
 	}
 }
@@ -22,7 +22,7 @@ func TestIncludeGlob(t *testing.T) {
 		t.Fatal(err)
 	}
 	bals := GetBalances(trans, []string{"Assets"})
-	if bals[0].Balance.StringRound() != "80" {
+	if bals[0].Balance.StringFixed(0) != "80" {
 		t.Fatal(errors.New("should be 80"))
 	}
 }

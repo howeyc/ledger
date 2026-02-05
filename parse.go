@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/alfredxing/calc/compute"
-	"github.com/howeyc/ledger/decimal"
 	date "github.com/joyt/godate"
+	"github.com/shopspring/decimal"
 )
 
 // ParseLedgerFile parses a ledger file and returns a list of Transactions.

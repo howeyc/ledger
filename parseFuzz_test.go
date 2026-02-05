@@ -6,7 +6,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/howeyc/ledger/decimal"
+	"github.com/shopspring/decimal"
 )
 
 func FuzzParseLedger(f *testing.F) {

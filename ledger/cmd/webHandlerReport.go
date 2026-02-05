@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/howeyc/ledger"
-	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/cmd/internal/pdr"
 	colorful "github.com/lucasb-eyer/go-colorful"
+	"github.com/shopspring/decimal"
 )
 
 func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period ledger.Period, err error) {
@@ -82,7 +82,7 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 						factor := decimal.NewFromFloat(acctOp.MultiplicationFactor)
 						fval = fval.Mul(factor)
 					}
-					oval := decimal.One
+					oval := decimal.NewFromInt(1)
 					if acctOp.SubAccount != "" {
 						for _, obal := range balances {
 							if acctOp.SubAccount == obal.Name {
