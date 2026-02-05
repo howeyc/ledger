@@ -133,7 +133,7 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			overallBalance = overallBalance.Add(account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.StringFixedBank()
+			outBalanceString := account.Currency + " " + account.Balance.StringFixedBank()
 			amtColor := colorReset
 			if account.Balance.Sign() < 0 {
 				amtColor = colorNeg
