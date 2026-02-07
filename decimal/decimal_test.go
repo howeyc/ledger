@@ -414,7 +414,7 @@ func FuzzStringParse(f *testing.F) {
 
 func BenchmarkNewFromString(b *testing.B) {
 	numbers := []string{"10.0", "245.6", "354", "2.456", "-31.2"}
-	for range b.N {
+	for b.Loop() {
 		for _, numStr := range numbers {
 			NewFromString(numStr)
 		}
@@ -429,8 +429,7 @@ func BenchmarkStringFixedBank(b *testing.B) {
 			numbers[i] *= -1
 		}
 	}
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		for _, num := range numbers {
 			num.StringFixedBank()
 		}
