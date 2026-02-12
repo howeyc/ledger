@@ -187,6 +187,15 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 	w.WriteString(newLine)
 	for _, accChange := range trans.AccountChanges {
 		outBalanceString := accChange.Balance.StringFixedBank(2)
+		if accChange.Currency != "" {
+			outBalanceString = accChange.Currency + " " + outBalanceString
+		}
+		// Show converted amount (@@) or conversion factor (@) similar to hledger
+		if accChange.Converted != nil {
+			outBalanceString = outBalanceString + " @@ " + accChange.Converted.StringFixedBank(2)
+		} else if accChange.ConversionFactor != nil {
+			outBalanceString = outBalanceString + " @ " + accChange.ConversionFactor.String()
+		}
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
@@ -242,7 +251,9 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	colorReset := fastcolor.Reset
 
 	buf := bufio.NewWriter(os.Stdout)
-	runningBalance := decimal.Zero
+	// runningBalance keeps the total per currency
+	runningBalance := make(map[string]decimal.Decimal)
+
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
@@ -251,30 +262,104 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 					inFilter = true
 				}
 			}
-			if inFilter {
-				runningBalance = runningBalance.Add(accChange.Balance)
-				outBalanceString := accChange.Balance.StringFixedBank(2)
-				outRunningBalanceString := runningBalance.StringFixedBank(2)
+			if !inFilter {
+				continue
+			}
 
-				balamtColor := colorReset
-				if accChange.Balance.Sign() < 0 {
-					balamtColor = colorNeg
-				}
-				runamtColor := colorReset
-				if runningBalance.Sign() < 0 {
-					runamtColor = colorNeg
-				}
+			// Update running totals per currency
+			cur := accChange.Currency
+			if cur == "" {
+				cur = "_" // treat empty currency as its own bucket
+			}
+			runningBalance[cur] = runningBalance[cur].Add(accChange.Balance)
 
-				buf.WriteString(trans.Date.Format(transactionDateFormat))
-				buf.WriteString(" ")
-				colorPayee.WriteStringFixed(buf, trans.Payee, col1width, false)
-				buf.WriteString(" ")
-				colorAccount.WriteStringFixed(buf, accChange.Name, col2width, false)
-				buf.WriteString(" ")
-				balamtColor.WriteStringFixed(buf, outBalanceString, 10, true)
-				buf.WriteString(" ")
-				runamtColor.WriteStringFixed(buf, outRunningBalanceString, 10, true)
-				buf.WriteString(newLine)
+			// Current posting amount string
+			outBalanceString := accChange.Balance.StringFixedBank(2)
+			if accChange.Currency != "" {
+				outBalanceString = accChange.Currency + " " + outBalanceString
+			}
+
+			// Build primary running total string (first currency: the one for this posting)
+			type curTotal struct {
+				currency string
+				amount   decimal.Decimal
+			}
+			totals := make([]curTotal, 0, len(runningBalance))
+			for k, v := range runningBalance {
+				totals = append(totals, curTotal{currency: k, amount: v})
+			}
+			// Sort for deterministic output: primary currency first, then by name
+			slices.SortFunc(totals, func(a, b curTotal) int {
+				// primary currency first
+				if a.currency == cur && b.currency != cur {
+					return -1
+				}
+				if b.currency == cur && a.currency != cur {
+					return 1
+				}
+				// "_" (no currency) should sort last
+				if a.currency == "_" && b.currency != "_" {
+					return 1
+				}
+				if b.currency == "_" && a.currency != "_" {
+					return -1
+				}
+				return strings.Compare(a.currency, b.currency)
+			})
+
+			formatTotal := func(ct curTotal) string {
+				amtStr := ct.amount.StringFixedBank(2)
+				if ct.currency == "_" {
+					return amtStr
+				}
+				return ct.currency + " " + amtStr
+			}
+
+			primaryTotal := formatTotal(totals[0])
+
+			// Colors
+			balamtColor := colorReset
+			if accChange.Balance.Sign() < 0 {
+				balamtColor = colorNeg
+			}
+			runamtColor := colorReset
+			if totals[0].amount.Sign() < 0 {
+				runamtColor = colorNeg
+			}
+
+			// First line with primary total
+			buf.WriteString(trans.Date.Format(transactionDateFormat))
+			buf.WriteString(" ")
+			colorPayee.WriteStringFixed(buf, trans.Payee, col1width, false)
+			buf.WriteString(" ")
+			colorAccount.WriteStringFixed(buf, accChange.Name, col2width, false)
+			buf.WriteString(" ")
+			balamtColor.WriteStringFixed(buf, outBalanceString, 10, true)
+			buf.WriteString(" ")
+			runamtColor.WriteStringFixed(buf, primaryTotal, 10, true)
+			buf.WriteString(newLine)
+
+			// Additional lines for other currencies in running total
+			if len(totals) > 1 {
+				for _, ct := range totals[1:] {
+					otherTotal := formatTotal(ct)
+					otherColor := colorReset
+					if ct.amount.Sign() < 0 {
+						otherColor = colorNeg
+					}
+
+					// Empty date/payee/account/amount columns, only total column
+					buf.WriteString(strings.Repeat(" ", 10)) // date
+					buf.WriteString(" ")
+					colorPayee.WriteStringFixed(buf, "", col1width, false)
+					buf.WriteString(" ")
+					colorAccount.WriteStringFixed(buf, "", col2width, false)
+					buf.WriteString(" ")
+					balamtColor.WriteStringFixed(buf, "", 10, true)
+					buf.WriteString(" ")
+					otherColor.WriteStringFixed(buf, otherTotal, 10, true)
+					buf.WriteString(newLine)
+				}
 			}
 		}
 	}
@@ -301,7 +386,12 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 				record := []string{trans.Date.Format(transactionDateFormat),
 					trans.Payee,
 					accChange.Name,
-					outBalanceString,
+					func() string {
+						if accChange.Currency != "" {
+							return accChange.Currency + " " + outBalanceString
+						}
+						return outBalanceString
+					}(),
 				}
 				if err := csvWriter.Write(record); err != nil {
 					fmt.Fprintf(os.Stderr, "error writing record to CSV: %s", err)

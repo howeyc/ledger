@@ -89,37 +89,16 @@ type parser struct {
 	strPrevDate string
 	prevDateErr error
 	prevDate    time.Time
-
-	transactions []Transaction
-	ctIdx        int
-	postings     []Account
-	cpIdx        int
-}
-
-const preAllocSize = 100000
-const preAllocWarn = 10
-
-func (p *parser) init() {
-	p.transactions = make([]Transaction, preAllocSize)
-	p.postings = make([]Account, preAllocSize*3)
-	p.ctIdx = 0
-	p.cpIdx = 0
-}
-
-func (p *parser) grow() {
-	if len(p.transactions)-p.ctIdx < preAllocWarn ||
-		len(p.postings)-p.cpIdx < (preAllocWarn*3) {
-		p.init()
-	}
 }
 
 func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Transaction, err error) (stop bool)) (stop bool) {
 	var lp parser
-	lp.init()
 	lp.scanner = newLineScanner(filename, ledgerReader)
 
 	var tlist []*Transaction
 
+	blocks := []block{}
+	comments := []string{}
 	for lp.scanner.Scan() {
 		// remove heading and tailing space from the line
 		trimmedLine := strings.TrimSpace(lp.scanner.Text())
@@ -135,7 +114,7 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 		// Skip empty lines
 		if len(trimmedLine) == 0 {
 			if len(currentComment) > 0 {
-				lp.comments = append(lp.comments, currentComment)
+				comments = append(comments, currentComment)
 			}
 			continue
 		}
@@ -147,7 +126,7 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 				return true
 			}
 			if len(currentComment) > 0 {
-				lp.comments = append(lp.comments, currentComment)
+				comments = append(comments, currentComment)
 			}
 			continue
 		}
@@ -155,37 +134,33 @@ func parseLedger(filename string, ledgerReader io.Reader, callback func(t []*Tra
 		case "account":
 			lp.skipAccount()
 		case "include":
-			paths, _ := filepath.Glob(filepath.Join(filepath.Dir(lp.scanner.Name()), after))
-			if len(paths) < 1 {
-				callback(nil, fmt.Errorf("%s:%d: unable to include file(%s): %w", lp.scanner.Name(), lp.scanner.LineNumber(), after, errors.New("not found")))
-				return true
-			}
-			var wg sync.WaitGroup
-			for _, incpath := range paths {
-				wg.Add(1)
-				go func(ipath string) {
-					ifile, _ := os.Open(ipath)
-					defer ifile.Close()
-					if parseLedger(ipath, ifile, callback) {
-						stop = true
-					}
-					wg.Done()
-				}(incpath)
-			}
-			wg.Wait()
+			stop := lp.include(after, callback)
 			if stop {
 				return stop
 			}
 		default:
-			trans, transErr := lp.parseTransaction(before, after, currentComment)
-			if transErr != nil {
-				if callback(nil, fmt.Errorf("%s:%d: unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(), transErr)) {
+			transDate, derr := lp.parseDate(before)
+			if derr != nil {
+				if callback(nil, fmt.Errorf("%s:%d: unable to parse transaction: %w", lp.scanner.Name(), lp.scanner.LineNumber(), derr)) {
 					return true
 				}
 				continue
 			}
-			tlist = append(tlist, trans)
+
+			blocks = append(blocks, lp.parseBlock(transDate, after, currentComment, comments))
+			comments = []string{}
 		}
+	}
+
+	for _, block := range blocks {
+		trans, transErr := block.parseTransaction()
+		if transErr != nil {
+			if callback(nil, fmt.Errorf("%s:%d: unable to parse transaction: %w", block.filename, block.lineNum, transErr)) {
+				return true
+			}
+			continue
+		}
+		tlist = append(tlist, trans)
 	}
 	callback(tlist, nil)
 	return false
@@ -198,6 +173,28 @@ func (lp *parser) skipAccount() {
 			return
 		}
 	}
+}
+
+func (lp *parser) include(after string, callback func(t []*Transaction, err error) (stop bool)) (stop bool) {
+	paths, _ := filepath.Glob(filepath.Join(filepath.Dir(lp.scanner.Name()), after))
+	if len(paths) < 1 {
+		callback(nil, fmt.Errorf("%s:%d: unable to include file(%s): %w", lp.scanner.Name(), lp.scanner.LineNumber(), after, errors.New("not found")))
+		return true
+	}
+	var wg sync.WaitGroup
+	for _, incpath := range paths {
+		wg.Add(1)
+		go func(ipath string) {
+			ifile, _ := os.Open(ipath)
+			defer ifile.Close()
+			if parseLedger(ipath, ifile, callback) {
+				stop = true
+			}
+			wg.Done()
+		}(incpath)
+	}
+	wg.Wait()
+	return
 }
 
 func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) {
@@ -224,7 +221,7 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 	return
 }
 
-func (a *Account) parsePosting(trimmedLine string) (err error) {
+func (a *Account) parsePosting(trimmedLine string, comment string) (err error) {
 	trimmedLine = strings.TrimSpace(trimmedLine)
 
 	// Regex groups:
@@ -249,6 +246,7 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 
 	a.Name = m[1]
 	a.Currency = m[2]
+	a.Comment = comment
 
 	if m[3] != "" {
 		bal, err := compute.Evaluate(m[3])
@@ -278,86 +276,72 @@ func (a *Account) parsePosting(trimmedLine string) (err error) {
 	return
 }
 
-func (lp *parser) parseTransaction(dateString, payeeString, payeeComment string) (trans *Transaction, err error) {
-	transDate, derr := lp.parseDate(dateString)
-	if derr != nil {
-		return nil, derr
-	}
+type block struct {
+	transDate    time.Time
+	payeeString  string
+	payeeComment string
+	comments     []string
+	lines        []string
+	filename     string
+	lineNum      int
+}
 
-	transBal := decimal.Zero
-	var numEmpty int
-	var emptyAccIndex int
-	var accIndex int
-
+func (lp *parser) parseBlock(transDate time.Time, payeeString, payeeComment string, comments []string) block {
+	lines := []string{}
 	for lp.scanner.Scan() {
 		trimmedLine := lp.scanner.Text()
+		lines = append(lines, trimmedLine)
+		if len(trimmedLine) == 0 {
+			break
+		}
+	}
 
+	return block{
+		transDate:    transDate,
+		payeeString:  payeeString,
+		payeeComment: payeeComment,
+		comments:     comments,
+		lines:        lines,
+		filename:     lp.scanner.Name(),
+		lineNum:      lp.scanner.LineNumber(),
+	}
+}
+
+func (b *block) parseTransaction() (trans *Transaction, err error) {
+	trans = &Transaction{}
+	for _, trimmedLine := range b.lines {
+		postingComment := ""
 		// handle comments
 		if commentIdx := strings.Index(trimmedLine, ";"); commentIdx >= 0 {
 			currentComment := trimmedLine[commentIdx:]
 			trimmedLine = trimmedLine[:commentIdx]
 			trimmedLine = strings.TrimSpace(trimmedLine)
 			if len(trimmedLine) == 0 {
-				lp.comments = append(lp.comments, currentComment)
+				b.comments = append(b.comments, currentComment)
 				continue
 			}
-			lp.postings[lp.cpIdx+accIndex].Comment = currentComment
+			postingComment = currentComment
 		}
 
 		if len(trimmedLine) == 0 {
 			break
 		}
 
-		_ = lp.postings[lp.cpIdx+accIndex].parsePosting(trimmedLine)
-
-		if lp.postings[lp.cpIdx+accIndex].Balance.IsZero() {
-			numEmpty++
-			emptyAccIndex = accIndex
-		}
-
-		if lp.postings[lp.cpIdx+accIndex].Converted != nil {
-			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Converted.Neg())
-		} else if lp.postings[lp.cpIdx+accIndex].ConversionFactor != nil {
-			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance.Mul(
-				*lp.postings[lp.cpIdx+accIndex].ConversionFactor,
-			))
-		} else {
-			transBal = transBal.Add(lp.postings[lp.cpIdx+accIndex].Balance)
-		}
-		accIndex++
+		posting := Account{}
+		posting.parsePosting(trimmedLine, postingComment)
+		trans.AccountChanges = append(trans.AccountChanges, posting)
 	}
 
-	if accIndex < 2 {
-		err = errors.New("need at least two postings")
-		return
+	trans.Payee = b.payeeString
+	trans.Date = b.transDate
+	trans.PayeeComment = b.payeeComment
+	if len(b.comments) > 0 {
+		trans.Comments = b.comments
 	}
 
-	if !transBal.IsZero() {
-		switch numEmpty {
-		case 0:
-			return nil, errors.New("unable to balance transaction: no empty account to place extra balance")
-		case 1:
-			// If there is a single empty account, then it is obvious where to
-			// place the remaining balance.
-			lp.postings[lp.cpIdx+emptyAccIndex].Balance = transBal.Neg()
-		default:
-			return nil, errors.New("unable to balance transaction: more than one account empty")
-		}
+	if err = trans.IsBalanced(); err != nil {
+		return nil, err
 	}
-
-	lp.transactions[lp.ctIdx].Payee = payeeString
-	lp.transactions[lp.ctIdx].Date = transDate
-	lp.transactions[lp.ctIdx].PayeeComment = payeeComment
-	lp.transactions[lp.ctIdx].AccountChanges = lp.postings[lp.cpIdx : lp.cpIdx+accIndex]
-	lp.transactions[lp.ctIdx].Comments = lp.comments
-
-	trans = &lp.transactions[lp.ctIdx]
-
-	lp.comments = nil
-	lp.cpIdx += accIndex
-	lp.ctIdx++
-
-	lp.grow()
 
 	return
 }
