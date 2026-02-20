@@ -1,0 +1,35 @@
+!Type:Cash
+D08/14/2024
+T15.00
+LBank Deposit to PP Account 
+SBank Deposit to PP Account 
+$15.00
+SFee
+$0.00
+CX
+M~@~CLD:1723446000~@~
+P
+^
+!Type:Cash
+D08/14/2024
+T-15.00
+LPreApproved Payment Bill User Payment
+SPreApproved Payment Bill User Payment
+$-15.00
+SFee
+$0.00
+CX
+MVOIPMS15
+P9171-5573 Quebec Inc
+^
+!Type:Cash
+D08/27/2024
+T80.00
+LBank Deposit to PP Account 
+SBank Deposit to PP Account 
+$80.00
+SFee
+$0.00
+CX
+P
+^
