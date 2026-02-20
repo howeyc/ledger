@@ -32,7 +32,8 @@ func Test_findMatchingAccount(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, gotErr := findMatchingAccount(tt.generalLedger, tt.accountSubstring)
+			imp := &Importer{generalLedger: tt.generalLedger}
+			got, gotErr := imp.findMatchingAccount(tt.accountSubstring)
 			if gotErr != nil {
 				if !tt.wantErr {
 					t.Errorf("findMatchingAccount() failed: %v", gotErr)
