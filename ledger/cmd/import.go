@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	"log"
 	"math"
 	"os"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/ledger/cmd/internal/import/camt"
+	"github.com/howeyc/ledger/ledger/cmd/internal/import/iif"
 	"github.com/howeyc/ledger/ledger/cmd/internal/import/qfx"
 	"github.com/howeyc/ledger/ledger/cmd/internal/import/qif"
 	"github.com/jbrukh/bayesian"
@@ -370,6 +372,55 @@ func (imp *Importer) importQIF() {
 	}
 }
 
+func (imp *Importer) importIIF() {
+	f, err := iif.NewDecoder(imp.reader).Decode()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	tx := []iif.Transaction{}
+	for _, b := range f.Blocks {
+		tr, err := iif.DeserializeTransactions(b)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		tx = append(tx, tr...)
+	}
+
+	for _, itx := range tx {
+		trans := &ledger.Transaction{
+			Date:  itx.Tr.Date,
+			Payee: itx.Tr.Class + " " + itx.Tr.Memo,
+		}
+		trans.AccountChanges = []ledger.Account{
+			{
+				Name:    itx.Tr.Account,
+				Balance: itx.Tr.Amount,
+			},
+		}
+
+		for _, split := range itx.Splits {
+			trans.AccountChanges = append(
+				trans.AccountChanges,
+				ledger.Account{
+					Name:    split.Account,
+					Balance: split.Amount,
+				},
+			)
+		}
+
+		if overrideCurrency != "" {
+			for i := range trans.AccountChanges {
+				trans.AccountChanges[i].Currency = overrideCurrency
+			}
+		}
+		WriteTransaction(os.Stdout, trans, 80)
+	}
+
+}
+
 func (imp *Importer) importQFX() {
 	entries, err := qfx.ParseQFX(imp.reader)
 	if err != nil {
@@ -444,6 +495,8 @@ var importCmd = &cobra.Command{
 			imp.importQFX()
 		} else if strings.HasSuffix(lower, ".qif") {
 			imp.importQIF()
+		} else if strings.HasSuffix(lower, ".iif") {
+			imp.importIIF()
 		} else {
 			imp.importCSV()
 		}

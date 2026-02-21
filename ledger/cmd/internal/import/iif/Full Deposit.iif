@@ -1,0 +1,15 @@
+!ACCNT	NAME	ACCNTTYPE	DESC	ACCNUM	EXTRA																											
+ACCNT	Checking	BANK																														
+ACCNT	Income	INC																														
+!CLASS	NAME																															
+CLASS	class																															
+!CUST	NAME	BADDR1	BADDR2	BADDR3	BADDR4	BADDR5	SADDR1		SADDR2	SADDR3	SADDR4	SADDR5	PHONE1	PHONE2	FAXNUM	EMAIL	NOTE	CONT1	CONT2	CTYPE	TERMS	TAXABLE	LIMIT	RESALENUM	REP	TAXITEM	NOTEPAD	SALUTATION	COMPANYNAME	FIRSTNAME	MIDINIT	LASTNAME
+CUST	Customer	Joe Customer	444 Road Rd	"Anywhere, AZ 85740"	USA								5554443333					Joe Customer				N								Joe		Customer
+!OTHERNAME	NAME	BADDR1	BADDR2	BADDR3	BADDR4	BADDR5	PHONE1	PHONE2	FAXNUM	EMAIL	NOTE	CONT1	CONT2	NOTEPAD	SALUTATION	COMPANYNAME	FIRSTNAME	MIDINIT	LASTNAME													
+OTHERNAME	Other Name	Other Name	123 a Street	"Somewhere, AZ 85730"	USA		5555555555					Other Name					Other		Name													
+!TRNS	TRNSID	TRNSTYPE	DATE	ACCNT	NAME	CLASS	AMOUNT	DOCNUM	MEMO	CLEAR																						
+!SPL	SPLID	TRNSTYPE	DATE	ACCNT	NAME	CLASS	AMOUNT	DOCNUM	MEMO	CLEAR																						
+!ENDTRNS																																
+TRNS	 	DEPOSIT	7/1/1998	Checking			10000			N																						
+SPL		DEPOSIT	7/1/1998	Income	Customer		-10000			N																						
+ENDTRNS																																
