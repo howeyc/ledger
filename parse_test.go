@@ -59,7 +59,7 @@ var testCases = []testCase{
 	Assets      123
 `,
 		nil,
-		errors.New(`:1: unable to parse transaction: unable to parse date(1970/02/31): parsing time "1970/02/31": extra text: "1970/02/31"`),
+		errors.New(`:1: unable to parse transaction: unable to parse date(1970/02/31): parsing time "1970/02/31": day out of range`),
 	},
 	{
 		"unbalanced error",

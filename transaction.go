@@ -31,11 +31,12 @@ func (t *Transaction) IsBalanced() error {
 			emptyAccIndex = i
 		}
 
-		if acc.Converted != nil {
+		switch {
+		case acc.Converted != nil:
 			transBal = transBal.Add(acc.Converted.Neg())
-		} else if acc.ConversionFactor != nil {
+		case acc.ConversionFactor != nil:
 			transBal = transBal.Add(acc.Balance.Mul(*acc.ConversionFactor))
-		} else {
+		default:
 			transBal = transBal.Add(acc.Balance)
 		}
 	}
@@ -92,8 +93,10 @@ func (t *Transaction) inferConversionFactorForTwoCurrencyTx() error {
 	var (
 		curKeys [2]string
 		groups  [2]*currencyGroup
-		i       int
 	)
+
+	// Collect keys to deterministically choose base/other currency
+	i := 0
 	for k, g := range currencyMap {
 		if i >= 2 {
 			break
@@ -101,6 +104,12 @@ func (t *Transaction) inferConversionFactorForTwoCurrencyTx() error {
 		curKeys[i] = k
 		groups[i] = g
 		i++
+	}
+
+	// Assign base currency as the one with the lower sort order
+	if curKeys[1] < curKeys[0] {
+		curKeys[0], curKeys[1] = curKeys[1], curKeys[0]
+		groups[0], groups[1] = groups[1], groups[0]
 	}
 
 	var baseCurIdx, otherCurIdx int
@@ -150,9 +159,10 @@ func (t *Transaction) inferConversionFactorForTwoCurrencyTx() error {
 	for _, idx := range groups[otherCurIdx].indices {
 		acc := &t.AccountChanges[idx]
 		if acc.Converted != nil || acc.ConversionFactor != nil {
-			if acc.Converted != nil {
+			switch {
+			case acc.Converted != nil:
 				sumOtherRaw = sumOtherRaw.Add(acc.Converted.Neg())
-			} else if acc.ConversionFactor != nil {
+			case acc.ConversionFactor != nil:
 				sumOtherRaw = sumOtherRaw.Add(acc.Balance.Mul(*acc.ConversionFactor))
 			}
 		} else {

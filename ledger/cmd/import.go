@@ -489,15 +489,16 @@ var importCmd = &cobra.Command{
 		defer imp.Close()
 
 		lower := strings.ToLower(fileName)
-		if strings.HasSuffix(lower, ".xml") {
+		switch {
+		case strings.HasSuffix(lower, ".xml"):
 			imp.importCamt()
-		} else if strings.HasSuffix(lower, ".qfx") || strings.HasSuffix(lower, ".ofx") {
+		case strings.HasSuffix(lower, ".qfx") || strings.HasSuffix(lower, ".ofx"):
 			imp.importQFX()
-		} else if strings.HasSuffix(lower, ".qif") {
+		case strings.HasSuffix(lower, ".qif"):
 			imp.importQIF()
-		} else if strings.HasSuffix(lower, ".iif") {
+		case strings.HasSuffix(lower, ".iif"):
 			imp.importIIF()
-		} else {
+		default:
 			imp.importCSV()
 		}
 
@@ -517,7 +518,7 @@ func init() {
 
 func (imp *Importer) existingTransaction(transDate time.Time, payee string) bool {
 	for _, trans := range imp.generalLedger {
-		if trans.Date == transDate && strings.TrimSpace(trans.Payee) == strings.TrimSpace(payee) {
+		if trans.Date.Equal(transDate) && strings.TrimSpace(trans.Payee) == strings.TrimSpace(payee) {
 			return true
 		}
 	}

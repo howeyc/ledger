@@ -13,9 +13,9 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/araddon/dateparse"
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/ledger/cmd/internal/fastcolor"
-	date "github.com/joyt/godate"
 	"github.com/shopspring/decimal"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -46,8 +46,8 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		}
 	}
 
-	parsedStartDate, tstartErr := date.Parse(startString)
-	parsedEndDate, tendErr := date.Parse(endString)
+	parsedStartDate, tstartErr := dateparse.ParseAny(startString)
+	parsedEndDate, tendErr := dateparse.ParseAny(endString)
 
 	if tstartErr != nil || tendErr != nil {
 		return nil, errors.New("unable to parse start or end date string argument")

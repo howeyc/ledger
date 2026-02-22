@@ -11,8 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/alfredxing/calc/compute"
-	date "github.com/joyt/godate"
+	"github.com/expr-lang/expr"
+	"github.com/araddon/dateparse"
 	"github.com/shopspring/decimal"
 )
 
@@ -203,14 +203,10 @@ func (lp *parser) parseDate(dateString string) (transDate time.Time, err error) 
 		return lp.prevDate, lp.prevDateErr
 	}
 
-	// try current date layout
-	transDate, err = time.Parse(lp.dateLayout, dateString)
+	// Use dateparse to handle flexible date formats
+	transDate, err = dateparse.ParseAny(dateString)
 	if err != nil {
-		// try to find new date layout
-		transDate, lp.dateLayout, err = date.ParseAndGetLayout(dateString)
-		if err != nil {
-			err = fmt.Errorf("unable to parse date(%s): %w", dateString, err)
-		}
+		err = fmt.Errorf("unable to parse date(%s): %w", dateString, err)
 	}
 
 	// maybe next date is same
@@ -249,11 +245,30 @@ func (a *Account) parsePosting(trimmedLine string, comment string) (err error) {
 	a.Comment = comment
 
 	if m[3] != "" {
-		bal, err := compute.Evaluate(m[3])
+		program, err := expr.Compile(m[3])
 		if err != nil {
 			return err
 		}
-		a.Balance = decimal.NewFromFloat(bal)
+		out, err := expr.Run(program, nil)
+		if err != nil {
+			return err
+		}
+
+		var f float64
+		switch v := out.(type) {
+		case int:
+			f = float64(v)
+		case int64:
+			f = float64(v)
+		case float32:
+			f = float64(v)
+		case float64:
+			f = v
+		default:
+			return fmt.Errorf("expression did not evaluate to a number: %T", out)
+		}
+
+		a.Balance = decimal.NewFromFloat(f)
 	}
 
 	// @@ explicit converted amount
