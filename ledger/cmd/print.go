@@ -15,7 +15,7 @@ import (
 
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
-	"github.com/howeyc/ledger/ledger/internal/fastcolor"
+	"github.com/howeyc/ledger/ledger/cmd/internal/fastcolor"
 	date "github.com/joyt/godate"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"

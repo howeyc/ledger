@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/howeyc/ledger/ledger/camt"
+	"github.com/howeyc/ledger/ledger/cmd/internal/import/camt"
 )
 
 //go:embed sample.xml

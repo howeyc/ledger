@@ -5,7 +5,7 @@ import (
 	_ "embed"
 	"testing"
 
-	"github.com/howeyc/ledger/ledger/qfx"
+	"github.com/howeyc/ledger/ledger/cmd/internal/import/qfx"
 )
 
 //go:embed sample.qfx

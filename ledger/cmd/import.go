@@ -12,8 +12,8 @@ import (
 
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
-	"github.com/howeyc/ledger/ledger/camt"
-	"github.com/howeyc/ledger/ledger/qfx"
+	"github.com/howeyc/ledger/ledger/cmd/internal/import/camt"
+	"github.com/howeyc/ledger/ledger/cmd/internal/import/qfx"
 	"github.com/jbrukh/bayesian"
 	"github.com/spf13/cobra"
 )
