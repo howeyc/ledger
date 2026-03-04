@@ -13,6 +13,7 @@ import (
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
 	"github.com/howeyc/ledger/ledger/camt"
+	"github.com/howeyc/ledger/ledger/qfx"
 	"github.com/jbrukh/bayesian"
 	"github.com/spf13/cobra"
 )
@@ -222,6 +223,11 @@ func importCamt(accountSubstring, camtFileName string) {
 	classifier := trainClassifier(generalLedger, matchingAccount)
 
 	entries, err := camt.ParseCamt(fileReader)
+	if err != nil {
+		fmt.Println("CAMT parse error:", err.Error())
+		return
+	}
+
 	expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: decimal.Zero}
 	camtAccount := ledger.Account{Name: matchingAccount, Balance: decimal.Zero}
 	for _, entry := range entries {
@@ -280,6 +286,82 @@ func importCamt(accountSubstring, camtFileName string) {
 	}
 }
 
+func importQFX(accountSubstring, qfxFileName string) {
+	decScale := decimal.NewFromFloat(scaleFactor)
+
+	fileReader, err := os.Open(qfxFileName)
+	if err != nil {
+		fmt.Println("QFX: ", err, qfxFileName)
+		return
+	}
+	defer fileReader.Close()
+
+	generalLedger, parseError := ledger.ParseLedgerFile(ledgerFilePath)
+	if parseError != nil {
+		fmt.Printf("%s:%s\n", ledgerFilePath, parseError.Error())
+		return
+	}
+
+	matchingAccount, err := findMatchingAccount(generalLedger, accountSubstring)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	classifier := trainClassifier(generalLedger, matchingAccount)
+
+	entries, err := qfx.ParseQFX(fileReader)
+	if err != nil {
+		fmt.Println("QFX parse error:", err.Error())
+		return
+	}
+
+	expenseAccount := ledger.Account{Name: "unknown:unknown", Balance: decimal.Zero}
+	qfxAccount := ledger.Account{Name: matchingAccount, Balance: decimal.Zero}
+	for _, entry := range entries {
+		// QFX DTPOSTED is typically YYYYMMDDHHMMSS.XXX; we only care about the date.
+		// Take the first 8 characters as YYYYMMDD.
+		dateStr := entry.DtPosted
+		if len(dateStr) >= 8 {
+			dateStr = dateStr[:8]
+		}
+		dateTime, err := time.Parse("20060102", dateStr)
+		if err != nil {
+			fmt.Println("QFX date parse error:", err.Error())
+			continue
+		}
+
+		// Parse amount
+		amount, err := decimal.NewFromString(entry.TrnAmt)
+		if err != nil {
+			fmt.Println("QFX amount parse error:", err.Error())
+			continue
+		}
+
+		payee := entry.Memo
+		inputPayeeWords := strings.Fields(payee)
+
+		expenseAccount.Name = predictAccount(classifier, inputPayeeWords)
+		expenseAccount.Balance = amount
+
+		// Apply scale
+		expenseAccount.Balance = expenseAccount.Balance.Mul(decScale)
+
+		// Account side is the opposite of expense
+		qfxAccount.Balance = expenseAccount.Balance.Neg()
+
+		// Create valid transaction for print in ledger format
+		trans := &ledger.Transaction{Date: dateTime, Payee: payee}
+		trans.AccountChanges = []ledger.Account{qfxAccount, expenseAccount}
+
+		// Comment with FITID if present
+		if entry.FitID != "" {
+			trans.Comments = []string{";" + entry.FitID}
+		}
+		WriteTransaction(os.Stdout, trans, 80)
+	}
+}
+
 // importCmd represents the import command
 var importCmd = &cobra.Command{
 	Use:   "import <account-substring> <csv-file>",
@@ -289,8 +371,11 @@ var importCmd = &cobra.Command{
 		accountSubstring := args[0]
 		fileName := args[1]
 
-		if strings.HasSuffix(strings.ToLower(fileName), ".xml") {
+		lower := strings.ToLower(fileName)
+		if strings.HasSuffix(lower, ".xml") {
 			importCamt(accountSubstring, fileName)
+		} else if strings.HasSuffix(lower, ".qfx") || strings.HasSuffix(lower, ".ofx") {
+			importQFX(accountSubstring, fileName)
 		} else {
 			importCSV(accountSubstring, fileName)
 		}
