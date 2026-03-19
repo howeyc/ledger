@@ -442,6 +442,14 @@ func reportHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		sort.Strings(lData.AccountNames[1:])
 
+		// For line, set origin value
+		if rConf.Chart == "line" && len(rangeBalances) > 0 {
+			lData.Labels = append([]string{rangeBalances[0].Start.Format(time.DateOnly)}, lData.Labels...)
+			for dIdx := range lData.DataSets {
+				lData.DataSets[dIdx].Values = append([]decimal.Decimal{decimal.Zero}, lData.DataSets[dIdx].Values...)
+			}
+		}
+
 		// Radar chart flips everything. Dates are each dataset and the accounts become the labels
 		if rConf.Chart == "radar" {
 			dates := lData.Labels
