@@ -118,7 +118,7 @@
     {{end}}
         ]
     };
-        {{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx, {type: 'line', data: data, options: {interaction: {mode: 'index'}}});{{end}}
+        {{if eq .ChartType "Line"}} var myPieChart = new Chart(ctx, {type: 'line', data: data, options: {interaction: {mode: 'nearest'}, elements: {point: {hitRadius: 25}}}});{{end}}
         {{if eq .ChartType "Radar"}} var myPieChart = new Chart(ctx, {type: 'radar', data: data});{{end}}
     {{end}}
     {{if eq .ChartType "Bar" "StackedBar"}}
