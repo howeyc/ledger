@@ -16,9 +16,9 @@ type CompressResponseWriter struct {
 }
 
 func (res CompressResponseWriter) Write(b []byte) (int, error) {
-	if "" == res.Header().Get("Content-Type") {
+	if "" == res.ResponseWriter.Header().Get("Content-Type") {
 		// If no content type, apply sniffing algorithm to un-gzipped body.
-		res.Header().Set("Content-Type", http.DetectContentType(b))
+		res.ResponseWriter.Header().Set("Content-Type", http.DetectContentType(b))
 	}
 	return res.Writer.Write(b)
 }

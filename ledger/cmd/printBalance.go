@@ -23,7 +23,7 @@ var balanceCmd = &cobra.Command{
 		if period == "" {
 			PrintBalances(ledger.GetBalances(generalLedger, args), showEmptyAccounts, transactionDepth, columnWidth)
 		} else {
-			lperiod := ledger.Period(strings.Title(period))
+			lperiod := strToPeriod(period)
 			rtrans := ledger.TransactionsByPeriod(generalLedger, lperiod)
 			for rIdx, rt := range rtrans {
 				balances := ledger.GetBalances(rt.Transactions, args)

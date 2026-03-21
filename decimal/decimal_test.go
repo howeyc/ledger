@@ -416,7 +416,7 @@ func BenchmarkNewFromString(b *testing.B) {
 	numbers := []string{"10.0", "245.6", "354", "2.456", "-31.2"}
 	for b.Loop() {
 		for _, numStr := range numbers {
-			NewFromString(numStr)
+			_, _ = NewFromString(numStr)
 		}
 	}
 }

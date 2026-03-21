@@ -23,7 +23,9 @@ func ParseRange(s string, baseTime time.Time) (start, end time.Time, err error) 
 		currentTime: baseTime,
 	}
 
-	p.Init()
+	if err := p.Init(); err != nil {
+		return time.Time{}, time.Time{}, err
+	}
 
 	if err := p.Parse(); err != nil {
 		return time.Time{}, time.Time{}, err
