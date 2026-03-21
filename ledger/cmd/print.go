@@ -59,7 +59,7 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 	var generalLedger []*ledger.Transaction
 	var parseError error
 	if ledgerFilePath == "-" {
-		generalLedger, parseError = ledger.ParseLedger(os.Stdin)
+		generalLedger, parseError = ledger.ParseLedger("", os.Stdin)
 	} else {
 		generalLedger, parseError = ledger.ParseLedgerFile(ledgerFilePath)
 	}

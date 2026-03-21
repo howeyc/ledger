@@ -16,6 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pelletier/go-toml v1.9.5
+	github.com/samber/lo v1.53.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/cobra v1.7.0
 	golang.org/x/term v0.13.0
@@ -28,4 +29,5 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 )

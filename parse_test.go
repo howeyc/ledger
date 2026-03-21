@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"sync"
 	"testing"
 	"time"
 
@@ -650,7 +649,7 @@ func p(d decimal.Decimal) *decimal.Decimal {
 func TestParseLedger(t *testing.T) {
 	for _, tc := range testCases {
 		b := bytes.NewBufferString(tc.data)
-		transactions, err := ParseLedger(b)
+		transactions, err := ParseLedger("", b)
 		if (err != nil && tc.err == nil) || (err != nil && tc.err != nil && err.Error() != tc.err.Error()) {
 			t.Errorf("Error: expected `%s`, got `%s`", tc.err, err)
 		}
@@ -659,52 +658,6 @@ func TestParseLedger(t *testing.T) {
 		if string(exp) != string(got) {
 			t.Errorf("Error(%s): expected \n`%s`, \ngot \n`%s`", tc.name, exp, got)
 		}
-	}
-}
-
-func TestParseLedgerAsync(t *testing.T) {
-	buf := bytes.NewBufferString(`; test
-account bam:bam
-	subacc line  ; sub comment
-	another subacc line
-
-1970/01/01 Payee
-	Assets       50
-	Expenses
-
-1970/02/30 Error  ; oops
-	Assets   30
-	Expenses
-
-1970/01/01bbafafdaf;bad comment
-	Assets 20
-	Expenses
-
-account endofledger`)
-
-	tc, ec := ParseLedgerAsync(buf)
-
-	var trans []*Transaction
-	var errors []error
-
-	var wg sync.WaitGroup
-	wg.Add(2)
-	go func() {
-		for t := range tc {
-			trans = append(trans, t)
-		}
-		wg.Done()
-	}()
-	go func() {
-		for e := range ec {
-			errors = append(errors, e)
-		}
-		wg.Done()
-	}()
-	wg.Wait()
-
-	if len(trans) < 1 || len(errors) < 1 {
-		t.Error("async parse failed")
 	}
 }
 

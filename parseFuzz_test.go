@@ -17,7 +17,7 @@ func FuzzParseLedger(f *testing.F) {
 	}
 	f.Fuzz(func(t *testing.T, s string) {
 		b := bytes.NewBufferString(s)
-		trans, _ := ParseLedger(b)
+		trans, _ := ParseLedger("", b)
 		overall := decimal.Zero
 		for _, t := range trans {
 			for _, p := range t.AccountChanges {

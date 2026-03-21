@@ -75,7 +75,7 @@ func addTransactionPostHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(&tbuf, "")
 
 	/* Check valid transaction is created */
-	trans, perr := ledger.ParseLedger(&tbuf)
+	trans, perr := ledger.ParseLedger("", &tbuf)
 	if perr != nil {
 		http.Error(w, perr.Error(), 500)
 		return

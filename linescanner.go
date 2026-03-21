@@ -3,14 +3,10 @@ package ledger
 import (
 	"bufio"
 	"io"
-	"os"
-	"unsafe"
 )
 
 type linescanner struct {
-	scanner *bufio.Scanner
-	unsafe  bool
-
+	scanner   *bufio.Scanner
 	filename  string
 	lineCount int
 }
@@ -20,17 +16,6 @@ type linescanner struct {
 func newLineScanner(filename string, r io.Reader) *linescanner {
 	lp := &linescanner{}
 	lp.scanner = bufio.NewScanner(r)
-	if fs, fserr := os.Stat(filename); fserr == nil {
-		size := int(fs.Size())
-		// only pre-alloc for large files
-		if size > bufio.MaxScanTokenSize {
-			// allocate large enough such that scanner in bufio doesn't need to
-			// move anything during scanning
-			size *= 2
-			lp.scanner.Buffer(make([]byte, size), size)
-			lp.unsafe = true
-		}
-	}
 	lp.filename = filename
 
 	return lp
@@ -42,15 +27,7 @@ func (lp *linescanner) Scan() bool {
 
 func (lp *linescanner) Text() string {
 	var line string
-	if lp.unsafe {
-		if lbytes := lp.scanner.Bytes(); len(lbytes) > 0 {
-			line = unsafe.String(unsafe.SliceData(lbytes), len(lbytes))
-		} else {
-			line = ""
-		}
-	} else {
-		line = lp.scanner.Text()
-	}
+	line = lp.scanner.Text()
 	lp.lineCount++
 	return line
 }

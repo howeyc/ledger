@@ -122,7 +122,7 @@ var testBalCases = []testBalCase{
 func TestBalanceLedger(t *testing.T) {
 	for _, tc := range testBalCases {
 		b := bytes.NewBufferString(tc.data)
-		transactions, err := ParseLedger(b)
+		transactions, err := ParseLedger("", b)
 		bals := GetBalances(transactions, []string{})
 		if (err != nil && tc.err == nil) || (err != nil && tc.err != nil && err.Error() != tc.err.Error()) {
 			t.Errorf("Error: expected `%s`, got `%s`", tc.err, err)
@@ -189,7 +189,7 @@ func TestBalancesByPeriod(t *testing.T) {
 
 `)
 
-	trans, _ := ParseLedger(b)
+	trans, _ := ParseLedger("", b)
 	partitionRb := BalancesByPeriod(trans, PeriodQuarter, RangePartition)
 	snapshotRb := BalancesByPeriod(trans, PeriodQuarter, RangeSnapshot)
 
