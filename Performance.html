@@ -142,30 +142,33 @@
 <li><a href="https://hledger.org">hledger</a></li>
 </ul>
 <h2 id="stats"><a class="header" href="#stats">Stats</a></h2>
-<table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
-<tr><td style="text-align: left"><code>ledger-go stats</code></td><td style="text-align: right">16.9ms ± 700µs</td><td style="text-align: right">15.4ms</td><td style="text-align: right">19.4ms</td><td style="text-align: right">1.00</td></tr>
-<tr><td style="text-align: left"><code>ledger-cli stats</code></td><td style="text-align: right">139.3ms ± 1.8ms</td><td style="text-align: right">136ms</td><td style="text-align: right">145.5ms</td><td style="text-align: right">8.23 ± 0.40</td></tr>
-<tr><td style="text-align: left"><code>hledger stats</code></td><td style="text-align: right">1.5835s ± 22.7ms</td><td style="text-align: right">1.5659s</td><td style="text-align: right">1.6467s</td><td style="text-align: right">93.49 ± 4.54</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>ledger-go stats</code></td><td style="text-align: right">10.4ms ± 600µs</td><td style="text-align: right">8.9ms</td><td style="text-align: right">12.8ms</td><td style="text-align: right">1.00</td></tr>
+<tr><td style="text-align: left"><code>ledger-cli stats</code></td><td style="text-align: right">127ms ± 3.7ms</td><td style="text-align: right">119.5ms</td><td style="text-align: right">131.1ms</td><td style="text-align: right">12.11 ± 0.85</td></tr>
+<tr><td style="text-align: left"><code>hledger stats</code></td><td style="text-align: right">771ms ± 6.6ms</td><td style="text-align: right">759.3ms</td><td style="text-align: right">784.1ms</td><td style="text-align: right">73.46 ± 4.69</td></tr>
 </tbody></table>
+</div>
 <h2 id="balance"><a class="header" href="#balance">Balance</a></h2>
-<table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
-<tr><td style="text-align: left"><code>ledger-go bal</code></td><td style="text-align: right">16.2ms ± 800µs</td><td style="text-align: right">15.1ms</td><td style="text-align: right">18.8ms</td><td style="text-align: right">1.00</td></tr>
-<tr><td style="text-align: left"><code>ledger-cli bal</code></td><td style="text-align: right">149.5ms ± 2.1ms</td><td style="text-align: right">147.5ms</td><td style="text-align: right">157.4ms</td><td style="text-align: right">9.19 ± 0.48</td></tr>
-<tr><td style="text-align: left"><code>hledger bal</code></td><td style="text-align: right">1.5783s ± 7.7ms</td><td style="text-align: right">1.5656s</td><td style="text-align: right">1.5877s</td><td style="text-align: right">97.01 ± 4.86</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>ledger-go bal</code></td><td style="text-align: right">10.7ms ± 600µs</td><td style="text-align: right">9.4ms</td><td style="text-align: right">12.7ms</td><td style="text-align: right">1.00</td></tr>
+<tr><td style="text-align: left"><code>ledger-cli bal</code></td><td style="text-align: right">124.9ms ± 2.7ms</td><td style="text-align: right">119ms</td><td style="text-align: right">131.2ms</td><td style="text-align: right">11.60 ± 0.75</td></tr>
+<tr><td style="text-align: left"><code>hledger bal</code></td><td style="text-align: right">729ms ± 3.4ms</td><td style="text-align: right">724.3ms</td><td style="text-align: right">734.4ms</td><td style="text-align: right">67.65 ± 4.13</td></tr>
 </tbody></table>
+</div>
 <h2 id="register"><a class="header" href="#register">Register</a></h2>
-<table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
-<tr><td style="text-align: left"><code>ledger-go reg</code></td><td style="text-align: right">29ms ± 900µs</td><td style="text-align: right">27.2ms</td><td style="text-align: right">31.4ms</td><td style="text-align: right">1.00</td></tr>
-<tr><td style="text-align: left"><code>ledger-cli reg</code></td><td style="text-align: right">1.9186s ± 17.7ms</td><td style="text-align: right">1.8879s</td><td style="text-align: right">1.9468s</td><td style="text-align: right">65.96 ± 2.20</td></tr>
-<tr><td style="text-align: left"><code>hledger reg</code></td><td style="text-align: right">2.2997s ± 14.6ms</td><td style="text-align: right">2.2761s</td><td style="text-align: right">2.3275s</td><td style="text-align: right">79.06 ± 2.58</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>ledger-go reg</code></td><td style="text-align: right">15.2ms ± 1ms</td><td style="text-align: right">12.3ms</td><td style="text-align: right">18.1ms</td><td style="text-align: right">1.00</td></tr>
+<tr><td style="text-align: left"><code>hledger reg</code></td><td style="text-align: right">1.1036s ± 5.2ms</td><td style="text-align: right">1.0977s</td><td style="text-align: right">1.1162s</td><td style="text-align: right">72.52 ± 4.82</td></tr>
+<tr><td style="text-align: left"><code>ledger-cli reg</code></td><td style="text-align: right">1.3065s ± 43.4ms</td><td style="text-align: right">1.2367s</td><td style="text-align: right">1.3515s</td><td style="text-align: right">85.85 ± 6.37</td></tr>
 </tbody></table>
+</div>
 <h2 id="print"><a class="header" href="#print">Print</a></h2>
-<table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
-<tr><td style="text-align: left"><code>ledger-go print</code></td><td style="text-align: right">25.1ms ± 1.5ms</td><td style="text-align: right">22ms</td><td style="text-align: right">29.2ms</td><td style="text-align: right">1.00</td></tr>
-<tr><td style="text-align: left"><code>ledger-cli print</code></td><td style="text-align: right">281.7ms ± 5.7ms</td><td style="text-align: right">275.6ms</td><td style="text-align: right">296.1ms</td><td style="text-align: right">11.20 ± 0.71</td></tr>
-<tr><td style="text-align: left"><code>hledger print</code></td><td style="text-align: right">1.8827s ± 15.1ms</td><td style="text-align: right">1.8546s</td><td style="text-align: right">1.905s</td><td style="text-align: right">74.83 ± 4.52</td></tr>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">Command</th><th style="text-align: right">Mean</th><th style="text-align: right">Min</th><th style="text-align: right">Max</th><th style="text-align: right">Relative</th></tr></thead><tbody>
+<tr><td style="text-align: left"><code>ledger-go print</code></td><td style="text-align: right">14.2ms ± 900µs</td><td style="text-align: right">11.7ms</td><td style="text-align: right">16.9ms</td><td style="text-align: right">1.00</td></tr>
+<tr><td style="text-align: left"><code>ledger-cli print</code></td><td style="text-align: right">223.2ms ± 3.8ms</td><td style="text-align: right">217.4ms</td><td style="text-align: right">229.7ms</td><td style="text-align: right">15.69 ± 1.07</td></tr>
+<tr><td style="text-align: left"><code>hledger print</code></td><td style="text-align: right">946.6ms ± 3.7ms</td><td style="text-align: right">940.7ms</td><td style="text-align: right">954.5ms</td><td style="text-align: right">66.51 ± 4.41</td></tr>
 </tbody></table>
-
+</div>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
