@@ -15,8 +15,8 @@ var registerCmd = &cobra.Command{
 	Aliases: []string{"reg"},
 	Use:     "register [account-substring-filter]...",
 	Short:   "Print register of transactions",
-	Run: func(_ *cobra.Command, args []string) {
-		generalLedger, err := cliTransactions()
+	Run: func(cmd *cobra.Command, args []string) {
+		generalLedger, err := cliTransactions(cmd)
 		if err != nil {
 			log.Fatalln(err)
 		}

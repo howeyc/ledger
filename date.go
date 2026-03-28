@@ -6,7 +6,7 @@ import "time"
 // specified by start and end. The returned list contains transactions on the same day as start
 // but does not include any transactions on the day of end.
 func TransactionsInDateRange(trans []*Transaction, start, end time.Time) []*Transaction {
-	var newlist []*Transaction
+	newlist := make([]*Transaction, 0, len(trans))
 
 	start = start.Add(-1 * time.Second)
 

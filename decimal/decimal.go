@@ -251,6 +251,13 @@ func fmtInt(buf []byte, v uint64) int {
 // NewFromFloat(5.445).StringFixedBank() == "5.44"
 func (d Decimal) StringFixedBank() string {
 	var buf [24]byte
+	n := d.FixedBank(buf[:])
+	return string(buf[n:])
+}
+
+// FixedBank writes a banker rounded fixed-point string with 2 digits
+// after the decimal point to the passed in byte array.
+func (d Decimal) FixedBank(buf []byte) (n int) {
 	w := len(buf)
 
 	u := uint64(d)
@@ -275,7 +282,7 @@ func (d Decimal) StringFixedBank() string {
 		buf[w] = '-'
 	}
 
-	return string(buf[w:])
+	return w
 }
 
 // StringTruncate returns the whole-number (Int) part of d.

@@ -16,8 +16,8 @@ import (
 var equityCmd = &cobra.Command{
 	Use:   "equity [account-substring-filter]...",
 	Short: "Print account equity as transaction",
-	Run: func(_ *cobra.Command, args []string) {
-		generalLedger, err := cliTransactions()
+	Run: func(cmd *cobra.Command, args []string) {
+		generalLedger, err := cliTransactions(cmd)
 		if err != nil {
 			log.Fatalln(err)
 		}

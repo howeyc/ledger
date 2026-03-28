@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 	"unicode/utf8"
+	"unsafe"
 
 	"github.com/howeyc/ledger"
 	"github.com/howeyc/ledger/decimal"
@@ -26,6 +27,20 @@ const (
 	newLine               = "\n"
 )
 
+func formatDate(p []byte, t time.Time) {
+	y, m, d := t.Date()
+	p[0] = byte(y/1000) + '0'
+	p[1] = byte((y/100)%10) + '0'
+	p[2] = byte((y/10)%10) + '0'
+	p[3] = byte(y%10) + '0'
+	p[4] = byte('/')
+	p[5] = byte(m/10) + '0'
+	p[6] = byte(m%10) + '0'
+	p[7] = byte('/')
+	p[8] = byte(d/10) + '0'
+	p[9] = byte(d%10) + '0'
+}
+
 var startString, endString string
 var columnWidth, transactionDepth int
 var showEmptyAccounts bool
@@ -34,7 +49,7 @@ var period string
 var payeeFilter string
 var spaceStr string
 
-func cliTransactions() ([]*ledger.Transaction, error) {
+func cliTransactions(cmd *cobra.Command) ([]*ledger.Transaction, error) {
 	if columnWidth == 80 && columnWide {
 		columnWidth = 132
 		fd := int(os.Stdout.Fd())
@@ -46,15 +61,8 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		}
 	}
 
-	parsedStartDate, tstartErr := date.Parse(startString)
-	parsedEndDate, tendErr := date.Parse(endString)
-
-	if tstartErr != nil || tendErr != nil {
-		return nil, errors.New("unable to parse start or end date string argument")
-	}
-
-	// include end dates' transactions too
-	parsedEndDate = parsedEndDate.Add(time.Second)
+	filterByDate := cmd.Flags().Changed("begin-date") || cmd.Flags().Changed("end-date")
+	filterByPayee := cmd.Flags().Changed("payee")
 
 	var generalLedger []*ledger.Transaction
 	var parseError error
@@ -71,13 +79,28 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 		return a.Date.Compare(b.Date)
 	})
 
-	generalLedger = ledger.TransactionsInDateRange(generalLedger, parsedStartDate, parsedEndDate)
+	// Only use start/end if specified as arguments
+	if filterByDate {
+		parsedStartDate, tstartErr := date.Parse(startString)
+		parsedEndDate, tendErr := date.Parse(endString)
 
-	origLedger := generalLedger
-	generalLedger = make([]*ledger.Transaction, 0)
-	for _, trans := range origLedger {
-		if strings.Contains(trans.Payee, payeeFilter) {
-			generalLedger = append(generalLedger, trans)
+		if tstartErr != nil || tendErr != nil {
+			return nil, errors.New("unable to parse start or end date string argument")
+		}
+
+		// include end dates' transactions too
+		parsedEndDate = parsedEndDate.Add(time.Second)
+
+		generalLedger = ledger.TransactionsInDateRange(generalLedger, parsedStartDate, parsedEndDate)
+	}
+
+	if filterByPayee {
+		origLedger := generalLedger
+		generalLedger = make([]*ledger.Transaction, 0)
+		for _, trans := range origLedger {
+			if strings.Contains(trans.Payee, payeeFilter) {
+				generalLedger = append(generalLedger, trans)
+			}
 		}
 	}
 
@@ -88,8 +111,8 @@ func cliTransactions() ([]*ledger.Transaction, error) {
 var printCmd = &cobra.Command{
 	Use:   "print [account-substring-filter]...",
 	Short: "Print transactions in ledger file format",
-	Run: func(_ *cobra.Command, args []string) {
-		generalLedger, err := cliTransactions()
+	Run: func(cmd *cobra.Command, args []string) {
+		generalLedger, err := cliTransactions(cmd)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -125,6 +148,8 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 	colorAccount := fastcolor.FgBlue
 	colorReset := fastcolor.Reset
 
+	var amtBuf [24]byte
+
 	buf := bufio.NewWriter(os.Stdout)
 	overallBalance := decimal.Zero
 	for _, account := range accountList {
@@ -133,7 +158,8 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 			overallBalance = overallBalance.Add(account.Balance)
 		}
 		if (printZeroBalances || account.Balance.Sign() != 0) && (depth < 0 || accDepth <= depth) {
-			outBalanceString := account.Balance.StringFixedBank()
+			n := account.Balance.FixedBank(amtBuf[:])
+			outBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
 			amtColor := colorReset
 			if account.Balance.Sign() < 0 {
 				amtColor = colorNeg
@@ -145,7 +171,8 @@ func PrintBalances(accountList []*ledger.Account, printZeroBalances bool, depth,
 		}
 	}
 	fmt.Fprintln(buf, strings.Repeat("-", columns))
-	outBalanceString := overallBalance.StringFixedBank()
+	n := overallBalance.FixedBank(amtBuf[:])
+	outBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
 	amtColor := colorReset
 	if overallBalance.Sign() < 0 {
 		amtColor = colorNeg
@@ -173,7 +200,12 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	w.WriteString(trans.Date.Format(transactionDateFormat))
+	var amtBuf [24]byte
+
+	var dateBuf [10]byte
+	formatDate(dateBuf[:], trans.Date)
+	dateString := unsafe.String(unsafe.SliceData(dateBuf[:]), 10)
+	w.WriteString(dateString)
 	w.WriteString(spaceStr[:1])
 	w.WriteString(trans.Payee)
 	if len(trans.PayeeComment) > 0 {
@@ -186,7 +218,8 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 	}
 	w.WriteString(newLine)
 	for _, accChange := range trans.AccountChanges {
-		outBalanceString := accChange.Balance.StringFixedBank()
+		n := accChange.Balance.FixedBank(amtBuf[:])
+		outBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
 		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
 		if spaceCount < 1 {
 			spaceCount = 1
@@ -241,6 +274,9 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 	colorAccount := fastcolor.FgBlue
 	colorReset := fastcolor.Reset
 
+	var amtBuf [24]byte
+	var dateBuf [10]byte
+
 	buf := bufio.NewWriter(os.Stdout)
 	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
@@ -253,8 +289,6 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 			}
 			if inFilter {
 				runningBalance = runningBalance.Add(accChange.Balance)
-				outBalanceString := accChange.Balance.StringFixedBank()
-				outRunningBalanceString := runningBalance.StringFixedBank()
 
 				balamtColor := colorReset
 				if accChange.Balance.Sign() < 0 {
@@ -265,14 +299,19 @@ func PrintRegister(generalLedger []*ledger.Transaction, filterArr []string, colu
 					runamtColor = colorNeg
 				}
 
-				buf.WriteString(trans.Date.Format(transactionDateFormat))
+				formatDate(dateBuf[:], trans.Date)
+				buf.Write(dateBuf[:])
 				buf.WriteString(" ")
 				colorPayee.WriteStringFixed(buf, trans.Payee, col1width, false)
 				buf.WriteString(" ")
 				colorAccount.WriteStringFixed(buf, accChange.Name, col2width, false)
 				buf.WriteString(" ")
+				n := accChange.Balance.FixedBank(amtBuf[:])
+				outBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
 				balamtColor.WriteStringFixed(buf, outBalanceString, 10, true)
 				buf.WriteString(" ")
+				n = runningBalance.FixedBank(amtBuf[:])
+				outRunningBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
 				runamtColor.WriteStringFixed(buf, outRunningBalanceString, 10, true)
 				buf.WriteString(newLine)
 			}
@@ -286,7 +325,6 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 	csvWriter := csv.NewWriter(os.Stdout)
 	csvWriter.Comma, _ = utf8.DecodeRuneInString(fieldDelimiter)
 
-	runningBalance := decimal.Zero
 	for _, trans := range generalLedger {
 		for _, accChange := range trans.AccountChanges {
 			inFilter := len(filterArr) == 0
@@ -296,7 +334,6 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 				}
 			}
 			if inFilter {
-				runningBalance = runningBalance.Add(accChange.Balance)
 				outBalanceString := accChange.Balance.StringFixedBank()
 				record := []string{trans.Date.Format(transactionDateFormat),
 					trans.Payee,

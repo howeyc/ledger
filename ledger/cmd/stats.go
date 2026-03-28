@@ -16,8 +16,8 @@ import (
 var statsCmd = &cobra.Command{
 	Use:   "stats",
 	Short: "A small report of transaction stats",
-	Run: func(_ *cobra.Command, _ []string) {
-		transactions, terr := cliTransactions()
+	Run: func(cmd *cobra.Command, _ []string) {
+		transactions, terr := cliTransactions(cmd)
 		if terr != nil {
 			log.Fatalln(terr)
 		}
