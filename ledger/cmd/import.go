@@ -364,9 +364,9 @@ func importQFX(accountSubstring, qfxFileName string) {
 
 // importCmd represents the import command
 var importCmd = &cobra.Command{
-	Use:   "import <account-substring> <csv-file>",
+	Use:   "import <account-substring> <file.csv>",
 	Args:  cobra.ExactArgs(2),
-	Short: "Import transactions from csv to ledger format",
+	Short: "Import transactions from camt(xml)/csv/qfx/ofx to ledger format",
 	Run: func(_ *cobra.Command, args []string) {
 		accountSubstring := args[0]
 		fileName := args[1]
