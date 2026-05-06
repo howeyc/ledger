@@ -49,6 +49,51 @@ func PrintCSV(generalLedger []*ledger.Transaction, filterArr []string) {
 	}
 }
 
+func PrintBeancount(generalLedger []*ledger.Transaction, filterArr []string) {
+	// no spaces in account names for beancount
+	for i := range generalLedger {
+		for j := range generalLedger[i].AccountChanges {
+			generalLedger[i].AccountChanges[j].Name = strings.ReplaceAll(generalLedger[i].AccountChanges[j].Name, " ", "-")
+			generalLedger[i].AccountChanges[j].Name = strings.ReplaceAll(generalLedger[i].AccountChanges[j].Name, "/", "-")
+		}
+	}
+
+	accounts := ledger.GetBalances(generalLedger, filterArr)
+
+	var firstDate time.Time
+	if len(generalLedger) > 0 {
+		firstDate = generalLedger[0].Date
+	}
+	firstDate = firstDate.Add(time.Hour * -25)
+
+	for _, acc := range accounts {
+		if strings.Contains(acc.Name, ":") {
+			fmt.Println(firstDate.Format("2006-01-02"), "open", acc.Name)
+		}
+	}
+
+	for _, trans := range generalLedger {
+		inFilter := len(filterArr) == 0
+		for _, filter := range filterArr {
+			for _, accChange := range trans.AccountChanges {
+				if strings.Contains(accChange.Name, filter) {
+					inFilter = true
+				}
+			}
+		}
+		if inFilter {
+			for _, comm := range trans.Comments {
+				fmt.Println(comm)
+			}
+			fmt.Println(trans.Date.Format("2006-01-02"), "*", "\""+trans.Payee+"\"", trans.PayeeComment)
+			for _, acc := range trans.AccountChanges {
+				fmt.Println("   ", acc.Name, "        ", acc.Balance.StringFixedBank(), "USD", acc.Comment)
+			}
+			fmt.Println()
+		}
+	}
+}
+
 var exportType string
 
 // exportCmd represents the export command
@@ -64,6 +109,8 @@ var exportCmd = &cobra.Command{
 		switch exportType {
 		case "csv":
 			PrintCSV(generalLedger, args)
+		case "beancount":
+			PrintBeancount(generalLedger, args)
 		default:
 			fmt.Fprintln(os.Stderr, "unknown export type specified")
 		}
