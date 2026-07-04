@@ -31,9 +31,9 @@ func getRangeAndPeriod(dateRange, dateFreq string) (start, end time.Time, period
 func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (results []*ledger.Account) {
 	needleDepth := len(strings.Split(accountNeedle, ":"))
 
-	if dblstarIdx := strings.Index(accountNeedle, "**"); dblstarIdx != -1 {
+	if before, _, ok := strings.Cut(accountNeedle, "**"); ok {
 		foundAccountNames := make(map[string]*ledger.Account)
-		prefixNeedle := accountNeedle[:dblstarIdx]
+		prefixNeedle := before
 		for _, hay := range accountsHaystack {
 			if strings.HasPrefix(hay.Name, prefixNeedle) {
 				foundAccountNames[hay.Name] = hay
@@ -48,8 +48,8 @@ func getAccounts(accountNeedle string, accountsHaystack []*ledger.Account) (resu
 		for _, hay := range foundAccountNames {
 			results = append(results, hay)
 		}
-	} else if starIdx := strings.Index(accountNeedle, "*"); starIdx != -1 {
-		prefixNeedle := accountNeedle[:starIdx]
+	} else if before, _, ok := strings.Cut(accountNeedle, "*"); ok {
+		prefixNeedle := before
 		for _, hay := range accountsHaystack {
 			hayDepth := len(strings.Split(hay.Name, ":"))
 			if strings.HasPrefix(hay.Name, prefixNeedle) && hayDepth == needleDepth {

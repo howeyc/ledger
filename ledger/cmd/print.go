@@ -208,10 +208,7 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 	w.WriteString(spaceStr[:1])
 	w.WriteString(trans.Payee)
 	if len(trans.PayeeComment) > 0 {
-		spaceCount := columns - 10 - utf8.RuneCountInString(trans.Payee)
-		if spaceCount < 1 {
-			spaceCount = 1
-		}
+		spaceCount := max(columns-10-utf8.RuneCountInString(trans.Payee), 1)
 		w.WriteString(spaceStr[:spaceCount])
 		w.WriteString(trans.PayeeComment)
 	}
@@ -219,10 +216,7 @@ func WriteTransaction(w io.StringWriter, trans *ledger.Transaction, columns int)
 	for _, accChange := range trans.AccountChanges {
 		n := accChange.Balance.FixedBank(amtBuf[:])
 		outBalanceString := unsafe.String(unsafe.SliceData(amtBuf[n:]), 24-n)
-		spaceCount := columns - 4 - utf8.RuneCountInString(accChange.Name) - utf8.RuneCountInString(outBalanceString)
-		if spaceCount < 1 {
-			spaceCount = 1
-		}
+		spaceCount := max(columns-4-utf8.RuneCountInString(accChange.Name)-utf8.RuneCountInString(outBalanceString), 1)
 		w.WriteString(spaceStr[:4])
 		w.WriteString(accChange.Name)
 		w.WriteString(spaceStr[:spaceCount])
