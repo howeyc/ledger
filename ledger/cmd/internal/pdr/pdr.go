@@ -1,4 +1,4 @@
-//go:generate peg -inline -switch grammar.peg
+//go:generate go tool peg -inline -switch grammar.peg
 
 // Package pdr parses date range as string
 // Uses pointlander/peg
@@ -18,7 +18,7 @@ import (
 // However, range without numeric factor excludes current month. Specifying "last month" returns
 // just the range for that month.
 func ParseRange(s string, baseTime time.Time) (start, end time.Time, err error) {
-	p := &parser{
+	p := &parser[uint32]{
 		Buffer:      strings.ToLower(s),
 		currentTime: baseTime,
 	}
