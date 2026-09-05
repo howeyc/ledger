@@ -120,6 +120,33 @@ func calcBalances(calcAccts []calculatedAccount, balances []*ledger.Account) (re
 	return
 }
 
+// calcTransaction will create one-posting transactions for any calculated accounts
+func calcTransaction(calcAccts []calculatedAccount, trans *ledger.Transaction) (results []*ledger.Transaction) {
+	for _, calcAccount := range calcAccts {
+		for i, accChange := range trans.AccountChanges {
+			include := false
+			accIdx := -1
+			for _, acctOp := range calcAccount.AccountOperations {
+				if strings.HasPrefix(accChange.Name, acctOp.Name) && acctOp.Operation == "+" {
+					include = true
+					accIdx = i
+				}
+				if strings.HasPrefix(accChange.Name, acctOp.Name) && acctOp.Operation == "-" {
+					include = false
+				}
+			}
+			if include {
+				newtrans := *trans
+				newtrans.AccountChanges = []ledger.Account{trans.AccountChanges[accIdx]}
+				newtrans.AccountChanges[0].Name = calcAccount.Name
+				results = append(results, &newtrans)
+			}
+		}
+	}
+
+	return
+}
+
 // Merge multiple account changes for each distinct account
 func mergeAccounts(input *ledger.Transaction) {
 	balmap := make(map[string]decimal.Decimal)
@@ -215,9 +242,16 @@ func reportHandler(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+
 		if include {
 			mergeAccounts(trans)
 			vtrans = append(vtrans, trans)
+		}
+
+		// calculated transaction
+		ctrans := calcTransaction(rConf.CalculatedAccounts, trans)
+		for _, ct := range ctrans {
+			vtrans = append(vtrans, ct)
 		}
 	}
 
@@ -368,6 +402,7 @@ func reportHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		var lData linePageData
 		lData.Init()
+		lData.Transactions = vtrans
 		lData.ReportName = reportName
 
 		for colorIdx, repAccount := range reportSummaryAccounts {
@@ -480,8 +515,6 @@ func reportHandler(w http.ResponseWriter, r *http.Request) {
 			lData.AccountNames = append([]string{"All"}, accNames...)
 			sort.Strings(lData.AccountNames[1:])
 		}
-
-		lData.Transactions = vtrans
 
 		t, err := loadTemplates("templates/template.barlinechart.html")
 		if err != nil {

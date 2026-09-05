@@ -147,7 +147,7 @@
 				<tbody>
 					{{range $trIdx, $trans := $.Transactions}}
 					{{range $trAccIdx, $trAcc := $trans.AccountChanges}}
-					{{if or (eq $accName "All") (substr $trAcc.Name $accName)}}
+					{{if or (and (eq $accName "All") (gt (len $trans.AccountChanges) 1)) (substr $trAcc.Name $accName)}}
 					<tr>
 						<td>{{$trans.Date.Format "2006-01-02"}}</td>
 						<td class="d-none d-sm-block">
