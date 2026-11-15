@@ -342,13 +342,12 @@ func importQFX(accountSubstring, qfxFileName string) {
 		inputPayeeWords := strings.Fields(payee)
 
 		expenseAccount.Name = predictAccount(classifier, inputPayeeWords)
-		expenseAccount.Balance = amount
 
-		// Apply scale
-		expenseAccount.Balance = expenseAccount.Balance.Mul(decScale)
+		// TRNAMT is the change of the account the statement is for
+		qfxAccount.Balance = amount.Mul(decScale)
 
-		// Account side is the opposite of expense
-		qfxAccount.Balance = expenseAccount.Balance.Neg()
+		// Expense side is the opposite of the account
+		expenseAccount.Balance = qfxAccount.Balance.Neg()
 
 		// Create valid transaction for print in ledger format
 		trans := &ledger.Transaction{Date: dateTime, Payee: payee}
