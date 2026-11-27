@@ -70,6 +70,8 @@ func predictAccount(classifier *bayesian.Classifier, inputPayeeWords []string) s
 			highScore2 = highScore1
 			highScore1 = score
 			matchIdx = j
+		} else if score > highScore2 {
+			highScore2 = score
 		}
 	}
 	// If the difference between the highest and second highest scores is greater than 10
